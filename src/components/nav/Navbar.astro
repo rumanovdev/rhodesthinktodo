@@ -65,15 +65,7 @@ if (user) {
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href="/" class="home-link">Home</a></li>
 
-          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Explore<span class="submenu-indicator"></span></a>
-            <ul class="nav-dropdown nav-submenu">
-              {/* Hidden for now — keep markup in source for easy re-enable. */}
-              {false && <li><a href="/listings/" class="sub-menu-item">Browse Listings</a></li>}
-              {false && <li><a href="/listings-grid/" class="sub-menu-item">Grid View</a></li>}
-              <li><a href="/listings-map/" class="sub-menu-item">Map View</a></li>
-              {/* Removed: /listing/ gallery index — duplicate of the three above. The /listing/:slug detail route is still reachable by clicking any card. */}
-            </ul>
-          </li>
+          <li class="parent-parent-menu-item"><a href="/listings-map/" class="home-link">Explore</a></li>
 
           <li class="parent-parent-menu-item"><a href="/about-us/" class="home-link">About Us</a></li>
 
