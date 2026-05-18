@@ -8,6 +8,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = null;
   context.locals.session = null;
   context.locals.supabase = null;
+  context.locals.isAdmin = false;
 
   // Skip Supabase session hydration during static prerender — there's no real
   // request so cookies are empty and @supabase/ssr warns about header access.
@@ -24,6 +25,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.user = data.user;
       const { data: sessionData } = await supabase.auth.getSession();
       context.locals.session = sessionData.session;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', data.user.id)
+        .maybeSingle();
+      context.locals.isAdmin = Boolean(profile?.is_admin);
     }
   }
 

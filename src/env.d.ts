@@ -16,5 +16,6 @@ declare namespace App {
     user: import('@supabase/supabase-js').User | null;
     session: import('@supabase/supabase-js').Session | null;
     supabase: ReturnType<typeof import('./lib/supabase/server').getSupabaseServer>;
+    isAdmin: boolean;
   }
 }

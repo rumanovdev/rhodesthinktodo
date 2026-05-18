@@ -254,42 +254,42 @@ export const listings = [
 // reviews data
 export const reviews = [
   {
-    img: '/assets/img/team-2.jpg',
+    img: '/assets/img/team-3.jpg',
     name: 'Nikos Papadopoulos',
     name1: 'Taverna Owner, Lindos',
     title: 'Visitors Find Us Before the Tourist Spots',
     desc: "Since we listed our taverna in Lindos, guests walk in every week with the app already open on their phones. The local search actually works — they find us before the obvious tourist places.",
   },
   {
-    img: '/assets/img/team-3.jpg',
+    img: '/assets/img/team-2.jpg',
     name: 'Eleni Konstantinou',
     name1: 'Hotel Manager, Faliraki',
     title: 'Steady Bookings All Summer',
     desc: 'After we opened in Faliraki we tried every booking site. ThinksToDo brought us a steady stream of Greek families and visitors from northern Europe — and the honest reviews from real guests build trust quickly.',
   },
   {
-    img: '/assets/img/team-4.jpg',
+    img: '/assets/img/team-5.jpg',
     name: 'Yannis Stavropoulos',
     name1: 'Walking Tour Guide, Old Town',
     title: 'Travelers Book My Tours Directly',
     desc: "Running private walking tours of the Medieval Old Town used to mean depending on hotel concierges. Now travelers book me directly through the listing — they arrive already excited about Rhodes.",
   },
   {
-    img: '/assets/img/team-5.jpg',
+    img: '/assets/img/team-4.jpg',
     name: 'Maria Vlachou',
     name1: 'Beach Bar Owner, Tsambika',
     title: 'Busy Even in the Off-Season',
     desc: 'Tsambika is packed in July, but our off-season used to be very quiet. With ThinksToDo, weekenders from Rhodes Town and Athens started showing up year-round. Best decision we made for the business.',
   },
   {
-    img: '/assets/img/team-6.jpg',
+    img: '/assets/img/team-7.jpg',
     name: 'Dimitris Karagiannis',
     name1: 'Boat Tour Operator, Mandraki',
     title: 'Day-Trips Sell Out Through the App',
     desc: 'We run daily boats from Mandraki harbour to Symi and Lindos. The booking flow on ThinksToDo is the smoothest we have used — guests pay, we get the notification, and they arrive at the dock ready to sail.',
   },
   {
-    img: '/assets/img/team-7.jpg',
+    img: '/assets/img/team-6.jpg',
     name: 'Sophia Manolaki',
     name1: 'Boutique Owner, Old Town',
     title: 'Customers Actually Find Our Shop',

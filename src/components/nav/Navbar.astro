@@ -16,6 +16,7 @@ const {
 
 const user = Astro.locals?.user ?? null;
 const supabase = Astro.locals?.supabase ?? null;
+const isAdmin = Astro.locals?.isAdmin ?? false;
 
 let userLabel: string | null = null;
 let userAvatar: string | null = null;
@@ -64,19 +65,21 @@ if (user) {
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href="/" class="home-link">Home</a></li>
 
-          <li class="parent-parent-menu-item"><a href="/about-us/" class="home-link">About Us</a></li>
-
           <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Explore<span class="submenu-indicator"></span></a>
             <ul class="nav-dropdown nav-submenu">
-              <li><a href="/listings/" class="sub-menu-item">Browse Listings</a></li>
-              <li><a href="/listings-grid/" class="sub-menu-item">Grid View</a></li>
+              {/* Hidden for now — keep markup in source for easy re-enable. */}
+              {false && <li><a href="/listings/" class="sub-menu-item">Browse Listings</a></li>}
+              {false && <li><a href="/listings-grid/" class="sub-menu-item">Grid View</a></li>}
               <li><a href="/listings-map/" class="sub-menu-item">Map View</a></li>
               {/* Removed: /listing/ gallery index — duplicate of the three above. The /listing/:slug detail route is still reachable by clicking any card. */}
             </ul>
           </li>
 
+          <li class="parent-parent-menu-item"><a href="/about-us/" class="home-link">About Us</a></li>
+
           {/* User Dashboard submenu removed from the primary nav — the logged-in user reaches dashboard pages via the avatar dropdown (right-aligned) instead. */}
 
+          {isAdmin && (
           <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Pages<span class="submenu-indicator"></span></a>
             <ul class="nav-dropdown nav-submenu">
               <li class="parent-menu-item"><a href="JavaScript:Void(0);"><i class="bi bi-person-circle me-1"></i>My Account<span class="submenu-indicator"></span></a>
@@ -103,6 +106,7 @@ if (user) {
               <li><a href="/elements/" class="sub-menu-item"><i class="bi bi-gear me-1"></i>Elements</a></li>
             </ul>
           </li>
+          )}
 
           <li><a class="mob-addlisting light" href="JavaScript:Void(0);"><i class="bi bi-geo-alt-fill me-1"></i>Add Listing</a></li>
         </ul>
