@@ -14,6 +14,8 @@ export type ListingCard = {
   title: string;
   desc: string;
   img: string;
+  /** Owner avatar (or a deterministic team-N.jpg fallback when the owner has no uploaded avatar). */
+  img1: string;
   number: string;
   name: string; // category display name
   city: string;
@@ -44,6 +46,11 @@ function row2card(r: any): ListingCard {
   const categoryName = r.categories?.name || 'Listing';
   const tier = Math.min(Math.max(Number(r.price_tier) || 1, 1), 4);
   const verified = !!r.is_verified;
+  // Owner avatar: use uploaded one if present, else a stable fallback per slug
+  // so each listing keeps the same placeholder face across renders.
+  const ownerAvatar = r.profiles?.avatar_url as string | null | undefined;
+  const fallbackIdx = ((r.slug || r.id || '').split('').reduce((a: number, c: string) => a + c.charCodeAt(0), 0) % 13) + 1;
+  const img1 = ownerAvatar || `/assets/img/team-${fallbackIdx}.jpg`;
 
   return {
     id: r.id,
@@ -51,6 +58,7 @@ function row2card(r: any): ListingCard {
     title: r.title,
     desc: r.description || '',
     img,
+    img1,
     number: r.phone || '',
     name: categoryName,
     city: r.city || '',
@@ -74,7 +82,7 @@ function row2card(r: any): ListingCard {
   };
 }
 
-const SELECT = '*, listing_images(url, sort_order), categories(name, slug)';
+const SELECT = '*, listing_images(url, sort_order), categories(name, slug), profiles!listings_owner_id_fkey(avatar_url, full_name)';
 
 export async function getPublishedListings(
   supabase: DB | null,

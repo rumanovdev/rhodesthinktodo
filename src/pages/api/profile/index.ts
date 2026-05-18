@@ -70,7 +70,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   const website = cleanUrl(form, 'website', LIMITS.website);
   if (website === 'invalid') return redirectErr(redirect, 'Website must be a valid http(s) URL');
 
-  const socialKeys = ['facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'dribbble'] as const;
+  const socialKeys = ['facebook', 'twitter', 'linkedin', 'instagram', 'youtube'] as const;
   const social: Record<string, string | null> = {};
   for (const k of socialKeys) {
     const v = cleanUrl(form, k, LIMITS.social);

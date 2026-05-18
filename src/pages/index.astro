@@ -169,7 +169,7 @@ if (Astro.locals.supabase) {
 			    <div class="listingitem-container">
 			        <div class="singlelisting-item">
 			            <div class="listing-top-item">
-			                <a href="#" class="topLink">
+			                <a href={`/listing/${slugify(item.title)}/`} class="topLink" aria-label={item.title}>
 			                    <div class="position-absolute start-0 top-0 ms-3 mt-3 z-2">
 			                        <div class="d-flex align-items-center justify-content-start gap-2">
 			                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
