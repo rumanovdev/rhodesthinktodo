@@ -54,7 +54,7 @@ export const categories = [
   },
   {
     icon: 'bi bi-house-check',
-    title: 'Real Estate',
+    title: 'Accommodations',
     slug: 'real-estate',
   },
   {
@@ -76,6 +76,16 @@ export const categories = [
     icon: 'bi bi-car-front',
     title: 'Automotive',
     slug: 'automotive',
+  },
+  {
+    icon: 'bi bi-binoculars',
+    title: 'Activities',
+    slug: 'activities',
+  },
+  {
+    icon: 'bi bi-map',
+    title: 'Tours',
+    slug: 'tours',
   },
 ] as const;
 
@@ -457,7 +467,7 @@ export const cities = [
   },
   {
     img: '/assets/img/category/realestate.jpg',
-    title: 'Real Estate',
+    title: 'Accommodations',
     lists: 'Browse',
     style: 'col-xl-6 col-lg-6 col-md-4 col-sm-6',
     href: '/search/?category=real-estate',
