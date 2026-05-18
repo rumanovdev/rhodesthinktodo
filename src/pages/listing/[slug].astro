@@ -434,7 +434,8 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 						</div>
 
 
-						<!-- Booking Form -->
+						{/* Booking + payment flow hidden until we wire up real payments. The card markup is kept in source for easy re-enable. */}
+						{false && (
 						<div class="card overflow-visible">
 							<div class="card-header py-3">
 								<div class="headerFirst"><h6><i class="bi bi-calendar-check me-2"></i>Booking Rooms</h6></div>
@@ -484,6 +485,7 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 							</div>
 
 						</div>
+						)}
 						<!-- Booking Form End -->
 
 						<!-- Share option -->
