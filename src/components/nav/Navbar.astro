@@ -149,6 +149,20 @@ if (user) {
 </div>
 <!-- End Navigation -->
 
+<style is:global>
+  @media (min-width: 1024px) {
+    .navigation-landscape .nav-menus-wrapper {
+      position: relative;
+    }
+    .navigation-landscape .nav-menus-wrapper > ul.nav-menu:not(.nav-menu-social) {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      float: none;
+    }
+  }
+</style>
+
 <script is:inline>
   (function () {
     const currentPath = window.location.pathname.replace(/\/$/, '');
