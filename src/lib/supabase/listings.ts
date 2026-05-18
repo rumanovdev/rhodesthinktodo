@@ -82,7 +82,7 @@ function row2card(r: any): ListingCard {
   };
 }
 
-const SELECT = '*, listing_images(url, sort_order), categories(name, slug), profiles!listings_owner_id_fkey(avatar_url, full_name)';
+const SELECT = '*, listing_images(url, sort_order), categories(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
 
 export async function getPublishedListings(
   supabase: DB | null,
@@ -126,7 +126,7 @@ export async function getListingBySlug(supabase: DB | null, slug: string) {
   if (!supabase) return null;
   const { data } = await supabase
     .from('listings')
-    .select(SELECT + ', profiles:owner_id(id, full_name, avatar_url)')
+    .select(SELECT)
     .eq('slug', slug)
     .maybeSingle();
   if (!data) return null;

@@ -31,6 +31,11 @@ const { data: reviewRows } = Astro.locals.supabase
       .eq('listing_id', event.id)
       .order('created_at', { ascending: false })
   : { data: [] };
+
+// Owner of this listing — used in the sidebar "Added By" card.
+const owner = (detail as any).profiles ?? null;
+const ownerName = owner?.full_name || 'Listing Owner';
+const ownerAvatar = owner?.avatar_url || event.img1 || '/assets/img/team-1.jpg';
 const reviewsList = (reviewRows ?? []).map((r: any) => ({
   id: r.id,
   name: r.profiles?.full_name || 'Anonymous',
@@ -68,14 +73,14 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 		                            </h2><span class="verified mt-1"><img src="/assets/img/tick.svg" class="img-fluid" width="22" alt="Verified Listing"></span></div>
 		                            <div class="listingsbasicInfo">
 		                                <div class="d-flex align-items-center justify-content-start flex-wrap gap-2">
-		                                    <div class="flexItem me-2"><span class="text-md fw-medium text-light"><i class="fa-solid fa-location-dot me-2"></i>Old Paris, France</span></div>
-		                                    <div class="flexItem me-2"><span class="text-md fw-medium text-light"><i class="bi bi-briefcase me-2"></i>Events</span></div>
+		                                    <div class="flexItem me-2"><span class="text-md fw-medium text-light"><i class="fa-solid fa-location-dot me-2"></i>{event.location || event.city || 'Rhodes, Greece'}</span></div>
+		                                    <div class="flexItem me-2"><span class="text-md fw-medium text-light"><i class="bi bi-briefcase me-2"></i>{event.name}</span></div>
 		                                    <div class="flexItem">
 		                                        <div class="d-flex align-items-center justify-content-start gap-2">
 		                                            <div class="d-flex align-items-center justify-content-start gap-1">
 		                                                <i class="bi bi-star-fill text-warning text-sm"></i><i class="bi bi-star-fill text-warning text-sm"></i><i class="bi bi-star-fill text-warning text-sm"></i><i class="bi bi-star-fill text-warning text-sm"></i><i class="bi bi-star-half text-warning text-sm"></i>
 		                                            </div>
-		                                            <span class="text-md fw-medium text-light">(2k Reviews)</span>
+		                                            <span class="text-md fw-medium text-light">({event.reviews})</span>
 		                                        </div>
 		                                    </div>
 		                                </div>
@@ -86,12 +91,12 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 		                <div class="lastColumn">
 		                    <div class="d-flex align-items-center justify-content-md-end flex-wrap gap-3">
 		                        <div class="flexStart Priceinfo d-flex flex-column">
-		                            <span class="fw-medium text-light">Event Time</span>
-		                            <span class="fw-bold text-md text-light">24 Nov 2025 -
-		                                {event.time || '10:30AM To 14:30PM'}
-		                            </span>
+		                            <span class="fw-medium text-light">Price</span>
+		                            <span class="fw-bold text-md text-light">{event.dollar}</span>
 		                        </div>
-		                        <div class="flexlastButton"><button type="button" class="btn px-4 btn-whites text-primary fw-medium rounded-pill"><i class="bi bi-telephone me-2"></i>Call Now</button></div>
+		                        {event.number && (
+		                            <div class="flexlastButton"><a href={`tel:${event.number}`} class="btn px-4 btn-whites text-primary fw-medium rounded-pill"><i class="bi bi-telephone me-2"></i>{event.number}</a></div>
+		                        )}
 		                    </div>
 		                </div>
 		            </div>
@@ -122,8 +127,7 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 
 					    <div id="description" class="panel-collapse collapse show">
 					        <div class="card-body p-4 pt-2">
-					            <p>Welcome to ThinksToDo Directory, a breathtaking retreat nestled in the heart of Las Vegas. This exquisite villa offers a perfect blend of luxury, comfort, and tranquility, providing an unparalleled escape for those seeking an idyllic haven.</p>
-					            <p>Enjoy panoramic views of lush landscapes, rolling hills, and distant mountains from the expansive windows and private balconies. Watch the sunrise or sunset paint the sky in a myriad of colors, creating a daily masterpiece just for you. Retreat to the sumptuous bedrooms, each thoughtfully designed for ultimate comfort. Crisp linens, plush pillows, and tasteful decor create a haven of relaxation, ensuring restful nights and rejuvenating mornings.</p>
+					            <p>{event.desc || 'No description provided yet.'}</p>
 					        </div>
 					    </div>
 					</div>
@@ -375,26 +379,46 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 							<div class="bg-cover card-header ht-150" style="background:url(/assets/img/avatar-bg.jpg)no-repeat;"></div>
 							<div class="card-body mt-n3 p-0">
 								<div class="avatarBox position-relative mb-4">
-									<div class="square--100 circle bg-transparents mx-auto p-2 z-2"><img src="/assets/img/team-4.jpg" class="img-fluid circle" alt="Avatar"></div>
+									<div class="square--100 circle bg-transparents mx-auto p-2 z-2"><img src={ownerAvatar} class="img-fluid circle" alt={ownerName} style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
 									<div class="listingInfo text-center">
 										<p class="text-md text-muted mb-0">Added By</p>
-										<h6 class="mb-0">Shree K. Patel</h6>
+										<h6 class="mb-0">{ownerName}</h6>
 									</div>
 								</div>
 								<div class="avatarInfo mb-2">
 
 									<!-- Components/Listings/Single-Listings/single-listing-01/author.html -->
-									{authors.map((item) => (
+									{event.number && (
 									<div class="py-3 px-3 border-top">
 									    <div class="infoFlexio d-flex align-items-center justify-content-start gap-2">
-									        <div class="square--40 rounded bg-light-primary"><i class={`${item.icon} text-primary`}></i></div>
+									        <div class="square--40 rounded bg-light-primary"><i class="bi bi-telephone text-primary"></i></div>
 									        <div class="infoDetails">
-									            <p class="text-muted lh-base mb-0">{item.name}</p>
-									            <p class="text-dark lh-base fw-medium fs-6 mb-0">{item.title}</p>
+									            <p class="text-muted lh-base mb-0">Phone</p>
+									            <p class="text-dark lh-base fw-medium fs-6 mb-0"><a href={`tel:${event.number}`} class="text-reset">{event.number}</a></p>
 									        </div>
 									    </div>
 									</div>
-									))}
+									)}
+									{event.address && (
+									<div class="py-3 px-3 border-top">
+									    <div class="infoFlexio d-flex align-items-center justify-content-start gap-2">
+									        <div class="square--40 rounded bg-light-primary"><i class="bi bi-geo-alt text-primary"></i></div>
+									        <div class="infoDetails">
+									            <p class="text-muted lh-base mb-0">Address</p>
+									            <p class="text-dark lh-base fw-medium fs-6 mb-0">{event.address}{event.city ? `, ${event.city}` : ''}</p>
+									        </div>
+									    </div>
+									</div>
+									)}
+									<div class="py-3 px-3 border-top">
+									    <div class="infoFlexio d-flex align-items-center justify-content-start gap-2">
+									        <div class="square--40 rounded bg-light-primary"><i class="bi bi-tag text-primary"></i></div>
+									        <div class="infoDetails">
+									            <p class="text-muted lh-base mb-0">Category</p>
+									            <p class="text-dark lh-base fw-medium fs-6 mb-0">{event.name}</p>
+									        </div>
+									    </div>
+									</div>
 
 								</div>
 							</div>
