@@ -64,7 +64,9 @@ if (user) {
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href="/" class="home-link">Home</a></li>
 
-          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Listings<span class="submenu-indicator"></span></a>
+          <li class="parent-parent-menu-item"><a href="/about-us/" class="home-link">About Us</a></li>
+
+          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Explore<span class="submenu-indicator"></span></a>
             <ul class="nav-dropdown nav-submenu">
               <li><a href="/listings/" class="sub-menu-item">Browse Listings</a></li>
               <li><a href="/listings-grid/" class="sub-menu-item">Grid View</a></li>
@@ -160,6 +162,19 @@ if (user) {
       transform: translateX(-50%);
       float: none;
     }
+    /* Bigger nav link text */
+    .navigation-landscape .nav-menu > li > a.home-link,
+    .navigation-landscape .nav-menu.nav-menu-social > li > a {
+      font-size: 17px;
+    }
+  }
+  /* Add Listing button stays red even when the navbar is in its initial
+     (non-scrolled) "light" state on transparent/dark hero variants. */
+  .nav-menu.nav-menu-social > li.list-buttons.light a,
+  .nav-menu.nav-menu-social > li.list-buttons.light a:hover,
+  .nav-menu.nav-menu-social > li.list-buttons.light a:focus {
+    background: var(--bs-primary) !important;
+    color: var(--bs-white) !important;
   }
 </style>
 

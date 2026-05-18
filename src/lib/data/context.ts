@@ -28,54 +28,54 @@ export const brands = [
 // categories data
 export const categories = [
   {
-    icon: 'bi bi-backpack',
-    title: 'Showroom',
-    lists: '103 Lists',
+    icon: 'bi bi-cup-straw',
+    title: 'Restaurants & Tavernas',
+    slug: 'restaurant',
+  },
+  {
+    icon: 'bi bi-buildings',
+    title: 'Hotels & Stays',
+    slug: 'travel',
+  },
+  {
+    icon: 'bi bi-flower1',
+    title: 'Spa & Wellness',
+    slug: 'spa',
+  },
+  {
+    icon: 'bi bi-music-note-beamed',
+    title: 'Bars & Nightlife',
+    slug: 'entertainment',
   },
   {
     icon: 'bi bi-basket2',
-    title: 'Fashion & Beauty',
-    lists: '110 Lists',
+    title: 'Shopping',
+    slug: 'shopping',
   },
   {
     icon: 'bi bi-house-check',
     title: 'Real Estate',
-    lists: '35 Lists',
+    slug: 'real-estate',
+  },
+  {
+    icon: 'bi bi-suit-heart',
+    title: 'Weddings & Events',
+    slug: 'wedding',
   },
   {
     icon: 'fa-solid fa-dumbbell',
     title: 'Health & Fitness',
-    lists: '120 Lists',
-  },
-  {
-    icon: 'bi bi-shop',
-    title: 'Business Shp',
-    lists: '69 Lists',
-  },
-  {
-    icon: 'bi bi-cup-hot',
-    title: 'Coffe Shop',
-    lists: '78 Lists',
-  },
-  {
-    icon: 'bi bi-cup-straw',
-    title: 'Restaurants',
-    lists: '69 Lists',
-  },
-  {
-    icon: 'bi bi-lungs',
-    title: 'Hospital & Med',
-    lists: '75 Lists',
-  },
-  {
-    icon: 'bi bi-lamp',
-    title: 'Wedding & Events',
-    lists: '16 Lists',
+    slug: 'fitness',
   },
   {
     icon: 'bi bi-mortarboard',
     title: 'Education',
-    lists: '62 Lists',
+    slug: 'education',
+  },
+  {
+    icon: 'bi bi-car-front',
+    title: 'Automotive',
+    slug: 'automotive',
   },
 ] as const;
 

@@ -13,6 +13,19 @@ export const prerender = false;
 // Show the 8 most recent / featured listings on the home page. Falls back to an empty array
 // if Supabase isn't reachable — the rest of the page still renders.
 const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 });
+
+// Live counts per category for the Hot & Trending tiles.
+const categoryCounts: Record<string, number> = {};
+if (Astro.locals.supabase) {
+  const { data: countRows } = await Astro.locals.supabase
+    .from('listings')
+    .select('categories(slug)')
+    .eq('status', 'published');
+  for (const r of countRows ?? []) {
+    const slug = (r as any).categories?.slug;
+    if (slug) categoryCounts[slug] = (categoryCounts[slug] ?? 0) + 1;
+  }
+}
 ---
 <Base title="ThinksToDo - Business Directory & Listing Template">
   <Navbar headerClass="header header-transparent dark navdark" logo="/assets/img/logo-light.svg" addListingLight={true} />
@@ -48,7 +61,7 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 						</div>
 						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
 							<div class="form-group position-relative">
-								<input type="text" name="city" class="form-control fs-6 fw-medium" placeholder="City">
+								<input type="text" name="city" class="form-control fs-6 fw-medium" placeholder="Location">
 								<span class="position-absolute top-50 end-0 translate-middle me-2"><i class="fa-solid fa-location-dot text-muted opacity-50 fs-5"></i></span>
 							</div>
 						</div>
@@ -108,19 +121,23 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 				<div class="owl-carousel categorySlider">
 
 					<!-- Components/Home/index/categories.html -->
-					{categories.map((item) => (
-					<div class="singleCategory">
-						<div class="category-small-wrapper light">
-							<a href="#" class="categoryBox">
-								<div class="categoryCapstions">
-									<div class="catsIcons"><div class="icoBoxx"><i class={item.icon}></i></div></div>
-									<div class="catsTitle"><h5>{item.title}</h5></div>
-									<div class="CatsLists"><span class="categorycounter">{item.lists}</span></div>
+					{categories.map((item) => {
+						const count = categoryCounts[item.slug] ?? 0;
+						const label = count === 1 ? '1 Listing' : `${count} Listings`;
+						return (
+							<div class="singleCategory">
+								<div class="category-small-wrapper light">
+									<a href={`/listings-map/?category=${item.slug}`} class="categoryBox">
+										<div class="categoryCapstions">
+											<div class="catsIcons"><div class="icoBoxx"><i class={item.icon}></i></div></div>
+											<div class="catsTitle"><h5>{item.title}</h5></div>
+											<div class="CatsLists"><span class="categorycounter">{label}</span></div>
+										</div>
+									</a>
 								</div>
-							</a>
-						</div>
-					</div>
-					))}
+							</div>
+						);
+					})}
 
 				</div>
 			</div>
