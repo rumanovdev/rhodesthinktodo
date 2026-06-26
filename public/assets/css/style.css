@@ -25,7 +25,7 @@ This files table contents are outlined below>>>>>
 /*--------------------------------------------------
 Default Style
 ---------------------------------------------------*/
-@import url("https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500;600;700;800&display=swap");
+/* Jost is loaded async via a <link> in Base.astro (was a render-blocking @import). */
 :root,
 [data-bs-theme=light] {
   --bs-body-bg: #ffffff;

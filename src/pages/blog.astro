@@ -53,7 +53,7 @@ function slugify(s: string): string {
           <div class="col-xl-4 col-lg-4 col-md-6">
             <div class="card rounded-4 shadow-sm h-100">
               <a href={`/blog-detail/${item.slug || slugify(item.title)}/`} class="d-block bg-gradient rounded-top">
-                <img class="card-img-top hover-fade-out" src={item.img} alt="blog image" />
+                <img class="card-img-top hover-fade-out" src={item.img} alt="blog image" loading="lazy" />
               </a>
               <div class="card-body">
                 <a href={`/blog-detail/${item.slug || slugify(item.title)}/`}><h4 class="fw-semibold fs-5 lh-base mb-3">{item.title}</h4></a>

@@ -26,5 +26,24 @@ const GA_ID = 'G-CXN08G00SM';
 
   gtag('js', new Date());
   gtag('config', GA_ID);
+
+  // Load the GA library (~150KB) lazily, after the page is interactive, so it
+  // never competes with LCP/critical resources.
+  function loadGtag() {
+    if (window.__gtagLoaded) return;
+    window.__gtagLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(loadGtag, 1200);
+  } else {
+    window.addEventListener('load', function () { setTimeout(loadGtag, 1200); });
+  }
+  // Also load on first interaction in case load fires late.
+  ['scroll', 'click', 'keydown', 'touchstart'].forEach(function (e) {
+    window.addEventListener(e, loadGtag, { once: true, passive: true });
+  });
 </script>
-<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} is:inline></script>

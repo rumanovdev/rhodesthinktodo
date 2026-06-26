@@ -117,6 +117,12 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <link rel="preload" as="font" type="font/woff2" href="/assets/webfonts/fa-solid-900.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/bootstrap-icons.woff2" crossorigin />
 
+    <!-- Jost font: async (was a render-blocking @import inside style.css) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap" /></noscript>
+
     <!-- Critical CSS (render-blocking): layout + theme only -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/assets/css/style.css" rel="stylesheet" />
@@ -160,19 +166,27 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <!-- Back to top -->
     <a href="#" class="btn-primary back-to-top" id="back2Top"><i class="bi bi-arrow-up"></i></a>
 
-    <!-- All jQuery + plugins (deferred so they don't block first paint) -->
+    <!-- Core jQuery + plugins used site-wide (deferred so they don't block paint) -->
     <script src="/assets/js/jquery.min.js" defer is:inline></script>
     <script src="/assets/js/popper.min.js" defer is:inline></script>
     <script src="/assets/js/bootstrap.min.js" defer is:inline></script>
-    <script src="/assets/js/dropzone.min.js" defer is:inline></script>
     <script src="https://cdn.jsdelivr.net/npm/waypoints@4.0.1/lib/noframework.waypoints.min.js" defer is:inline></script>
     <script src="/assets/js/counterup.min.js" defer is:inline></script>
-    <script src="/assets/js/rangeslider.js" defer is:inline></script>
     <script src="/assets/js/select2.min.js" defer is:inline></script>
     <script src="/assets/js/owl.carousel.min.js" defer is:inline></script>
-    <script src="/assets/js/rome.js" defer is:inline></script>
     <script src="/assets/js/jquery.magnific-popup.min.js" defer is:inline></script>
     <script src="/assets/js/addadult.js" defer is:inline></script>
+
+    {/* Heavy plugins only where used: rome (datepicker), dropzone (uploads),
+        rangeslider (price filter) — keeps ~590KB off public/content pages. */}
+    {(Astro.url.pathname.includes('dashboard') || Astro.url.pathname.includes('booking') || Astro.url.pathname.includes('add-listing') || Astro.url.pathname.includes('listings')) && (
+      <>
+        <script src="/assets/js/dropzone.min.js" defer is:inline></script>
+        <script src="/assets/js/rangeslider.js" defer is:inline></script>
+        <script src="/assets/js/rome.js" defer is:inline></script>
+      </>
+    )}
+
     <script src="/assets/js/custom.js" defer is:inline></script>
 
     {Astro.url.pathname.includes('dashboard') && (
