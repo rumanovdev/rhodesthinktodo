@@ -14,6 +14,8 @@ interface Props {
   ogType?: string;
   /** Set true on private/utility pages to keep them out of the index. */
   noindex?: boolean;
+  /** Preload a critical (LCP) image, e.g. the homepage hero. */
+  preloadImage?: string;
   /** One or more JSON-LD objects injected into <head>. */
   schema?: Record<string, any> | Record<string, any>[];
   htmlClass?: string;
@@ -27,6 +29,7 @@ const {
   ogImage = SITE.defaultOgImage,
   ogType = 'website',
   noindex = false,
+  preloadImage,
   schema,
   htmlClass = '',
   bodyClass = '',
@@ -108,25 +111,30 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <!-- Google Analytics (GA4) + Consent Mode -->
     <Analytics />
 
-    <!-- All Plugins -->
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
+
+    <!-- Critical CSS (render-blocking) -->
     <link href="/assets/css/animation.css" rel="stylesheet" />
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/assets/css/dropzone.min.css" rel="stylesheet" />
-    <link href="/assets/css/rome.css" rel="stylesheet" />
-    <link href="/assets/css/owl.carousel.min.css" rel="stylesheet" />
-    <link href="/assets/css/owl.theme.default.min.css" rel="stylesheet" />
-    <link href="/assets/css/rangeSlider.min.css" rel="stylesheet" />
-    <link href="/assets/css/select2.min.css" rel="stylesheet" />
-    <link href="/assets/css/magnific-popup.css" rel="stylesheet" />
-    <link href="/assets/css/prism.css" rel="stylesheet" />
-
-    <!-- Icons CSS -->
     <link href="/assets/css/fontawesome.css" rel="stylesheet" />
     <link href="/assets/css/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" />
-
-    <!-- Custom CSS -->
     <link href="/assets/css/style.css" rel="stylesheet" />
+
+    <!-- Non-critical plugin CSS — loaded async so it doesn't block first paint -->
+    <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/owl.theme.default.min.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/select2.min.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/rangeSlider.min.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/dropzone.min.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/rome.css" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
+      <link rel="stylesheet" href="/assets/css/owl.theme.default.min.css" />
+      <link rel="stylesheet" href="/assets/css/magnific-popup.css" />
+      <link rel="stylesheet" href="/assets/css/select2.min.css" />
+      <link rel="stylesheet" href="/assets/css/rangeSlider.min.css" />
+    </noscript>
   </head>
 
   <body class={bodyClass}>
