@@ -1,15 +1,24 @@
 ---
+import { SITE, absUrl } from '../lib/data/site';
+
 interface Props {
   title?: string;
+  description?: string;
+  /** Auth/utility pages should stay out of the index by default. */
+  noindex?: boolean;
   htmlClass?: string;
   bodyClass?: string;
 }
 
 const {
-  title = 'ThinksToDo - Business Directory & Listing Template',
+  title = `${SITE.name}`,
+  description = SITE.description,
+  noindex = true,
   htmlClass = '',
   bodyClass = '',
 } = Astro.props;
+
+const canonicalUrl = absUrl(Astro.url.pathname);
 ---
 <!doctype html>
 <html lang="en" class={htmlClass}>
@@ -17,7 +26,9 @@ const {
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="ThinksToDo - Business Directory & Listing Template" />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonicalUrl} />
     <title>{title}</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
     <link href="/assets/css/animation.css" rel="stylesheet" />

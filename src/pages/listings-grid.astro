@@ -12,7 +12,11 @@ export const prerender = false;
 
 const listings = await getPublishedListings(Astro.locals.supabase);
 ---
-<Base title="Grid Layout - ThinksToDo">
+<Base
+  title="Browse Listings in Rhodes — Restaurants, Hotels & Activities | Rhodes Things To Do"
+  description="Browse all listings in Rhodes, Greece — restaurants, hotels, tours, activities, bars, shopping and wellness. Filter by category and find top-rated places."
+  canonical="/listings-grid/"
+>
   <Navbar headerClass="header header-light" />
 
 <Preloader />

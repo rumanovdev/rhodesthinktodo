@@ -7,8 +7,47 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import { faqs } from '../lib/data/context';
+
+// Curated, accurate FAQs for rich-result / AI eligibility (kept separate from
+// the template's placeholder accordion copy so the markup stays honest).
+const faqSchemaItems = [
+  {
+    q: 'What is Rhodes Things To Do?',
+    a: 'Rhodes Things To Do is a local directory and guide for the island of Rhodes, Greece, where you can discover restaurants and tavernas, hotels and stays, tours, activities, bars, shopping and wellness — with real listings and reviews.',
+  },
+  {
+    q: 'How do I find things to do in Rhodes?',
+    a: 'Use the search bar or browse by category (Restaurants, Hotels, Tours, Activities, Bars & Nightlife, Shopping, Spa & Wellness) and explore listings on the interactive map to find places near you.',
+  },
+  {
+    q: 'Is it free to use Rhodes Things To Do?',
+    a: 'Yes. Browsing listings, reading reviews and exploring the map is completely free for visitors.',
+  },
+  {
+    q: 'How can I list my business on Rhodes Things To Do?',
+    a: 'Create an account and submit your listing from the dashboard. Once approved, your business appears in the relevant category and on the map.',
+  },
+  {
+    q: 'How do I contact Rhodes Things To Do?',
+    a: 'You can reach us by phone at +30 690 791 7676 or by email at info@rhodesthingstodo.com.',
+  },
+];
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqSchemaItems.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
-<Base title="FAQs - ThinksToDo">
+<Base
+  title="FAQ — Frequently Asked Questions | Rhodes Things To Do"
+  description="Answers to common questions about Rhodes Things To Do — how to find things to do in Rhodes, listing your business, reviews and how to contact us."
+  canonical="/faq/"
+  schema={faqSchema}
+>
   <Navbar headerClass="header header-light head-shadow" />
 
 <Preloader />

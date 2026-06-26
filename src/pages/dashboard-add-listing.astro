@@ -17,7 +17,7 @@ const notice = Astro.url.searchParams.get('notice');
 const { data: categories } = (await supabase?.from('categories').select('id, slug, name').order('sort_order')) ?? { data: [] };
 const { data: amenityRows } = (await supabase?.from('amenities').select('id, key, name, icon').order('name')) ?? { data: [] };
 ---
-<Base title="Add Listing - ThinksToDo">
+<Base noindex title="Add Listing - Rhodes Things To Do">
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
@@ -211,7 +211,7 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
 
               <div class="row align-items-start g-4">
                 <div class="col-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo.</p>
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do.</p>
                 </div>
               </div>
 

@@ -275,7 +275,7 @@ export const reviews = [
     name: 'Eleni Konstantinou',
     name1: 'Hotel Manager, Faliraki',
     title: 'Steady Bookings All Summer',
-    desc: 'After we opened in Faliraki we tried every booking site. ThinksToDo brought us a steady stream of Greek families and visitors from northern Europe — and the honest reviews from real guests build trust quickly.',
+    desc: 'After we opened in Faliraki we tried every booking site. Rhodes Things To Do brought us a steady stream of Greek families and visitors from northern Europe — and the honest reviews from real guests build trust quickly.',
   },
   {
     img: '/assets/img/team-5.jpg',
@@ -289,21 +289,21 @@ export const reviews = [
     name: 'Maria Vlachou',
     name1: 'Beach Bar Owner, Tsambika',
     title: 'Busy Even in the Off-Season',
-    desc: 'Tsambika is packed in July, but our off-season used to be very quiet. With ThinksToDo, weekenders from Rhodes Town and Athens started showing up year-round. Best decision we made for the business.',
+    desc: 'Tsambika is packed in July, but our off-season used to be very quiet. With Rhodes Things To Do, weekenders from Rhodes Town and Athens started showing up year-round. Best decision we made for the business.',
   },
   {
     img: '/assets/img/team-7.jpg',
     name: 'Dimitris Karagiannis',
     name1: 'Boat Tour Operator, Mandraki',
     title: 'Day-Trips Sell Out Through the App',
-    desc: 'We run daily boats from Mandraki harbour to Symi and Lindos. The booking flow on ThinksToDo is the smoothest we have used — guests pay, we get the notification, and they arrive at the dock ready to sail.',
+    desc: 'We run daily boats from Mandraki harbour to Symi and Lindos. The booking flow on Rhodes Things To Do is the smoothest we have used — guests pay, we get the notification, and they arrive at the dock ready to sail.',
   },
   {
     img: '/assets/img/team-6.jpg',
     name: 'Sophia Manolaki',
     name1: 'Boutique Owner, Old Town',
     title: 'Customers Actually Find Our Shop',
-    desc: "Tucked away on a small street in the Old Town, our handmade leather shop was easy to walk past. After listing on ThinksToDo, customers come in saying 'we saw you on the app' — that almost never used to happen.",
+    desc: "Tucked away on a small street in the Old Town, our handmade leather shop was easy to walk past. After listing on Rhodes Things To Do, customers come in saying 'we saw you on the app' — that almost never used to happen.",
   },
 ] as const;
 
@@ -1856,7 +1856,7 @@ export const authors = [
   {
     icon: 'bi bi-browser-chrome',
     name: 'Website',
-    title: 'www.ThinksToDo.co.in',
+    title: 'www.rhodesthingstodo.com',
   },
 ] as const;
 
@@ -3136,7 +3136,7 @@ export const faqs = [
     id2: 'flush-collapseThree',
     id3: 'flush-collapseFour',
     id4: 'flush-collapseFive',
-    title: 'How to Meet ThinksToDo Directory Agents?',
+    title: 'How to Meet Rhodes Things To Do Directory Agents?',
     title1: 'Can I see Property Visualy?',
     title2: 'Can We Sell it?',
     title3: ' Can We Customized it According me?',

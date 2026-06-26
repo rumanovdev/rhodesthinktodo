@@ -20,7 +20,7 @@ const results = await searchListings(supabase, { q, categorySlug: category || un
 
 const title = q ? `Search results for "${q}"` : category ? `Listings in ${category}` : 'Search Listings';
 ---
-<Base title={`${title} - ThinksToDo`}>
+<Base noindex title={`${title} - Rhodes Things To Do`}>
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />

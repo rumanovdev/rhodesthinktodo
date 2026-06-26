@@ -12,7 +12,7 @@ export const prerender = false;
 const user = Astro.locals.user!;
 const saveds = await getBookmarkedListings(Astro.locals.supabase, user.id);
 ---
-<Base title="Bookmarks - ThinksToDo">
+<Base noindex title="Bookmarks - Rhodes Things To Do">
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
@@ -98,7 +98,7 @@ const saveds = await getBookmarkedListings(Astro.locals.supabase, user.id);
               <!-- Row Start -->
               <div class="row align-items-start g-4">
                 <div class="col-xl-12 col-lg-12 col-md-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo.</p>
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do.</p>
                 </div>
               </div>
 

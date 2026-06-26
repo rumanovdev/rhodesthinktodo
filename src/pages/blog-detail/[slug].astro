@@ -7,6 +7,7 @@ import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
 import { articles, tags } from '../../lib/data/context';
+import { absUrl } from '../../lib/data/site';
 
 export async function getStaticPaths() {
   const { blogs } = await import('../../lib/data/context');
@@ -22,8 +23,34 @@ const { blog } = Astro.props as { blog: any };
 const heroImg = blog.img || '/assets/img/gal-4.jpg';
 const heroTitle = blog.title || 'Top 10 Free Bootstrap Templates for Your Next Project';
 const heroDate = blog.date || '6 Sep 2025';
+
+const slug = (blog as any).slug || heroTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const postUrl = absUrl(`/blog-detail/${slug}/`);
+const seoDescription = (blog.desc || blog.excerpt || `${heroTitle} — a Rhodes travel story and guide from Rhodes Things To Do.`)
+  .toString().replace(/\s+/g, ' ').trim().slice(0, 160);
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: heroTitle,
+  image: absUrl(heroImg),
+  url: postUrl,
+  mainEntityOfPage: postUrl,
+  ...(blog.author ? { author: { '@type': 'Person', name: blog.author } } : { author: { '@type': 'Organization', name: 'Rhodes Things To Do' } }),
+  publisher: {
+    '@type': 'Organization',
+    name: 'Rhodes Things To Do',
+    logo: { '@type': 'ImageObject', url: absUrl('/assets/img/logo.svg') },
+  },
+};
 ---
-<Base title={`Blog Detail - ThinksToDo`}>
+<Base
+  title={`${heroTitle} | Rhodes Things To Do`}
+  description={seoDescription}
+  canonical={`/blog-detail/${slug}/`}
+  ogImage={heroImg}
+  ogType="article"
+  schema={blogSchema}
+>
   <Navbar headerClass="header header-light" />
 
   <div class="bg-light">

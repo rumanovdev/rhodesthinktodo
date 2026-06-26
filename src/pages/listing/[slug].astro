@@ -8,6 +8,7 @@ import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
 import { features, gallerys3, authors } from '../../lib/data/context';
 import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
+import { absUrl } from '../../lib/data/site';
 export const prerender = false;
 
 const { slug } = Astro.params as { slug: string };
@@ -43,9 +44,104 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
   rating: r.rating,
   body: r.body,
   date: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
+  iso: r.created_at || null,
 }));
+
+// --- SEO: title, description, structured data -----------------------------
+const areaLabel = event.location || event.city || 'Rhodes';
+const categoryLabel = event.name || 'Listing';
+const seoTitle = `${event.title} — ${categoryLabel} in ${areaLabel}, Rhodes | Rhodes Things To Do`;
+const seoDescription = (event.desc && String(event.desc).trim())
+  ? String(event.desc).replace(/\s+/g, ' ').trim().slice(0, 160)
+  : `${event.title} — ${categoryLabel} in ${areaLabel}, Rhodes. See details, photos, location and reviews on Rhodes Things To Do.`;
+
+// Map the listing category to the most specific Schema.org business type.
+const TYPE_MAP: Record<string, string> = {
+  restaurant: 'Restaurant',
+  restaurants: 'Restaurant',
+  'restaurants & tavernas': 'Restaurant',
+  food: 'Restaurant',
+  hotel: 'Hotel',
+  hotels: 'Hotel',
+  'hotels & stays': 'Hotel',
+  accommodation: 'LodgingBusiness',
+  accommodations: 'LodgingBusiness',
+  spa: 'DaySpa',
+  'spa & wellness': 'DaySpa',
+  bar: 'BarOrPub',
+  bars: 'BarOrPub',
+  'bars & nightlife': 'BarOrPub',
+  nightlife: 'BarOrPub',
+  shopping: 'Store',
+  store: 'Store',
+  activities: 'TouristAttraction',
+  tours: 'TouristAttraction',
+  attraction: 'TouristAttraction',
+};
+const schemaType = TYPE_MAP[String(categoryLabel).toLowerCase()] || 'LocalBusiness';
+
+const ratings = reviewsList.map((r) => Number(r.rating)).filter((n) => n > 0);
+const avgRating = ratings.length
+  ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10
+  : null;
+
+const listingUrl = absUrl(`/listing/${event.slug}/`);
+const businessSchema: Record<string, any> = {
+  '@context': 'https://schema.org',
+  '@type': schemaType,
+  name: event.title,
+  url: listingUrl,
+  ...(event.desc ? { description: String(event.desc).replace(/\s+/g, ' ').trim() } : {}),
+  ...(event.img ? { image: absUrl(event.img) } : {}),
+  ...(event.number ? { telephone: event.number } : {}),
+  address: {
+    '@type': 'PostalAddress',
+    ...(event.address ? { streetAddress: event.address } : {}),
+    addressLocality: event.city || 'Rhodes',
+    addressRegion: 'South Aegean',
+    addressCountry: 'GR',
+  },
+  ...(event.lat != null && event.lng != null
+    ? { geo: { '@type': 'GeoCoordinates', latitude: event.lat, longitude: event.lng } }
+    : {}),
+};
+if (avgRating && ratings.length) {
+  businessSchema.aggregateRating = {
+    '@type': 'AggregateRating',
+    ratingValue: avgRating,
+    reviewCount: ratings.length,
+    bestRating: 5,
+    worstRating: 1,
+  };
+  businessSchema.review = reviewsList
+    .filter((r) => Number(r.rating) > 0)
+    .slice(0, 10)
+    .map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.name },
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+      ...(r.iso ? { datePublished: new Date(r.iso).toISOString().slice(0, 10) } : {}),
+      ...(r.body ? { reviewBody: r.body } : {}),
+    }));
+}
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
+    { '@type': 'ListItem', position: 2, name: 'Listings', item: absUrl('/listings-grid/') },
+    { '@type': 'ListItem', position: 3, name: event.title, item: listingUrl },
+  ],
+};
 ---
-<Base title={`${event.title} - ThinksToDo`}>
+<Base
+  title={seoTitle}
+  description={seoDescription}
+  canonical={`/listing/${event.slug}/`}
+  ogImage={event.img || undefined}
+  ogType="business.business"
+  schema={[businessSchema, breadcrumbSchema]}
+>
   <Navbar headerClass="header header-light" />
 
 <Preloader />

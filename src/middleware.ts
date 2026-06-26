@@ -5,6 +5,15 @@ const AUTH_REDIRECT_PREFIXES = ['/dashboard-'];
 const PUBLIC_API_PREFIXES = ['/api/auth/'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Canonical host: 301 www → apex so the two hosts don't compete in the index.
+  const host = context.request.headers.get('host') || context.url.host;
+  if (host.startsWith('www.')) {
+    const target = new URL(context.url);
+    target.host = host.slice(4);
+    target.protocol = 'https:';
+    return context.redirect(target.toString(), 301);
+  }
+
   context.locals.user = null;
   context.locals.session = null;
   context.locals.supabase = null;

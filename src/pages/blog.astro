@@ -12,7 +12,11 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 ---
-<Base title="Blog - ThinksToDo">
+<Base
+  title="Rhodes Travel Blog — Tips, Guides & Stories | Rhodes Things To Do"
+  description="Travel tips, local guides and stories from across Rhodes, Greece — from Lindos and the Old Town to hidden beaches and the best places to eat and stay."
+  canonical="/blog/"
+>
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
