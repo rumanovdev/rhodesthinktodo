@@ -16,7 +16,7 @@ const t = useTranslations(locale);
 
 // Show the 8 most recent / featured listings on the home page. Falls back to an empty array
 // if Supabase isn't reachable — the rest of the page still renders.
-const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 });
+const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 6 });
 
 // Live counts per category for the Hot & Trending tiles.
 const categoryCounts: Record<string, number> = {};
@@ -82,7 +82,6 @@ if (Astro.locals.supabase) {
 										<option value="real-estate">Accommodations</option>
 										<option value="shopping">Shopping</option>
 										<option value="fitness">Fitness & Gym</option>
-										<option value="education">Education</option>
 										<option value="automotive">Automotive</option>
 										<option value="entertainment">Entertainment</option>
 										<option value="spa">Spa & Wellness</option>

@@ -68,11 +68,6 @@ export const categories = [
     slug: 'fitness',
   },
   {
-    icon: 'bi bi-mortarboard',
-    title: 'Education',
-    slug: 'education',
-  },
-  {
     icon: 'bi bi-car-front',
     title: 'Automotive',
     slug: 'automotive',
