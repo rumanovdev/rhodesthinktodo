@@ -48,7 +48,7 @@ if (Astro.locals.supabase) {
 
 		<!-- Heading Rwo -->
 		<div class="row justify-content-center align-items-center mb-5 pt-lg-0 pt-5">
-			<div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+			<div class="col-12">
 				<div class="position-relative text-center">
 					<h1 class="hero-title">Rhodes Things To Do</h1>
 					<p class="fs-5 fw-bold hero-sub">{t('hero.subtitle')}</p>
@@ -486,6 +486,10 @@ if (Astro.locals.supabase) {
     }
     @media (max-width: 575px) {
       .hero-header .hero-sub { font-size: 0.95rem !important; line-height: 1.5; }
+    }
+    /* Keep the subtitle on a single full-width line on desktop */
+    @media (min-width: 992px) {
+      .hero-header .hero-sub { white-space: nowrap; }
     }
     /* Equal-height testimonial cards so the avatar+name rows line up uniformly */
     .reviewsSlide .owl-stage { display: flex; align-items: stretch; }

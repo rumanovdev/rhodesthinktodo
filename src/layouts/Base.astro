@@ -140,25 +140,29 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <!-- Back to top -->
     <a href="#" class="btn-primary back-to-top" id="back2Top"><i class="bi bi-arrow-up"></i></a>
 
-    <!-- All jQuery + plugins (loaded as classic scripts from the copied theme) -->
-    <script src="/assets/js/jquery.min.js" is:inline></script>
-    <script src="/assets/js/popper.min.js" is:inline></script>
-    <script src="/assets/js/bootstrap.min.js" is:inline></script>
-    <script src="/assets/js/dropzone.min.js" is:inline></script>
-    <script src="https://cdn.jsdelivr.net/npm/waypoints@4.0.1/lib/noframework.waypoints.min.js" is:inline></script>
-    <script src="/assets/js/counterup.min.js" is:inline></script>
-    <script src="/assets/js/rangeslider.js" is:inline></script>
-    <script src="/assets/js/select2.min.js" is:inline></script>
-    <script src="/assets/js/owl.carousel.min.js" is:inline></script>
-    <script src="/assets/js/rome.js" is:inline></script>
-    <script src="/assets/js/jquery.magnific-popup.min.js" is:inline></script>
-    <script src="/assets/js/addadult.js" is:inline></script>
-    <script src="/assets/js/custom.js" is:inline></script>
+    <!-- All jQuery + plugins (deferred so they don't block first paint) -->
+    <script src="/assets/js/jquery.min.js" defer is:inline></script>
+    <script src="/assets/js/popper.min.js" defer is:inline></script>
+    <script src="/assets/js/bootstrap.min.js" defer is:inline></script>
+    <script src="/assets/js/dropzone.min.js" defer is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/waypoints@4.0.1/lib/noframework.waypoints.min.js" defer is:inline></script>
+    <script src="/assets/js/counterup.min.js" defer is:inline></script>
+    <script src="/assets/js/rangeslider.js" defer is:inline></script>
+    <script src="/assets/js/select2.min.js" defer is:inline></script>
+    <script src="/assets/js/owl.carousel.min.js" defer is:inline></script>
+    <script src="/assets/js/rome.js" defer is:inline></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js" defer is:inline></script>
+    <script src="/assets/js/addadult.js" defer is:inline></script>
+    <script src="/assets/js/custom.js" defer is:inline></script>
 
-    <!-- Morris.js charts (dashboard-only; cheap to keep loaded globally) -->
-    <script src="/assets/js/raphael/raphael.min.js" is:inline></script>
-    <script src="/assets/js/morris.js/morris.min.js" is:inline></script>
-    <script src="/assets/js/custom/dashboard.js" is:inline></script>
+    {Astro.url.pathname.includes('dashboard') && (
+      <>
+        <!-- Morris.js charts — dashboard pages only -->
+        <script src="/assets/js/raphael/raphael.min.js" defer is:inline></script>
+        <script src="/assets/js/morris.js/morris.min.js" defer is:inline></script>
+        <script src="/assets/js/custom/dashboard.js" defer is:inline></script>
+      </>
+    )}
 
     <!-- Counter-up animation (null-safe; runs on every page) -->
     <script is:inline>
