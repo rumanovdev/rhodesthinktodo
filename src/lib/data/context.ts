@@ -354,27 +354,36 @@ export const blogs = [
     desc: "A detailed 3-day Rhodes itinerary \u2014 the Old Town, Lindos and the east-coast beaches, the Valley of the Butterflies and a boat trip, with practical tips.",
     author: 'Rhodes Things To Do',
     body: `
-   <p>Only have a long weekend? Three days is enough to experience the very best of Rhodes without rushing. This day-by-day itinerary balances history, beaches and a boat trip, and works whether you have a car or rely on buses.</p>
+   <p>Only have a long weekend on Rhodes? Three days is enough to experience the very best of the island without rushing. This detailed day-by-day itinerary balances history, beaches and a boat trip, and works whether you have a hire car or rely on the island's buses. Each day is built around cool-morning sightseeing and warm-afternoon swims — the way locals do it.</p>
    <h2>Day 1 — Rhodes Old Town &amp; Mandraki</h2>
-   <p>Start in the medieval Old Town. Enter through the Marine Gate, walk the Street of the Knights, and tour the Palace of the Grand Master (around €10). Break for lunch at a taverna inside the walls, then explore the Jewish Quarter and the old harbour.</p>
-   <p>In the late afternoon, stroll Mandraki Harbour, where the Colossus of Rhodes once stood, and watch the sunset by the windmills. Stay for dinner in the New Town for a more local scene.</p>
-   <h2>Day 2 — Lindos &amp; the east coast</h2>
-   <p>Drive or take the bus south to Lindos (about an hour). Climb to the acropolis early, then cool off at St Paul's Bay. On the way back, stop at <strong>Tsambika</strong> or <strong>Anthony Quinn Bay</strong> for an afternoon swim. Have dinner on a rooftop in Lindos once the day-trippers leave.</p>
+   <p><strong>Morning:</strong> Start early in the medieval Old Town, a UNESCO World Heritage Site. Enter through the Marine Gate and make your way to the Palace of the Grand Master (entry around €10), then walk the cobbled Street of the Knights, lined with the inns of the old knightly orders. Visit the Archaeological Museum in the former Hospital of the Knights.</p>
+   <p><strong>Afternoon:</strong> Have lunch at a taverna within the walls, then explore the quieter Jewish Quarter and the oldest synagogue in Greece. Browse the artisan shops and pause in Hippocrates Square. For a swim, the town beach (Elli) is a short walk away.</p>
+   <p><strong>Evening:</strong> Stroll Mandraki Harbour, where the Colossus of Rhodes once stood, past the windmills and the fort of St Nicholas, then enjoy dinner in the New Town for a more local atmosphere. See our <a href="/blog-detail/rhodes-old-town-walking-guide/">Old Town walking guide</a>.</p>
+   <h2>Day 2 — Lindos &amp; the east-coast beaches</h2>
+   <p><strong>Morning:</strong> Head south to Lindos (about an hour by car or bus). Climb to the acropolis early, before the heat and the cruise crowds, for sweeping views over St Paul's Bay. Entry is around €12.</p>
+   <p><strong>Afternoon:</strong> Cool off at St Paul's Bay or Lindos Main Beach. On the way back north, stop at <strong>Tsambika</strong> for golden sand or <strong>Anthony Quinn Bay</strong> for snorkelling in crystal-clear water. See the <a href="/blog-detail/best-beaches-in-rhodes/">best beaches guide</a>.</p>
+   <p><strong>Evening:</strong> If you can, stay for dinner on a Lindos rooftop once the day-trippers leave — it is the most atmospheric meal of the trip. Read the <a href="/blog-detail/lindos-rhodes-guide/">Lindos guide</a>.</p>
    <h2>Day 3 — Nature or a boat trip</h2>
-   <p>Choose your pace. For nature, visit the <strong>Valley of the Butterflies</strong> in the morning, then relax on the quieter west coast. For something special, take a <a href="/blog-detail/best-boat-trips-rhodes/">boat trip to Symi</a> or a coastal cruise to swim in hidden coves.</p>
+   <p><strong>Option A — Nature:</strong> Visit the Valley of the Butterflies in the morning (best June–September), then relax on the quieter west coast or explore Ancient Kamiros, the "Pompeii of Rhodes".</p>
+   <p><strong>Option B — On the water:</strong> Take a <a href="/blog-detail/best-boat-trips-rhodes/">boat trip to Symi island</a> or a coastal cruise with swim stops in hidden coves — a memorable finale to the trip.</p>
    <h2>Practical tips</h2>
    <ul>
      <li><strong>Getting around:</strong> buses connect Rhodes Town with Lindos and the main beaches; a car helps for day 3. See <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a>.</li>
      <li><strong>Where to stay:</strong> Rhodes Town is the most convenient base for a short trip — see <a href="/blog-detail/where-to-stay-in-rhodes/">where to stay in Rhodes</a>.</li>
      <li><strong>Beat the heat:</strong> sightsee in the morning, beach in the afternoon, dine late like the locals.</li>
+     <li><strong>Tickets:</strong> carry some cash for site entries and beach sunbeds.</li>
    </ul>
+   <h2>Extending to 4 or 5 days</h2>
+   <p>With extra days, add a full-day boat trip to Symi, a visit to the Valley of the Butterflies and Ancient Kamiros, or a relaxed day exploring the quieter south coast and its long, empty beaches.</p>
    <h2>FAQ</h2>
    <h3>Is 3 days enough for Rhodes?</h3>
-   <p>Yes. Three days cover the Old Town, Lindos and the best beaches. Add a fourth day for a boat trip or the west coast.</p>
+   <p>Yes — three days cover the Old Town, Lindos and the best beaches. A fourth day lets you add a boat trip or the west coast.</p>
    <h3>Can you do this itinerary without a car?</h3>
-   <p>Mostly yes — buses and boats cover days 1 and 2. A car or organised tour makes day 3 easier.</p>
-   <h3>What is the best base for a short trip?</h3>
+   <p>Mostly yes — buses and boats cover days 1 and 2. A car or an organised tour makes day 3 easier.</p>
+   <h3>What is the best base for a 3-day trip?</h3>
    <p>Rhodes Town, for its central location, restaurants and transport links.</p>
+   <h3>How far is Lindos from Rhodes Town?</h3>
+   <p>About 50 km, or roughly an hour by car or bus.</p>
   `,
   },
   {
@@ -385,36 +394,45 @@ export const blogs = [
     desc: "The 10 best beaches in Rhodes, Greece \u2014 from family-friendly Tsambika and Faliraki to the snorkelling coves of Anthony Quinn Bay and windsurf haven Prasonisi.",
     author: 'Rhodes Things To Do',
     body: `
-   <p>With more than 250 km of coastline, Rhodes has a beach for every kind of traveller — golden sand for families, pebbly coves for snorkellers and wind-swept bays for surfers. Here are the 10 best beaches in Rhodes and what makes each one special.</p>
+   <p>With more than 250 km of coastline, Rhodes has one of the most varied collections of beaches in Greece. The sheltered east coast offers calm, sandy bays ideal for families, while the breezier west and southern coasts attract windsurfers and those seeking a quieter, wilder feel. This guide covers the 10 best beaches in Rhodes, what makes each special, and the practical details you need — facilities, water entry, how to get there and the best time to go.</p>
    <h2>1. Tsambika Beach</h2>
-   <p>A long stretch of soft golden sand on the east coast, shallow and calm — the top choice for families. Sunbeds, watersports and tavernas line the back of the beach.</p>
+   <p>A long stretch of soft golden sand on the east coast, Tsambika is consistently rated the best family beach in Rhodes. The water is shallow and warms early, with a gentle slope that suits young children. Sunbeds and umbrellas (around €8–€15 per pair) line the front, and tavernas and watersports operate through the season. Above the beach, a short climb to Tsambika Monastery rewards you with panoramic views. Arrive before 11am in July and August to secure a good spot.</p>
    <h2>2. Anthony Quinn Bay</h2>
-   <p>A small, rocky cove named after the actor, with some of the clearest water on the island. Bring a mask and fins for excellent snorkelling among the rocks.</p>
+   <p>Named after the actor who fell in love with the spot during filming, this small rocky cove has the clearest water on the island. It is a snorkelling paradise — bring a mask and fins to explore the rocks and marine life. There is limited sand, so it suits confident swimmers more than toddlers. Parking fills quickly, so come early or take the bus toward Faliraki and walk down.</p>
    <h2>3. St Paul's Bay, Lindos</h2>
-   <p>A sheltered, almost circular bay beneath the acropolis, with calm turquoise water — one of the most photogenic spots in Rhodes.</p>
+   <p>A sheltered, almost circular bay beneath the Acropolis of Lindos, with calm turquoise water that is perfect for swimming and snorkelling. It is one of the most photogenic beaches in Greece. Two sides offer sunbeds and small bars. Combine it with a morning at the acropolis — see our <a href="/blog-detail/lindos-rhodes-guide/">Lindos guide</a>.</p>
    <h2>4. Prasonisi</h2>
-   <p>On the southern tip, a thin sandbar separates the Aegean from the Libyan Sea, creating ideal conditions for kitesurfing and windsurfing.</p>
+   <p>At the island's southern tip, a thin sandbar links Rhodes to a small islet, with the calm Aegean on one side and the windy Libyan Sea on the other. This makes Prasonisi one of Europe's top kitesurfing and windsurfing spots. Schools rent gear and offer lessons. It is remote — a car is essential. See <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a>.</p>
    <h2>5. Faliraki Beach</h2>
-   <p>The island's liveliest resort beach, with sunbeds, watersports, bars and plenty of buzz — great if you want amenities and nightlife nearby.</p>
+   <p>The island's liveliest resort beach: a long sweep of sand with sunbeds, watersports, beach bars and a buzzing atmosphere. Ideal if you want amenities, nightlife and activity on your doorstep. Quieter Kathara Beach lies just around the headland for a calmer swim.</p>
    <h2>6. Agathi (Golden) Beach</h2>
-   <p>A small horseshoe of soft sand near Haraki and Feraklos castle, calm and shallow — another family favourite.</p>
+   <p>A small horseshoe of fine sand near Haraki, overlooked by the ruined Feraklos castle. The shallow, calm water makes it another family favourite, with a couple of tavernas and limited shade — arrive early for an umbrella.</p>
    <h2>7. Ladiko Beach</h2>
-   <p>The sheltered bay right next to Anthony Quinn, with sunbeds and a more relaxed feel.</p>
+   <p>The sheltered twin bay next to Anthony Quinn, with a mix of sand and pebble, sunbeds and a relaxed feel. A good choice if Anthony Quinn is crowded.</p>
    <h2>8. Elli Beach</h2>
-   <p>The main town beach in Rhodes Town, walkable from the Old Town, with a diving platform and lively promenade.</p>
+   <p>The main town beach in Rhodes Town, walkable from the Old Town, with a lively promenade, a diving platform and plenty of cafes. Perfect if you are staying in the city and want a quick swim without a journey.</p>
    <h2>9. Glystra Beach</h2>
-   <p>A small, calm cove south of Lindos with shallow water — perfect for a quiet swim.</p>
+   <p>A small, calm cove south of Lindos with shallow, clear water and a single taverna — an easy, peaceful stop on the drive down the east coast.</p>
    <h2>10. Kallithea Springs</h2>
-   <p>A historic thermal cove with elegant 1920s architecture and clear water for snorkelling — beach and sightseeing in one.</p>
-   <h2>Beach tips</h2>
-   <p>The east coast is more sheltered and better for swimming; the west coast is windier and popular with surfers. Sunbeds typically cost €8–€15 per pair with an umbrella. Find <a href="/listings-map/?category=activities">beaches and activities</a> and nearby <a href="/listings-map/?category=restaurant">tavernas</a>.</p>
+   <p>A historic 1920s thermal spa with elegant domed pavilions and a small rocky swimming cove. The clear water is great for snorkelling, and the architecture makes it as much a sight as a beach. Small entrance fee applies.</p>
+   <h2>Practical beach tips for Rhodes</h2>
+   <ul>
+     <li><strong>East vs west:</strong> the east coast is more sheltered and better for swimming; the west coast is windier and suits surfers.</li>
+     <li><strong>Sunbeds:</strong> typically €8–€15 per pair with umbrella; free areas exist at most beaches.</li>
+     <li><strong>Getting there:</strong> Tsambika, Faliraki, Kalithea and Lindos are reachable by bus; Prasonisi and remote coves need a car.</li>
+     <li><strong>Best time:</strong> June and September offer warm water with fewer crowds — see <a href="/blog-detail/best-time-to-visit-rhodes/">the best time to visit Rhodes</a>.</li>
+     <li><strong>Bring:</strong> water shoes for pebbly coves, and a snorkel for Anthony Quinn and Kallithea.</li>
+   </ul>
+   <p>Find <a href="/listings-map/?category=activities">beaches and activities</a> and nearby <a href="/listings-map/?category=restaurant">tavernas</a> across the island.</p>
    <h2>FAQ</h2>
    <h3>Which is the best beach in Rhodes for families?</h3>
-   <p>Tsambika and Agathi — both have shallow, calm, sandy water and facilities.</p>
+   <p>Tsambika and Agathi — both have shallow, calm, sandy water and good facilities.</p>
    <h3>Are Rhodes beaches sandy or pebbly?</h3>
-   <p>Both. The east coast has the sandiest beaches (Tsambika, Faliraki); many west-coast and cove beaches are pebbly.</p>
+   <p>Both. The east coast (Tsambika, Faliraki, Agathi) is the sandiest; many west-coast and cove beaches are pebbly, so water shoes help.</p>
    <h3>Which beach is best for snorkelling?</h3>
-   <p>Anthony Quinn Bay, thanks to its clear water and rocky seabed.</p>
+   <p>Anthony Quinn Bay and Kallithea Springs, thanks to their clear water and rocky seabeds.</p>
+   <h3>Do you need a car to reach the best beaches?</h3>
+   <p>Not for the main ones — buses serve Tsambika, Faliraki, Kalithea and Lindos. A car is needed for Prasonisi and quieter southern beaches.</p>
   `,
   },
   {
@@ -461,30 +479,35 @@ export const blogs = [
     desc: "When is the best time to visit Rhodes? A month-by-month guide to weather, sea temperature, crowds and prices to help you plan the perfect trip to Rhodes, Greece.",
     author: 'Rhodes Things To Do',
     body: `
-   <p>Rhodes enjoys one of the sunniest climates in Greece, with a long season from April to early November. The best time to visit depends on whether you want hot beach days, quiet sightseeing or the best value. Here is a month-by-month breakdown.</p>
-   <h2>Spring (April–June)</h2>
-   <p>Mild, green and uncrowded. April and May bring wildflowers, comfortable temperatures around 20–25°C and ideal conditions for sightseeing and hiking. The sea is cool early on but warms enough for swimming by June. Prices are lower than summer.</p>
-   <h2>Summer (July–August)</h2>
-   <p>Hot, lively and busy. Expect temperatures of 30–35°C, warm seas and full beaches. This is peak season for beach holidays and nightlife, but it is also the most expensive and crowded — book accommodation well ahead.</p>
-   <h2>Autumn (September–October)</h2>
-   <p>Many travellers' favourite. September keeps summer warmth with the warmest sea of the year, while crowds thin and prices drop. October stays pleasant and sunny, ideal for sightseeing and relaxed swims.</p>
-   <h2>Winter (November–March)</h2>
-   <p>Quiet and green, with some rain. Many resorts close, but Rhodes Town stays open and is lovely for a culture-focused city break without crowds.</p>
+   <p>Rhodes enjoys one of the sunniest, longest seasons in Greece, stretching from April to early November. The best time to visit depends on your priorities — hot beach days, quiet sightseeing, watersports or the best value. This month-by-month guide covers the weather, sea temperature, crowds and prices so you can choose the perfect dates.</p>
+   <h2>Spring: April to June</h2>
+   <p><strong>April</strong> is mild and green, with temperatures around 18–22°C, wildflowers and very few tourists — ideal for sightseeing, the Old Town and hiking, though the sea is still cool. <strong>May</strong> warms to 22–26°C, the countryside is at its most beautiful, and the first swimmers brave the sea. <strong>June</strong> is arguably the sweet spot: 27–30°C, long sunny days, a warm enough sea for everyone, and crowds that have not yet peaked. Spring also brings lower prices than high summer.</p>
+   <h2>Summer: July to August</h2>
+   <p>The peak season is hot, lively and busy. Temperatures reach 30–35°C (occasionally higher with the meltemi wind), the sea is warm and inviting, and beaches and resorts are at their fullest. This is the best time for beach holidays, watersports and nightlife — but also the most expensive and crowded. Book accommodation and popular boat trips well in advance, and plan sightseeing for the cooler mornings and evenings.</p>
+   <h2>Autumn: September to October</h2>
+   <p><strong>September</strong> is many travellers' favourite month: it keeps summer's warmth with the warmest sea of the year (around 25°C), while crowds thin and prices ease. <strong>October</strong> stays pleasantly warm (22–27°C early on) and sunny, perfect for sightseeing and relaxed swims, though some beach facilities begin to wind down toward month's end.</p>
+   <h2>Winter: November to March</h2>
+   <p>Winters are mild by northern European standards (12–16°C) but cooler and wetter, and many coastal resorts close. However, Rhodes Town stays open and atmospheric, making it a lovely, crowd-free destination for a culture-focused city break, with low prices and a local feel.</p>
    <h2>Quick comparison</h2>
    <ul>
      <li><strong>Best weather &amp; swimming:</strong> June and September.</li>
      <li><strong>Best value:</strong> May and October.</li>
      <li><strong>Best for nightlife &amp; beaches:</strong> July and August.</li>
      <li><strong>Best for sightseeing in peace:</strong> April and October.</li>
+     <li><strong>Best for windsurfing:</strong> July and August (strongest meltemi winds at Prasonisi).</li>
    </ul>
-   <p>Once you have picked your dates, browse <a href="/listings-map/?category=real-estate">hotels</a> and <a href="/listings-map/?category=activities">things to do</a> to start planning.</p>
+   <h2>Sea temperature through the year</h2>
+   <p>The sea is coolest in spring (around 18°C in April), comfortable by June (23°C), warmest in late August and September (25°C), and still swimmable in October (22–23°C). For the warmest swims, target late summer and early autumn.</p>
+   <p>Once you have your dates, browse <a href="/listings-map/?category=real-estate">hotels</a>, plan <a href="/blog-detail/best-beaches-in-rhodes/">the best beaches</a> and find <a href="/listings-map/?category=activities">things to do</a>.</p>
    <h2>FAQ</h2>
    <h3>What is the best month to visit Rhodes?</h3>
-   <p>September offers the best balance — warm sea, sunny weather, fewer crowds and lower prices than peak summer.</p>
-   <h3>Is Rhodes warm in winter?</h3>
-   <p>Winters are mild (around 12–16°C) but cooler and wetter; it is a season for sightseeing rather than the beach.</p>
+   <p>September offers the best balance — warm sea, sunny weather, fewer crowds and lower prices than peak summer. June is the best early-season choice.</p>
+   <h3>Is Rhodes too hot in August?</h3>
+   <p>It can reach 35°C, but the meltemi wind and sea breezes help. Plan sightseeing for mornings and evenings and spend midday at the beach or in the shade.</p>
    <h3>When is the sea warmest in Rhodes?</h3>
    <p>Late August and September, when sea temperatures peak around 25°C.</p>
+   <h3>Is Rhodes worth visiting in winter?</h3>
+   <p>For a quiet, budget-friendly city break focused on the Old Town and culture, yes — but most beach resorts are closed.</p>
   `,
   },
   {
@@ -591,26 +614,55 @@ export const blogs = [
     desc: "Where to stay in Rhodes \u2014 a guide to the best areas, from Rhodes Town and the Old Town to Lindos, Faliraki and quieter west-coast and southern resorts.",
     author: 'Rhodes Things To Do',
     body: `
-   <p>Choosing the right base makes a big difference on Rhodes, because the island is large and each area has a different character. Here is a guide to the best areas to stay in Rhodes for different kinds of trips.</p>
+   <p>Choosing the right base makes a big difference on Rhodes, because the island is large — around 80 km long — and each area has a distinct character and pace. The wrong choice can mean long daily drives; the right one puts the experiences you want on your doorstep. This guide breaks down the best areas to stay in Rhodes by traveller type, with the pros, cons and who each suits.</p>
    <h2>Rhodes Town &amp; the Old Town</h2>
-   <p><strong>Best for first-timers, culture and short trips.</strong> You get history, restaurants, shopping and nightlife on your doorstep, the town beach (Elli) nearby, and the island's best bus connections. Staying inside the Old Town walls is atmospheric; the New Town is handier for the beach and modern amenities.</p>
+   <p><strong>Best for first-timers, culture lovers and short trips.</strong> Staying in or near Rhodes Town gives you history, restaurants, shopping and nightlife on your doorstep, the town beach (Elli) nearby, and by far the best bus connections on the island. Within the medieval Old Town you can sleep inside the walls in atmospheric boutique stays — magical, though it means cobbled streets and some walking with luggage. The New Town just outside is handier for the beach, modern hotels and car hire. If you have only a few days or no car, this is the smart choice.</p>
+   <ul>
+     <li><strong>Pros:</strong> central, walkable, great transport, year-round amenities.</li>
+     <li><strong>Cons:</strong> the Old Town can be busy and noisy in peak season.</li>
+   </ul>
    <h2>Lindos</h2>
-   <p><strong>Best for couples and a postcard setting.</strong> Romantic, scenic and walkable, with boutique stays in restored captains' houses and rooftop dining. It is busy with day-trippers but magical in the evening. Note that the car-free village means some walking with luggage.</p>
+   <p><strong>Best for couples and a postcard setting.</strong> Lindos is the most scenic place to stay on Rhodes, with boutique hotels and villas in restored captains' houses, rooftop restaurants and two beautiful bays. It is busy with day-trippers by day but becomes magical in the evening once the excursions leave. Note that the village is car-free, so expect to walk with your bags, and it is about an hour from the airport.</p>
+   <ul>
+     <li><strong>Pros:</strong> stunning setting, romantic, great dining, walkable to beaches.</li>
+     <li><strong>Cons:</strong> far from the airport, crowded midday, limited car access.</li>
+   </ul>
    <h2>Faliraki &amp; the east coast</h2>
-   <p><strong>Best for families and beach holidays.</strong> Sandy beaches, watersports, big resorts and a lively scene. Nearby Kalithea and Ladiko offer quieter alternatives within easy reach.</p>
+   <p><strong>Best for families and beach holidays.</strong> Faliraki offers long sandy beaches, watersports, big resorts and a lively scene, with plenty of family-friendly hotels and easy bus links to Rhodes Town and Lindos. Nearby Kalithea and Ladiko provide quieter alternatives within easy reach. This stretch is the sweet spot for sun-and-sea holidays with lots to do.</p>
+   <ul>
+     <li><strong>Pros:</strong> great beaches, family amenities, value, good bus links.</li>
+     <li><strong>Cons:</strong> the resort centre can be lively/late in peak months.</li>
+   </ul>
    <h2>Ixia, Ialysos &amp; the west coast</h2>
-   <p><strong>Best for resorts and watersports.</strong> A strip of larger hotels close to Rhodes Town, with pebbly beaches and reliable breezes that windsurfers love.</p>
-   <h2>The quiet south</h2>
-   <p><strong>Best for a relaxed, authentic stay.</strong> Areas around Gennadi and Lachania offer long, quiet beaches and a slower pace, away from the crowds — better with a car.</p>
-   <h2>How to choose</h2>
-   <p>For a first visit or a short stay, base yourself in Rhodes Town. For beaches and family fun, choose the east coast. For romance, pick Lindos. For peace, head south. Compare <a href="/listings-map/?category=real-estate">hotels and stays</a>, and see <a href="/listings-map/?category=restaurant">where to eat</a> and <a href="/listings-map/?category=activities">what to do</a> nearby.</p>
+   <p><strong>Best for resorts, spas and watersports.</strong> A strip of larger hotels just outside Rhodes Town, with pebbly beaches and reliable afternoon breezes that windsurfers love. It is close to the city (a short bus or taxi ride) while feeling more resort-like, with many four- and five-star options and spa facilities.</p>
+   <ul>
+     <li><strong>Pros:</strong> upscale resorts, close to town, windsurfing.</li>
+     <li><strong>Cons:</strong> pebbly beaches, less character than the Old Town or Lindos.</li>
+   </ul>
+   <h2>The quiet south (Gennadi, Lachania, Kiotari)</h2>
+   <p><strong>Best for a relaxed, authentic stay.</strong> The south offers long, quiet beaches, a slower pace and a more local feel, away from the crowds. It rewards travellers who want peace and space — but a car is essential, as bus links and amenities are sparser.</p>
+   <ul>
+     <li><strong>Pros:</strong> tranquil, authentic, uncrowded beaches.</li>
+     <li><strong>Cons:</strong> needs a car, fewer restaurants and services.</li>
+   </ul>
+   <h2>How to choose at a glance</h2>
+   <ul>
+     <li><strong>First visit or short stay:</strong> Rhodes Town.</li>
+     <li><strong>Beaches &amp; family fun:</strong> Faliraki / east coast.</li>
+     <li><strong>Romance &amp; scenery:</strong> Lindos.</li>
+     <li><strong>Resorts &amp; spa:</strong> Ixia / Ialysos.</li>
+     <li><strong>Peace &amp; nature:</strong> the south (with a car).</li>
+   </ul>
+   <p>Compare <a href="/listings-map/?category=real-estate">hotels and stays</a>, and see <a href="/listings-map/?category=restaurant">where to eat</a> and <a href="/listings-map/?category=activities">what to do</a> nearby. For transport between areas, read <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a>.</p>
    <h2>FAQ</h2>
    <h3>Where is the best area to stay in Rhodes?</h3>
-   <p>Rhodes Town for first-timers and short trips; the east coast for beaches and families; Lindos for couples.</p>
+   <p>Rhodes Town for first-timers and short trips; the east coast (Faliraki) for beaches and families; Lindos for couples and scenery.</p>
    <h3>Is it better to stay in Rhodes Town or Lindos?</h3>
-   <p>Rhodes Town is more central and convenient; Lindos is more scenic and romantic but further from the airport.</p>
+   <p>Rhodes Town is more central, better connected and closer to the airport; Lindos is more scenic and romantic but further away and car-free.</p>
    <h3>Do you need a car if staying in Rhodes Town?</h3>
-   <p>No — buses and boats cover the main sights. A car is useful only for exploring remote areas.</p>
+   <p>No — buses and boats cover the main sights. A car is useful only for the south or remote villages.</p>
+   <h3>Which area is best for nightlife?</h3>
+   <p>Faliraki for resort nightlife, and Rhodes New Town for bars and clubs close to the Old Town.</p>
   `,
   },
 ] as const;
