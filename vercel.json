@@ -1,8 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
-    { "source": "/:locale(de|el|fr|es|it|nl)", "destination": "/?__locale=:locale" },
-    { "source": "/:locale(de|el|fr|es|it|nl)/", "destination": "/?__locale=:locale" },
-    { "source": "/:locale(de|el|fr|es|it|nl)/:path*", "destination": "/:path*?__locale=:locale" }
-  ]
+  "buildCommand": "pnpm build"
 }
