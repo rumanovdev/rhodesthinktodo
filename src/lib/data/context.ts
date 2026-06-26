@@ -383,6 +383,120 @@ export const blogs = [
       <p>Find beach bars, sunbed rentals and nearby stays in our <a href="/listings-grid/">Rhodes listings</a>.</p>
     `,
   },
+  {
+    id: 4,
+    slug: "lindos-rhodes-guide",
+    img: "/assets/img/blog-4.webp",
+    title: "Lindos, Rhodes: Acropolis, Beaches & Village Guide",
+    desc: "A complete guide to Lindos, Rhodes \u2014 how to climb the ancient acropolis, the best beaches at St Paul\u2019s Bay, and tips for the whitewashed village.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Lindos is the most beautiful village on Rhodes and a must on any island itinerary. A maze of whitewashed houses sits below a clifftop acropolis, with two turquoise bays on either side.</p>
+      <h2>The Acropolis of Lindos</h2>
+      <p>The ancient acropolis crowns the hill above the village, home to the Temple of Athena Lindia and sweeping views over the coast. Go early in the morning or an hour before sunset to avoid the midday heat. Wear good shoes — the path is steep and the stone is slippery.</p>
+      <h2>Beaches in Lindos</h2>
+      <ul>
+        <li><strong>St Paul’s Bay</strong> — a sheltered, almost circular bay with calm, clear water, perfect for swimming.</li>
+        <li><strong>Lindos Main Beach</strong> — sandy and family-friendly, with sunbeds and watersports.</li>
+      </ul>
+      <h2>Tips for visiting</h2>
+      <p>Lindos is car-free in the centre; park at the top and walk down. Donkey rides up to the acropolis are offered but walking is kinder and only takes 15 minutes. Stay for dinner on a rooftop taverna once the day-trippers leave.</p>
+      <p>Plan the rest of your trip with our <a href="/listings-map/?category=tours">boat trips</a>, <a href="/listings-map/?category=restaurant">restaurants</a> and <a href="/listings-map/?category=real-estate">places to stay</a>.</p>
+   `,
+  },
+  {
+    id: 5,
+    slug: "best-time-to-visit-rhodes",
+    img: "/assets/img/blog-5.webp",
+    title: "The Best Time to Visit Rhodes: A Month-by-Month Guide",
+    desc: "When is the best time to visit Rhodes? A month-by-month guide to weather, sea temperature, crowds and prices to help you plan the perfect trip.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Rhodes enjoys one of the sunniest climates in Greece, with a long season that runs from April to early November. The best time to visit depends on what you want.</p>
+      <h2>Spring (April–June)</h2>
+      <p>Mild, green and quiet. Wildflowers, comfortable temperatures and fewer crowds make spring ideal for sightseeing and hiking. The sea warms up enough for swimming by June.</p>
+      <h2>Summer (July–August)</h2>
+      <p>Hot, lively and busy. Expect temperatures around 30–35°C, warm seas and full beaches. Best for beach holidays and nightlife, but book accommodation early and expect higher prices.</p>
+      <h2>Autumn (September–October)</h2>
+      <p>Many travellers’ favourite season. The sea is at its warmest, the crowds thin out and prices drop, while the weather stays sunny well into October.</p>
+      <h2>The short answer</h2>
+      <p>For the best balance of weather, swimming and value, visit Rhodes in <strong>late May–June</strong> or <strong>September</strong>. Browse <a href="/listings-map/?category=real-estate">hotels</a> and <a href="/listings-map/?category=activities">things to do</a> to start planning.</p>
+   `,
+  },
+  {
+    id: 6,
+    slug: "getting-around-rhodes",
+    img: "/assets/img/blog-1.webp",
+    title: "Getting Around Rhodes: Buses, Car Hire & Transfers",
+    desc: "How to get around Rhodes \u2014 airport transfers, the local bus network, car and scooter hire, and whether you really need a car on the island.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Rhodes is a large island, so how you get around shapes your trip. Here are your options.</p>
+      <h2>Airport transfers</h2>
+      <p>Rhodes Airport (RHO) is about 14 km from Rhodes Town. Pre-booked transfers and taxis are the quickest way into town or to the resorts; public buses also serve the airport route.</p>
+      <h2>Local buses</h2>
+      <p>A reliable bus network connects Rhodes Town with Lindos, Faliraki, Kalithea and most coastal resorts. Buses are cheap and frequent in summer — great for car-free travellers.</p>
+      <h2>Car &amp; scooter hire</h2>
+      <p>To reach quieter villages, the west coast and remote beaches on your own schedule, a rental car or scooter is worth it. Roads are good and distances manageable.</p>
+      <h2>Do you need a car?</h2>
+      <p>Not for Rhodes Town, the Old Town and the main beaches — buses and boats cover those. A car helps if you want to explore independently. Compare <a href="/listings-map/?category=automotive">transfers &amp; car hire</a> and <a href="/listings-map/?category=tours">organised tours</a>.</p>
+   `,
+  },
+  {
+    id: 7,
+    slug: "rhodes-old-town-walking-guide",
+    img: "/assets/img/blog-2.webp",
+    title: "Rhodes Old Town: A Walking Guide to the Medieval City",
+    desc: "Explore Rhodes Old Town, a UNESCO World Heritage Site \u2014 the Street of the Knights, the Palace of the Grand Master, gates, mosques and the best things to see.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Rhodes Old Town is the largest inhabited medieval town in Europe and a UNESCO World Heritage Site since 1988. Encircled by 4 km of walls, it is best explored slowly on foot.</p>
+      <h2>Start at the Palace of the Grand Master</h2>
+      <p>This imposing 14th-century castle is the highlight of the Old Town, with grand halls and ancient mosaics. From here, walk the cobbled <strong>Street of the Knights</strong>, one of the best-preserved medieval streets anywhere.</p>
+      <h2>Gates, squares and mosques</h2>
+      <p>Enter through the monumental <strong>D’Amboise</strong> or <strong>Marine Gate</strong>, pause in Hippocrates Square, and look out for Ottoman-era mosques and pebble-mosaic courtyards hidden down side streets.</p>
+      <h2>Tips</h2>
+      <p>Wear comfortable shoes, carry water, and explore early or late to beat the heat and cruise crowds. The Old Town is full of <a href="/listings-map/?category=restaurant">tavernas and restaurants</a> for a break. See more <a href="/listings-map/?category=activities">attractions</a> nearby.</p>
+   `,
+  },
+  {
+    id: 8,
+    slug: "best-boat-trips-rhodes",
+    img: "/assets/img/blog-3.webp",
+    title: "The Best Boat Trips & Day Cruises from Rhodes",
+    desc: "The best boat trips from Rhodes \u2014 day cruises to Symi island, Lindos by sea, and snorkelling trips to the clearest bays on the coast.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Some of the best experiences on Rhodes happen on the water. Here are the boat trips worth booking.</p>
+      <h2>Day trip to Symi</h2>
+      <p>The classic excursion. Morning boats from Mandraki Harbour reach the pastel-painted island of Symi in under two hours — time for a swim and lunch in Gialos before returning.</p>
+      <h2>Lindos by sea</h2>
+      <p>Cruise down the east coast to Lindos, swimming in coves along the way and arriving with a perfect view of the acropolis from the water.</p>
+      <h2>Snorkelling &amp; swim stops</h2>
+      <p>Smaller boats run to Anthony Quinn Bay and other clear-water coves — bring a mask and fins.</p>
+      <p>Browse and book <a href="/listings-map/?category=tours">boat trips &amp; tours</a>, and combine with <a href="/listings-map/?category=activities">beaches</a> and <a href="/listings-map/?category=restaurant">waterfront dining</a>.</p>
+   `,
+  },
+  {
+    id: 9,
+    slug: "where-to-stay-in-rhodes",
+    img: "/assets/img/blog-4.webp",
+    title: "Where to Stay in Rhodes: Best Areas & Resorts",
+    desc: "Where to stay in Rhodes \u2014 a guide to the best areas, from Rhodes Town and the Old Town to Lindos, Faliraki and quieter west-coast resorts.",
+    author: 'Rhodes Things To Do',
+    body: `
+      <p>Choosing the right base makes a big difference on Rhodes. Here are the best areas for different travellers.</p>
+      <h2>Rhodes Town &amp; the Old Town</h2>
+      <p>Best for first-timers and culture lovers — history, restaurants, shopping and nightlife on your doorstep, plus easy bus connections.</p>
+      <h2>Lindos</h2>
+      <p>Best for couples and a postcard setting. Romantic, scenic and walkable, though busy by day with excursions.</p>
+      <h2>Faliraki &amp; the east coast</h2>
+      <p>Best for families and beach holidays, with sandy beaches, watersports and a lively resort scene.</p>
+      <h2>The quieter west &amp; south</h2>
+      <p>Best for a relaxed, authentic stay away from the crowds.</p>
+      <p>Compare <a href="/listings-map/?category=real-estate">hotels &amp; stays</a>, and see <a href="/listings-map/?category=restaurant">where to eat</a> and <a href="/listings-map/?category=activities">what to do</a> nearby.</p>
+   `,
+  },
 ] as const;
 
 // categories2 data
