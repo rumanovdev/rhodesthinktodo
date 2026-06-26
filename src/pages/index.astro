@@ -434,15 +434,11 @@ if (Astro.locals.supabase) {
 			            <img class="card-img-top hover-fade-out" src={item.img} alt="blog image">
 			        </a>
 			        <div class="card-body">
-			            <a href={`/blog-detail/${slugify(item.title)}/`}><h4 class="fw-medium fs-5 lh-base mb-3">{item.title}</h4></a>
+			            <a href={`/blog-detail/${(item as any).slug || slugify(item.title)}/`}><h4 class="fw-medium fs-5 lh-base mb-3">{item.title}</h4></a>
 			            <p>{item.desc}</p>
 			            <div class="d-flex align-items-center justify-content-start mt-4">
 			                <a href="#" class="badge badge-primary rounded-pill">Continue Reading</a>
 			            </div>
-			        </div>
-			        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
-			            <a href="#" class="text-dark fw-medium text-md"><i class="bi bi-calendar-check me-2"></i>{item.date}</a>
-			            <div class="text-muted text-md"><i class="bi bi-eye-fill me-2"></i>{item.views}</div>
 			        </div>
 			    </div>
 			</div>
@@ -485,10 +481,10 @@ if (Astro.locals.supabase) {
       font-weight: 600;
     }
     /* Equal-height testimonial cards so the avatar+name rows line up uniformly */
-    .reviewsSlide .owl-stage { display: flex; }
-    .reviewsSlide .owl-item { display: flex; height: auto; }
-    .reviewsSlide .singleItem,
-    .reviewsSlide .reviews-wrappers { display: flex; flex-direction: column; width: 100%; }
+    .reviewsSlide .owl-stage { display: flex; align-items: stretch; }
+    .reviewsSlide .owl-item { display: flex; flex-direction: column; height: auto; }
+    .reviewsSlide .owl-item > .singleItem { display: flex; flex-direction: column; flex: 1 1 auto; width: 100%; }
+    .reviewsSlide .reviews-wrappers { display: flex; flex-direction: column; flex: 1 1 auto; }
     .reviewsSlide .reviewsBox { flex: 1 1 auto; }
     /* Initials avatar for testimonials (no stock photos of other people) */
     .revws-initials {

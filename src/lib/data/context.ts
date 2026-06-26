@@ -311,51 +311,82 @@ export const reviews = [
 export const blogs = [
   {
     id: 1,
+    slug: 'best-things-to-do-in-rhodes',
     img: '/assets/img/blog-1.jpg',
-    title: 'Climbing the Acropolis of Lindos at Sunset',
-    desc: 'The hilltop temple of Athena Lindia rewards every step with a sweeping view over St Paul’s Bay. Go an hour before sunset to skip the crowds and catch the golden hour.',
-    date: '12 May 2026',
-    views: '12k Views',
+    title: 'Best Things to Do in Rhodes: 15 Top Experiences (2026 Guide)',
+    desc: 'From the medieval Old Town and the Acropolis of Lindos to the best beaches and a day trip to Symi — here are the top things to do in Rhodes, Greece.',
+    author: 'Rhodes Things To Do',
+    badge: 'Travel Guide',
+    body: `
+      <p>Rhodes is the largest of the Dodecanese islands and one of the most rewarding places to visit in Greece. Whether you are after history, beaches, food or family activities, here are the best things to do in Rhodes.</p>
+      <h2>1. Explore Rhodes Old Town</h2>
+      <p>The medieval Old Town is a UNESCO World Heritage Site and the largest inhabited medieval town in Europe. Walk the Street of the Knights, visit the Palace of the Grand Master, and get lost in the cobbled lanes.</p>
+      <h2>2. Visit the Acropolis of Lindos</h2>
+      <p>Perched above the village of Lindos, the ancient acropolis offers sweeping views over St Paul&rsquo;s Bay. Go early or an hour before sunset to avoid the midday heat and crowds.</p>
+      <h2>3. Relax on the best beaches</h2>
+      <ul>
+        <li><strong>Anthony Quinn Bay</strong> &mdash; crystal-clear water, great for snorkelling.</li>
+        <li><strong>Tsambika Beach</strong> &mdash; golden sand, perfect for families.</li>
+        <li><strong>Prasonisi</strong> &mdash; a kite- and windsurfing paradise where two seas meet.</li>
+      </ul>
+      <h2>4. Walk the Valley of the Butterflies</h2>
+      <p>From late June to early September, Petaloudes fills with thousands of Jersey tiger moths. The shaded boardwalk and waterfalls make it the coolest spot on the island.</p>
+      <h2>5. Take a day trip to Symi</h2>
+      <p>The morning ferry from Mandraki Harbour reaches the pastel-painted island of Symi in under two hours &mdash; an unforgettable day out.</p>
+      <h2>Plan your trip</h2>
+      <p>Browse our <a href="/listings-grid/">Rhodes listings</a> for restaurants, hotels, tours and activities, and find everything on the <a href="/listings-map/">interactive map</a>.</p>
+    `,
   },
   {
     id: 2,
+    slug: 'rhodes-3-day-itinerary',
     img: '/assets/img/blog-2.jpg',
-    title: 'A Quiet Morning at the Valley of the Butterflies',
-    desc: 'From late June to early September, Petaloudes fills with thousands of Jersey tiger moths. A shaded boardwalk and small waterfalls make it the coolest spot on the island.',
-    date: '10 May 2026',
-    views: '33k Views',
+    title: 'The Perfect 3 Days in Rhodes: A Complete Itinerary',
+    desc: 'How to spend 3 perfect days in Rhodes, Greece — the Old Town, Lindos and the east coast beaches, plus the Valley of the Butterflies and a day trip.',
+    author: 'Rhodes Things To Do',
+    badge: 'Itinerary',
+    body: `
+      <p>Only have a long weekend? Three days is enough to see the highlights of Rhodes without rushing. Here is the perfect 3-day Rhodes itinerary.</p>
+      <h2>Day 1 &mdash; Rhodes Old Town</h2>
+      <p>Spend your first day in the medieval Old Town. Start at the Palace of the Grand Master, walk the Street of the Knights, and explore the Jewish Quarter. In the evening, enjoy dinner at a traditional taverna inside the walls.</p>
+      <h2>Day 2 &mdash; Lindos &amp; the east coast</h2>
+      <p>Drive south to Lindos, climb to the acropolis, and swim at St Paul&rsquo;s Bay. On the way back, stop at Tsambika or Anthony Quinn Bay for an afternoon on the beach.</p>
+      <h2>Day 3 &mdash; Nature &amp; a day trip</h2>
+      <p>Visit the Valley of the Butterflies in the morning, then either relax on the west coast or take the ferry to Symi for the day.</p>
+      <h2>Getting around</h2>
+      <p>Renting a car gives you the most freedom. Find tours, transfers and rentals in our <a href="/listings-grid/">listings</a>.</p>
+    `,
   },
   {
     id: 3,
+    slug: 'best-beaches-in-rhodes',
     img: '/assets/img/blog-3.jpg',
-    title: 'Walking the Medieval Streets of Rhodes Old Town',
-    desc: 'A UNESCO World Heritage Site since 1988, the Old Town hides knight-era inns, Ottoman mosques and pebble-mosaic courtyards. Start at the Palace of the Grand Master.',
-    date: '07 May 2026',
-    views: '15k Views',
-  },
-  {
-    id: 4,
-    img: '/assets/img/blog-4.jpg',
-    title: 'Swimming at Anthony Quinn Bay and Tsambika',
-    desc: 'Anthony Quinn Bay has the clearest water on the east coast — bring snorkel gear. A short drive north, Tsambika’s golden sand is best in the late afternoon.',
-    date: '02 May 2026',
-    views: '12k Views',
-  },
-  {
-    id: 5,
-    img: '/assets/img/blog-5.jpg',
-    title: 'A Day Trip from Mandraki to Symi Island',
-    desc: 'The morning ferry from Mandraki Harbour reaches Symi in under two hours. Spend the day in pastel-painted Gialos, then swim at Agios Nikolaos before the boat returns.',
-    date: '28 Apr 2026',
-    views: '33k Views',
-  },
-  {
-    id: 6,
-    img: '/assets/img/blog-6.jpg',
-    title: 'Where Two Seas Meet: A Trip to Prasonisi',
-    desc: 'On the southern tip of Rhodes, a thin sandbar separates the Aegean from the Libyan Sea. It’s a kite- and windsurfing paradise — and an easy stop on the way to Monolithos.',
-    date: '22 Apr 2026',
-    views: '15k Views',
+    title: 'Best Beaches in Rhodes: 10 You Shouldn\'t Miss',
+    desc: 'The 10 best beaches in Rhodes, Greece — from family-friendly Tsambika to the snorkelling coves of Anthony Quinn Bay and the windsurf haven of Prasonisi.',
+    author: 'Rhodes Things To Do',
+    badge: 'Beaches',
+    body: `
+      <p>With over 250 km of coastline, Rhodes has a beach for everyone. Here are the 10 best beaches in Rhodes, Greece.</p>
+      <h2>1. Tsambika Beach</h2>
+      <p>A long stretch of golden sand on the east coast, shallow and calm &mdash; ideal for families.</p>
+      <h2>2. Anthony Quinn Bay</h2>
+      <p>A small, rocky cove with some of the clearest water on the island. Bring snorkelling gear.</p>
+      <h2>3. Prasonisi</h2>
+      <p>On the southern tip, a thin sandbar separates the Aegean from the Libyan Sea &mdash; a world-class kite- and windsurfing spot.</p>
+      <h2>4. St Paul&rsquo;s Bay, Lindos</h2>
+      <p>A sheltered, almost circular bay beneath the acropolis with turquoise water.</p>
+      <h2>5. Faliraki Beach</h2>
+      <p>The island&rsquo;s liveliest beach resort, with water sports, sunbeds and plenty of bars.</p>
+      <h2>6&ndash;10. More beaches worth a visit</h2>
+      <ul>
+        <li>Agathi (Golden) Beach &mdash; soft sand near Haraki.</li>
+        <li>Kallithea Springs &mdash; historic thermal cove.</li>
+        <li>Ladiko Beach &mdash; next to Anthony Quinn Bay.</li>
+        <li>Elli Beach &mdash; the main town beach in Rhodes Town.</li>
+        <li>Glystra Beach &mdash; a small, calm bay south of Lindos.</li>
+      </ul>
+      <p>Find beach bars, sunbed rentals and nearby stays in our <a href="/listings-grid/">Rhodes listings</a>.</p>
+    `,
   },
 ] as const;
 

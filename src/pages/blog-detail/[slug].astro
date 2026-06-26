@@ -6,7 +6,7 @@ import Subscribe from '../../components/shared/Subscribe.astro';
 import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
-import { articles, tags } from '../../lib/data/context';
+import { articles, tags, blogs } from '../../lib/data/context';
 import { absUrl } from '../../lib/data/site';
 
 export async function getStaticPaths() {
@@ -25,6 +25,7 @@ const heroTitle = blog.title || 'Top 10 Free Bootstrap Templates for Your Next P
 const heroDate = blog.date || '6 Sep 2025';
 
 const slug = (blog as any).slug || heroTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const recentPosts = (blogs as any[]).filter((b) => b.slug !== slug).slice(0, 4);
 const postUrl = absUrl(`/blog-detail/${slug}/`);
 const seoDescription = (blog.desc || blog.excerpt || `${heroTitle} — a Rhodes travel story and guide from Rhodes Things To Do.`)
   .toString().replace(/\s+/g, ' ').trim().slice(0, 160);
@@ -67,7 +68,7 @@ const blogSchema = {
         <div class="row justify-content-start align-items-center pt-lg-0 pt-5">
           <div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
             <div class="position-relative">
-              <h1 class="xl-heading">Latest Article</h1>
+              <h2 class="xl-heading">Blog</h2>
               <nav id="breadcrumbs" class="breadcrumbs">
                 <ul>
                   <li><a href="/">Home</a></li>
@@ -103,220 +104,22 @@ const blogSchema = {
                 <div class="card-body">
 
                   <!-- Badge -->
-                  <div class="d-inline-flex mb-2"><span class="badge badge-xs badge-primary rounded-pill">Software & Tools</span></div>
+                  <div class="d-inline-flex mb-2"><span class="badge badge-xs badge-primary rounded-pill">{(blog as any).badge || 'Rhodes Guide'}</span></div>
 
                   <!-- Title -->
                   <h1 class="fs-3">{heroTitle}</h1>
                   <div class="d-flex align-items-center justify-content-start flex-wrap gap-3 mb-3">
-                    <div>By <a href="#" class="link">Adam Michel</a></div>
-                    <div>{heroDate}</div>
-                    <div><a href="#" class="link">24 Comments</a></div>
+                    <div>By <span class="link">Rhodes Things To Do</span></div>
                   </div>
 
-                  <p>Websites in professional use templating systems. Commercial publishing platforms and content management systems ensure that you can show different text, different data using the same template. When it's about controlling hundreds of articles, product pages for web shops, or user profiles in social networks, all of them potentially with different sizes</p>
-
-                  <p>This is quite a problem to solve, but just doing without greeking text won't fix it. Using test items of real content and data in designs will help, but there's no guarantee that every oddity will be found and corrected. Do you want to be sure? Then a prototype or beta site with real content published from the real CMS is needed—but you're not going that far until you go through an initial design cycle.</p>
-
-                  <!-- blockquote -->
-                  <blockquote class="bg-light-primary rounded text-center p-3 p-md-4 my-4">
-                    <h6 class="fw-normal lh-base"><i class="fa-solid fa-quote-left me-2"></i>Asking the client to pay no attention Lorem Ipsum isn't hard as it doesn't make sense in the first place, that will limit any initial interest soon enough. Try telling a client to ignore draft copy however, and you're up to something you can't win.<i class="fa-solid fa-quote-right ms-2"></i></h6>
-                    <div class="blockquote-footer mb-0 fs-6 mt-3 text-primary fw-medium">
-                      Rouze M. Alhatri
-                    </div>
-                  </blockquote>
-
-                  <p>Typographers of yore didn't come up with the concept of dummy copy because people thought that content is inconsequential window dressing, only there to be used by designers who can't be bothered to read. Lorem Ipsum is needed because words matter, a lot. Just fill up a page with draft copy about the client's business and they will actually read it and comment on it. They will be drawn to it, fiercely. Do it the wrong way and draft copy can derail your design review.</p>
-
-                  <p>Asking the client to pay no attention Lorem Ipsum isn't hard as it doesn't make sense in the first place, that will limit any initial interest soon enough. Try telling a client to ignore draft copy however, and you're up to something you can't win. Whenever draft copy comes up in a meeting confused questions about it ensue.</p>
-
-                  <p>You made all the required mock ups for commissioned layout, got all the approvals, built a tested code base or had them built, you decided on a content management system, got a license for it or adapted open source software for your client's needs. Then the question arises: where's the content? Not there yet? That's not so bad, there's dummy copy to the rescue. But worse, what if the fish doesn't fit in the can, the foot's to big for the boot? Or to small? To short sentences, to many headings, images too large for the proposed design</p>
+                  <div class="article-body" set:html={blog.body}></div>
 
                 </div>
 
-                <div class="card-footer border-top bg-white">
-                  <div class="d-md-flex justify-content-between align-items-center">
-                    <!-- Title -->
-                    <h6 class="mb-0">Was this article helpful?</h6>
-                    <small class="py-3 p-md-0 d-block">40 out of 84 found this helpful</small>
-                    <!-- Check buttons -->
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                      <!-- Yes button -->
-                      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" />
-                      <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradio1"><i class="fa-regular fa-thumbs-up me-1"></i> Yes</label>
-                      <!-- No button -->
-                      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" />
-                      <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradio2"> No <i class="fa-regular fa-thumbs-down ms-1"></i></label>
-                    </div>
-                  </div>
-                </div>
 
               </div>
               <!-- First Card -->
 
-              <!-- Second Card -->
-              <div class="card shadow-sm w-100">
-                <div class="card-header p-4">
-                  <h4>Comments (4)</h4>
-                </div>
-
-                <div class="card-body">
-                  <div class="blogcommentsBox">
-                    <ul>
-
-                      <!-- Components/Pages/blog-detail/comments.html -->
-                      <li>
-                        <div class="singleComments">
-                          <div class="blogavatar">
-                            <img src="/assets/img/team-1.jpg" class="img-fluid circle" alt="" />
-                          </div>
-
-                          <div class="blogCaps">
-                            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-                              <div class="commentBy">
-                                <h6 class="mb-1 lh-base">Mitchel Musk</h6>
-                                <span>Aug 15 2025</span>
-                              </div>
-                              <div class="replyLink">
-                                <a href="#" class="btn btn-sm btn-light rounded-pill" data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-reply me-2"></i>Reply</a>
-                              </div>
-                            </div>
-                            <div class="commentsDes">
-                              <p>That's not so bad, there's though he or her can't quite put a finger dummy copy to the rescue. But worse, what if the fish doesn't fit in the can, the foot's to big for the boot? Or to small?</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Reply Comments -->
-                        <ul>
-
-                          <li>
-                            <div class="singleComments">
-                              <div class="blogavatar">
-                                <img src="/assets/img/team-2.jpg" class="img-fluid circle" alt="" />
-                              </div>
-
-                              <div class="blogCaps">
-                                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-                                  <div class="commentBy">
-                                    <h6 class="mb-1 lh-base">Renuka Muksr</h6>
-                                    <span>Sep 16 2025</span>
-                                  </div>
-                                  <div class="replyLink">
-                                    <a href="#" class="btn btn-sm btn-light rounded-pill" data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-reply me-2"></i>Reply</a>
-                                  </div>
-                                </div>
-                                <div class="commentsDes">
-                                  <p>That's not so bad, there's though he or her can't quite put a finger dummy copy to the rescue. But worse, what if the fish doesn't fit in the can, the foot's to big for the boot? Or to small?</p>
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- Reply Comments -->
-                            <ul>
-
-                              <li>
-                                <div class="singleComments">
-                                  <div class="blogavatar">
-                                    <img src="/assets/img/team-3.jpg" class="img-fluid circle" alt="" />
-                                  </div>
-
-                                  <div class="blogCaps">
-                                    <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-                                      <div class="commentBy">
-                                        <h6 class="mb-1 lh-base">Warner Devid</h6>
-                                        <span>Sep 17 2025</span>
-                                      </div>
-                                      <div class="replyLink">
-                                        <a href="#" class="btn btn-sm btn-light rounded-pill" data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-reply me-2"></i>Reply</a>
-                                      </div>
-                                    </div>
-                                    <div class="commentsDes">
-                                      <p>That's not so bad, there's though he or her can't quite put a finger dummy copy to the rescue. But worse, what if the fish doesn't fit in the can, the foot's to big for the boot? Or to small?</p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                              </li>
-
-                            </ul>
-                            <!-- Reply Comments -->
-
-                          </li>
-
-                        </ul>
-                        <!-- Reply Comments -->
-
-                      </li>
-
-                      <li>
-                        <div class="singleComments">
-                          <div class="blogavatar">
-                            <img src="/assets/img/team-1.jpg" class="img-fluid circle" alt="" />
-                          </div>
-
-                          <div class="blogCaps">
-                            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-                              <div class="commentBy">
-                                <h6 class="mb-1 lh-base">Mitchel Musk</h6>
-                                <span>Aug 15 2025</span>
-                              </div>
-                              <div class="replyLink">
-                                <a href="#" class="btn btn-sm btn-light rounded-pill" data-bs-toggle="modal" data-bs-target="#commentModal"><i class="bi bi-reply me-2"></i>Reply</a>
-                              </div>
-                            </div>
-                            <div class="commentsDes">
-                              <p>That's not so bad, there's though he or her can't quite put a finger dummy copy to the rescue. But worse, what if the fish doesn't fit in the can, the foot's to big for the boot? Or to small?</p>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-
-                    </ul>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Second Card -->
-
-              <!-- Second Card -->
-              <div class="card shadow-sm p-4 w-100">
-                <div class="commentsBox">
-                  <div class="row align-items-start">
-
-                    <div class="col-xl-12 col-lg-12 col-md-12">
-                      <h4 class="fw-semibold">Drop Comments</h4>
-                    </div>
-
-                    <!-- Components/Pages/blog-detail/drop2.html -->
-                    <div class="col-xl-6 col-lg-6 col-md-6">
-                      <div class="form-group">
-                        <label>Name:</label>
-                        <input type="text" class="form-control gray border-0" />
-                      </div>
-                    </div>
-
-                    <div class="col-xl-6 col-lg-6 col-md-6">
-                      <div class="form-group">
-                        <label>Email:</label>
-                        <input type="text" class="form-control gray border-0" />
-                      </div>
-                    </div>
-
-                    <div class="col-xl-12 col-lg-12 col-md-12">
-                      <div class="form-group">
-                        <label>Comments:</label>
-                        <textarea class="form-control gray border-0"></textarea>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-12 col-lg-12 col-md-12">
-                      <button type="button" class="btn btn-light-primary rounded-pill fw-medium px-5">Submit Comment</button>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-              <!-- Second Card -->
 
             </div>
 
@@ -339,22 +142,20 @@ const blogSchema = {
                 </div>
               </div>
 
-              <!-- Search -->
+              <!-- Recent Articles -->
               <div class="card">
                 <div class="card-header">
-                  <h4>Most Viewd Articles</h4>
+                  <h4>Recent Articles</h4>
                 </div>
                 <div class="card-body">
                   <div class="similarPosts">
                     <ul>
 
-                      <!-- Components/Pages/blog-detail/articles.html -->
-                      {articles.map((item: any) => (
+                      {recentPosts.map((item: any) => (
                         <li>
-                          <div class="postThumb"><a href="/blog-detail/" class="postImg"><figure><img src={item.img} class="img-fluid rounded" alt="Post Image" /></figure></a></div>
+                          <div class="postThumb"><a href={`/blog-detail/${item.slug}/`} class="postImg"><figure><img src={item.img} class="img-fluid rounded" alt={item.title} /></figure></a></div>
                           <div class="postCaps">
-                            <h6><a href="/blog-detail/" class="link">{item.title}</a></h6>
-                            <span>{item.date}</span>
+                            <h6><a href={`/blog-detail/${item.slug}/`} class="link">{item.title}</a></h6>
                           </div>
                         </li>
                       ))}
