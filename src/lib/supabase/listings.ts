@@ -23,7 +23,7 @@ export type ListingCard = {
   rating: string;
   reviews: string;
   btn: string; // "Open" / "Closed" / "Verified"
-  dollar: string; // "$", "$$", "$$$"
+  dollar: string; // "€", "€€", "€€€"
   tag: boolean; // featured
   miles: string;
   color: string;
@@ -66,7 +66,7 @@ function row2card(r: any): ListingCard {
     rating: r.rating != null ? String(r.rating) : '4.5',
     reviews: `${r.review_count ?? 0} Reviews`,
     btn: verified ? 'Verified' : 'Open',
-    dollar: '$'.repeat(tier),
+    dollar: '€'.repeat(tier),
     tag: !!r.is_featured,
     miles: r.city ? `${r.city}` : '',
     color: verified ? 'success' : 'primary',
