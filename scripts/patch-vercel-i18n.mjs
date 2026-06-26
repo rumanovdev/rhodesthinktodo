@@ -23,9 +23,9 @@ const assetHeader = {
   continue: true,
 };
 if (!routes.some((r) => r.src === assetHeader.src)) {
-  const astroIdx = routes.findIndex((r) => (r.src || '').includes('_astro'));
-  routes.splice(astroIdx === -1 ? 1 : astroIdx + 1, 0, assetHeader);
-  console.log('[patch-vercel-i18n] inserted asset cache header.');
+  // Must run BEFORE the `{handle:'filesystem'}` phase to apply to static files.
+  routes.unshift(assetHeader);
+  console.log('[patch-vercel-i18n] inserted asset cache header (pre-filesystem).');
 }
 
 const localeRoute = {
