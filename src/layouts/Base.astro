@@ -164,7 +164,7 @@ const jsonLd = [...baseSchema, ...pageSchema];
     </div>
 
     <!-- Back to top -->
-    <a href="#" class="btn-primary back-to-top" id="back2Top"><i class="bi bi-arrow-up"></i></a>
+    <a href="#" class="btn-primary back-to-top" id="back2Top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></a>
 
     <!-- Core jQuery + plugins used site-wide (deferred so they don't block paint) -->
     <script src="/assets/js/jquery.min.js" defer is:inline></script>
@@ -242,6 +242,21 @@ const jsonLd = [...baseSchema, ...pageSchema];
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
       }
+    </script>
+
+    <!-- A11y: label JS-generated carousel controls for screen readers / AI agents -->
+    <script is:inline>
+      function labelOwlControls() {
+        document.querySelectorAll('.owl-dot').forEach(function (d, i) {
+          if (!d.getAttribute('aria-label')) d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        });
+        document.querySelectorAll('.owl-prev').forEach(function (p) { p.setAttribute('aria-label', 'Previous'); });
+        document.querySelectorAll('.owl-next').forEach(function (p) { p.setAttribute('aria-label', 'Next'); });
+      }
+      window.addEventListener('load', function () {
+        setTimeout(labelOwlControls, 700);
+        setTimeout(labelOwlControls, 1800);
+      });
     </script>
 
     <!-- Cookie consent banner -->
