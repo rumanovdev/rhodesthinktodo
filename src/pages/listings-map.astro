@@ -143,6 +143,12 @@ const markersPayload = mappable.map((l) => ({
           position: absolute; right: 12px; pointer-events: none;
           color: #9aa0a6; font-size: .8rem;
         }
+        /* Listing cards */
+        .lm-thumb-link { position: relative; display: block; }
+        .lm-thumb { width: 100%; height: 180px; object-fit: cover; object-position: center; display: block; }
+        .lm-thumb-badge { position: absolute; left: 10px; top: 10px; font-weight: 500; }
+        .lm-card { transition: transform .15s ease, box-shadow .15s ease; }
+        .lm-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,.12) !important; }
       </style>
 
       {allPublished.length === 0 ? (
@@ -160,34 +166,26 @@ const markersPayload = mappable.map((l) => ({
           {allPublished.map((item) => (
             <div class="col-12">
               <article
-                class="card lm-card rounded-3 overflow-hidden h-100"
+                class="card lm-card border-0 shadow-sm rounded-4 overflow-hidden h-100"
                 data-listing-id={item.id}
                 data-has-coords={item.lat !== null && item.lng !== null ? 'true' : 'false'}
               >
-                <div class="row g-0">
-                  <div class="col-4">
-                    <a href={`/listing/${item.slug}/`}>
-                      <img src={item.img} alt={item.title} style="width:100%;height:100%;object-fit:cover;min-height:120px;" />
-                    </a>
+                <a href={`/listing/${item.slug}/`} class="lm-thumb-link">
+                  <img src={item.img} alt={item.title} class="lm-thumb" loading="lazy" />
+                  {item.lat !== null && item.lng !== null
+                    ? <span class="badge bg-success lm-thumb-badge"><i class="bi bi-geo-alt-fill me-1"></i>On map</span>
+                    : null}
+                </a>
+                <div class="card-body py-3 px-3">
+                  <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                    <span class="text-primary text-md fw-medium">{item.name}</span>
+                    <span class="text-muted text-md">{item.dollar}</span>
                   </div>
-                  <div class="col-8">
-                    <div class="card-body py-3 px-3">
-                      <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
-                        <span class="text-primary text-md fw-medium">{item.name}</span>
-                        <span class="text-muted text-md">{item.dollar}</span>
-                      </div>
-                      <h5 class="mb-1"><a href={`/listing/${item.slug}/`} class="text-decoration-none text-dark">{item.title}</a></h5>
-                      <div class="text-md text-muted mb-2">
-                        <i class="bi bi-geo-alt me-1"></i>{item.location || 'No location set'}
-                      </div>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-sm"><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</span>
-                        {item.lat !== null && item.lng !== null
-                          ? <span class="badge bg-light-success text-success">On map</span>
-                          : <span class="badge bg-light-secondary text-muted">No coords</span>}
-                      </div>
-                    </div>
+                  <h5 class="mb-1 lh-base"><a href={`/listing/${item.slug}/`} class="text-decoration-none text-dark">{item.title}</a></h5>
+                  <div class="text-md text-muted mb-2">
+                    <i class="bi bi-geo-alt me-1"></i>{item.location || 'No location set'}
                   </div>
+                  <div class="text-sm"><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews} Reviews</div>
                 </div>
               </article>
             </div>
