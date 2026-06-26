@@ -15,6 +15,19 @@ if (!existsSync(CONFIG)) {
 
 const cfg = JSON.parse(readFileSync(CONFIG, 'utf8'));
 const routes = cfg.routes ?? [];
+
+// Long cache for static public assets (images, css, js, fonts).
+const assetHeader = {
+  src: '^/assets/(.*)$',
+  headers: { 'cache-control': 'public, max-age=31536000, immutable' },
+  continue: true,
+};
+if (!routes.some((r) => r.src === assetHeader.src)) {
+  const astroIdx = routes.findIndex((r) => (r.src || '').includes('_astro'));
+  routes.splice(astroIdx === -1 ? 1 : astroIdx + 1, 0, assetHeader);
+  console.log('[patch-vercel-i18n] inserted asset cache header.');
+}
+
 const localeRoute = {
   src: `^/(${LOCALES.join('|')})(/.*)?$`,
   dest: '_render',

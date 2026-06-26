@@ -111,18 +111,26 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <!-- Google Analytics (GA4) + Consent Mode -->
     <Analytics />
 
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
     <!-- Preload icon fonts to prevent late-swap layout shift (CLS) -->
     <link rel="preload" as="font" type="font/woff2" href="/assets/webfonts/fa-solid-900.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/bootstrap-icons.woff2" crossorigin />
 
-    <!-- Critical CSS (render-blocking) -->
-    <link href="/assets/css/animation.css" rel="stylesheet" />
+    <!-- Critical CSS (render-blocking): layout + theme only -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/assets/css/fontawesome.css" rel="stylesheet" />
-    <link href="/assets/css/bootstrap-icons.css" rel="stylesheet" />
     <link href="/assets/css/style.css" rel="stylesheet" />
+
+    <!-- Icon + animation CSS: async so the ~250KB doesn't block first paint
+         (icon fonts are preloaded above, so icons appear as soon as it lands) -->
+    <link rel="stylesheet" href="/assets/css/bootstrap-icons.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/fontawesome.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/assets/css/animation.css" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="/assets/css/bootstrap-icons.css" />
+      <link rel="stylesheet" href="/assets/css/fontawesome.css" />
+      <link rel="stylesheet" href="/assets/css/animation.css" />
+    </noscript>
 
     <!-- Non-critical plugin CSS — loaded async so it doesn't block first paint -->
     <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" media="print" onload="this.media='all'" />
