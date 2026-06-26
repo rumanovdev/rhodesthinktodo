@@ -113,6 +113,10 @@ const jsonLd = [...baseSchema, ...pageSchema];
 
     {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
 
+    <!-- Preload icon fonts to prevent late-swap layout shift (CLS) -->
+    <link rel="preload" as="font" type="font/woff2" href="/assets/webfonts/fa-solid-900.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/bootstrap-icons.woff2" crossorigin />
+
     <!-- Critical CSS (render-blocking) -->
     <link href="/assets/css/animation.css" rel="stylesheet" />
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
