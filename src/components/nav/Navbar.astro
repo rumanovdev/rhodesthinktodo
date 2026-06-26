@@ -161,8 +161,17 @@ if (user) {
     /* Bigger nav link text */
     .navigation-landscape .nav-menu > li > a.home-link,
     .navigation-landscape .nav-menu.nav-menu-social > li > a {
-      font-size: 17px;
+      font-size: 19px;
     }
+  }
+
+  /* On the transparent (homepage) header the theme renders nav links at 50%
+     white (grey). Force full white for the menu links and the Sign In link.
+     Inner pages use the light header, so this selector never affects them;
+     the scrolled state of this variant has a dark background, so white stays readable. */
+  .header.header-transparent .nav-menu > li > a.home-link,
+  .header.header-transparent .nav-menu.nav-menu-social > li > a {
+    color: var(--bs-white) !important;
   }
   /* Add Listing button stays red even when the navbar is in its initial
      (non-scrolled) "light" state on transparent/dark hero variants. */

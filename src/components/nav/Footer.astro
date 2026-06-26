@@ -11,14 +11,7 @@ import { SITE } from '../../lib/data/site';
                     <div class="footerText">
                         <p class="mb-0">© <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do.</p>
                     </div>
-                    <div class="footerSocialwrap">
-                        <ul class="footersocial">
-                            <li><a href="javascript:void(0)" class="social-link" tabindex="-1" aria-disabled="true" onclick="return false;"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a href="javascript:void(0)" class="social-link" tabindex="-1" aria-disabled="true" onclick="return false;"><i class="fa-brands fa-twitter"></i></a></li>
-                            <li><a href="javascript:void(0)" class="social-link" tabindex="-1" aria-disabled="true" onclick="return false;"><i class="fa-brands fa-instagram"></i></a></li>
-                            <li><a href="javascript:void(0)" class="social-link" tabindex="-1" aria-disabled="true" onclick="return false;"><i class="fa-brands fa-linkedin"></i></a></li>
-                        </ul>
-                    </div>
+                    {/* Social media links temporarily removed until live profiles exist. */}
                 </div>
             </div>
 
@@ -99,3 +92,36 @@ import { SITE } from '../../lib/data/site';
     </div>
 
 </footer>
+
+<style is:global>
+  /* Footer: solid black background, all text white, slightly larger font */
+  footer.skin-dark-footer {
+    background: #000 !important;
+  }
+  footer.skin-dark-footer,
+  footer.skin-dark-footer p,
+  footer.skin-dark-footer a,
+  footer.skin-dark-footer h4,
+  footer.skin-dark-footer h5,
+  footer.skin-dark-footer .widget-title,
+  footer.skin-dark-footer .footer-menu li a,
+  footer.skin-dark-footer .subs,
+  footer.skin-dark-footer .icons i {
+    color: #fff !important;
+  }
+  footer.skin-dark-footer .widget-title {
+    font-size: 1.25rem;
+  }
+  footer.skin-dark-footer .footer-menu li a,
+  footer.skin-dark-footer .singleinfo .title a,
+  footer.skin-dark-footer .footerText p {
+    font-size: 1rem;
+  }
+  footer.skin-dark-footer .subs {
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+  footer.skin-dark-footer .footer-menu li a:hover {
+    opacity: 0.8;
+  }
+</style>
