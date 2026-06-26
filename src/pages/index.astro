@@ -46,7 +46,7 @@ if (Astro.locals.supabase) {
 		<div class="row justify-content-center align-items-center mb-5 pt-lg-0 pt-5">
 			<div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
 				<div class="position-relative text-center">
-					<h1>Rhodes Things To Do — Discover the Best of the Island</h1>
+					<h1 class="hero-title">Rhodes Things To Do<span class="d-block fw-light mt-2">Discover the Best of the Island</span></h1>
 					<p class="fs-5 fw-light">Find top-rated restaurants, hotels, tours, beaches and activities across Rhodes, Greece — all in one place.</p>
 				</div>
 			</div>
@@ -476,4 +476,17 @@ if (Astro.locals.supabase) {
 	<SearchOffcanvas />
 
   <Footer />
+
+  <style is:global>
+    /* Hero title — keyword-led, smaller on desktop, no dash */
+    .hero-title {
+      font-size: clamp(2rem, 4.2vw, 3rem);
+      line-height: 1.15;
+      font-weight: 600;
+    }
+    .hero-title span {
+      font-size: clamp(1.05rem, 2.1vw, 1.5rem);
+      opacity: 0.92;
+    }
+  </style>
 </Base>
