@@ -1,6 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { getSupabaseServer } from './lib/supabase/server';
-import { parsePath, DEFAULT_LOCALE } from './lib/i18n';
+import { parsePath, isLocale, DEFAULT_LOCALE } from './lib/i18n';
 
 const AUTH_REDIRECT_PREFIXES = ['/dashboard-'];
 const PUBLIC_API_PREFIXES = ['/api/auth/'];
@@ -15,12 +15,24 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect(target.toString(), 301);
   }
 
-  // Resolve locale from the first path segment (/de/, /el/ …) and rewrite to
-  // the un-prefixed route so the same pages render in the selected language.
-  const { locale, path } = parsePath(context.url.pathname);
+  // Resolve locale. In production Vercel rewrites /de/foo → /foo?__locale=de
+  // (see vercel.json), so the route already exists and we just read the param.
+  // In dev there's no such rewrite, so we parse the /de/ prefix and rewrite.
+  const qpLocale = context.url.searchParams.get('__locale');
+  let locale: typeof DEFAULT_LOCALE;
+  let rewriteTarget: string | null = null;
+  if (qpLocale && isLocale(qpLocale)) {
+    locale = qpLocale;
+  } else {
+    const parsed = parsePath(context.url.pathname);
+    locale = parsed.locale;
+    if (locale !== DEFAULT_LOCALE) rewriteTarget = parsed.path + context.url.search;
+  }
   context.locals.locale = locale;
-  const rewriteTarget =
-    locale !== DEFAULT_LOCALE ? path + context.url.search : null;
+  // Locale-stripped path used for auth matching below.
+  const path = qpLocale && isLocale(qpLocale)
+    ? context.url.pathname
+    : parsePath(context.url.pathname).path;
 
   context.locals.user = null;
   context.locals.session = null;
