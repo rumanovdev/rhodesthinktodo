@@ -65,7 +65,7 @@ import { SITE } from '../../lib/data/site';
                         </div>
 
                         <div class="singleinfo">
-                            <div class="icons"><i class="bi bi-telephone-outbound"></i></div>
+                            <div class="icons"><i class="bi bi-telephone-fill"></i></div>
                             <div class="caps">
                                 <h5 class="title"><a href={SITE.phoneHref} class="text-reset">{SITE.phone}</a></h5>
                                 <p class="subs">Mon - Sat 10am - 6PM</p>
@@ -73,7 +73,7 @@ import { SITE } from '../../lib/data/site';
                         </div>
 
                         <div class="singleinfo">
-                            <div class="icons"><i class="bi bi-envelope"></i></div>
+                            <div class="icons"><i class="bi bi-envelope-fill"></i></div>
                             <div class="caps">
                                 <h5 class="title"><a href={`mailto:${SITE.email}`} class="text-reset">{SITE.email}</a></h5>
                                 <p class="subs">Email Us</p>
@@ -87,9 +87,8 @@ import { SITE } from '../../lib/data/site';
         </div>
 
         <!-- Copyright bar: full width, below everything -->
-        <div class="footer-bottom border-top mt-4 pt-3 d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-center">
+        <div class="footer-bottom border-top mt-4 pt-3 text-center">
             <p class="mb-0">© <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do. All rights reserved.</p>
-            <p class="mb-0">Developed by <strong>SaintLab</strong></p>
         </div>
 
     </div>
@@ -130,4 +129,18 @@ import { SITE } from '../../lib/data/site';
   footer.skin-dark-footer .footer-bottom {
     border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
   }
+  /* Bigger footer logo */
+  footer.skin-dark-footer .footerLogo img {
+    width: 260px;
+    max-width: 85%;
+    height: auto;
+  }
+  /* Contact icons: solid black, bold look */
+  footer.skin-dark-footer .singleinfo .icons i {
+    color: #000 !important;
+    font-size: 1.15rem;
+    -webkit-text-stroke: 0.4px #000;
+  }
+  /* Kill horizontal scroll on small screens */
+  html, body { overflow-x: hidden; }
 </style>
