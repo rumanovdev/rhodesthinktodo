@@ -1,5 +1,7 @@
 ---
 import { SITE, absUrl } from '../lib/data/site';
+import Analytics from '../components/shared/Analytics.astro';
+import CookieConsent from '../components/shared/CookieConsent.astro';
 
 interface Props {
   title?: string;
@@ -44,6 +46,9 @@ const canonicalUrl = absUrl(Astro.url.pathname);
     <link href="/assets/css/fontawesome.css" rel="stylesheet" />
     <link href="/assets/css/bootstrap-icons.css" rel="stylesheet" />
     <link href="/assets/css/style.css" rel="stylesheet" />
+
+    <!-- Google Analytics (GA4) + Consent Mode -->
+    <Analytics />
   </head>
   <body class={bodyClass}>
     <div id="main-wrapper">
@@ -63,5 +68,8 @@ const canonicalUrl = absUrl(Astro.url.pathname);
     <script src="/assets/js/rome.js" is:inline></script>
     <script src="/assets/js/jquery.magnific-popup.min.js" is:inline></script>
     <script src="/assets/js/custom.js" is:inline></script>
+
+    <!-- Cookie consent banner -->
+    <CookieConsent />
   </body>
 </html>

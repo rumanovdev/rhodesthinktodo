@@ -1,5 +1,7 @@
 ---
 import { SITE, absUrl } from '../lib/data/site';
+import Analytics from '../components/shared/Analytics.astro';
+import CookieConsent from '../components/shared/CookieConsent.astro';
 
 interface Props {
   title?: string;
@@ -92,6 +94,9 @@ const jsonLd = [...baseSchema, ...pageSchema];
     {jsonLd.map((node) => (
       <script type="application/ld+json" is:inline set:html={JSON.stringify(node)} />
     ))}
+
+    <!-- Google Analytics (GA4) + Consent Mode -->
+    <Analytics />
 
     <!-- All Plugins -->
     <link href="/assets/css/animation.css" rel="stylesheet" />
@@ -190,5 +195,8 @@ const jsonLd = [...baseSchema, ...pageSchema];
         document.documentElement.scrollTop = 0;
       }
     </script>
+
+    <!-- Cookie consent banner -->
+    <CookieConsent />
   </body>
 </html>

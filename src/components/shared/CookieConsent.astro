@@ -1,0 +1,159 @@
+---
+// Modern cookie-consent banner. Wired to Google Consent Mode (see Analytics.astro):
+// Accept → analytics_storage granted; Decline → stays denied. Choice stored in localStorage.
+---
+<div id="cookie-consent" class="cookie-consent" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
+  <div class="cookie-consent__icon" aria-hidden="true"><i class="bi bi-cookie"></i></div>
+  <div class="cookie-consent__body">
+    <h6 class="cookie-consent__title">We value your privacy</h6>
+    <p class="cookie-consent__text">
+      We use cookies to analyse traffic and improve your experience on Rhodes Things To Do.
+      <a href="/privacy-policy/">Learn more</a>.
+    </p>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-btn cookie-btn--accept" data-cookie="granted">Accept</button>
+      <button type="button" class="cookie-btn cookie-btn--decline" data-cookie="denied">Decline</button>
+    </div>
+  </div>
+  <button type="button" class="cookie-consent__close" aria-label="Dismiss" data-cookie="denied">&times;</button>
+</div>
+
+<style is:global>
+  .cookie-consent {
+    position: fixed;
+    left: 22px;
+    bottom: 22px;
+    z-index: 1080;
+    width: calc(100% - 44px);
+    max-width: 390px;
+    background: #fff;
+    border-radius: 18px;
+    border-top: 4px solid var(--bs-primary);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    padding: 20px 18px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transform: translateY(160%);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
+  }
+  .cookie-consent.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .cookie-consent__icon {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bs-primary) 14%, #fff);
+    color: var(--bs-primary);
+    font-size: 22px;
+  }
+  .cookie-consent__title {
+    margin: 0 0 4px;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .cookie-consent__text {
+    margin: 0 0 14px;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: #5a5a5a;
+  }
+  .cookie-consent__text a {
+    color: var(--bs-primary);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .cookie-consent__actions {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .cookie-btn {
+    border: none;
+    border-radius: 50rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 7px 22px;
+    cursor: pointer;
+    transition: filter 0.15s ease, background 0.15s ease;
+  }
+  .cookie-btn--accept {
+    background: var(--bs-primary);
+    color: #fff;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--bs-primary) 35%, transparent);
+  }
+  .cookie-btn--accept:hover {
+    filter: brightness(0.94);
+  }
+  .cookie-btn--decline {
+    background: transparent;
+    color: #666;
+    border: 1px solid #d6d6d6;
+  }
+  .cookie-btn--decline:hover {
+    background: #f5f5f5;
+  }
+  .cookie-consent__close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: #b5b5b5;
+    cursor: pointer;
+  }
+  .cookie-consent__close:hover {
+    color: #777;
+  }
+  @media (max-width: 480px) {
+    .cookie-consent {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      width: auto;
+      max-width: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var KEY = 'cookie-consent';
+    var el = document.getElementById('cookie-consent');
+    if (!el) return;
+
+    var stored = null;
+    try { stored = localStorage.getItem(KEY); } catch (e) {}
+
+    if (!stored) {
+      el.hidden = false;
+      // Slide in after paint.
+      requestAnimationFrame(function () {
+        setTimeout(function () { el.classList.add('show'); }, 400);
+      });
+    }
+
+    el.querySelectorAll('[data-cookie]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var value = btn.getAttribute('data-cookie');
+        try { localStorage.setItem(KEY, value); } catch (e) {}
+        if (typeof gtag === 'function') {
+          gtag('consent', 'update', {
+            analytics_storage: value === 'granted' ? 'granted' : 'denied',
+          });
+        }
+        el.classList.remove('show');
+        setTimeout(function () { el.hidden = true; }, 350);
+      });
+    });
+  })();
+</script>
