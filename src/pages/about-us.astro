@@ -27,15 +27,9 @@ import { process2 } from '../lib/data/context';
 		<div class="row justify-content-center align-items-center pt-lg-0 pt-5">
 			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
 				<div class="position-relative text-center mb-5">
-					<h1 class="text-light xl-heading">About Page</h1>
-					<nav id="breadcrumbs" class="breadcrumbs light">
-						<ul>
-							<li><a href="/">Home</a></li>
-							<li><a href="#">Pages</a></li>
-							<li>About Us</li>
-						</ul>
-					</nav>
-				</div>
+					<h1 class="text-light xl-heading">Your Local Guide to Rhodes</h1>
+
+</div>
 			</div>
 		</div>
 		<!-- </row> -->
@@ -65,7 +59,7 @@ import { process2 } from '../lib/data/context';
 				<!-- Components/Pages/about-us/our-mission.html -->
 				<div class="col-xl-5 col-lg-5 col-md-6 col-sm-12">
 				    <div class="missionImg">
-				        <img src="/assets/img/hero-rhodes.jpg" class="img-fluid rounded-4" alt="Rhodes Old Town and the Palace of the Grand Master">
+				        <img src="/assets/img/hero-rhodes.webp" class="img-fluid rounded-4" alt="Rhodes Old Town and the Palace of the Grand Master">
 				    </div>
 				</div>
 				<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
@@ -91,7 +85,7 @@ import { process2 } from '../lib/data/context';
 
 
 <!-- Who We Are Start -->
-<section class="bg-cover" style="background:#1a1a1a url(/assets/img/rhodes-about.jpg) center/cover no-repeat;" data-overlay="5">
+<section class="bg-cover island-section" style="background:#1a1a1a url(/assets/img/rhodes-about.webp) center 35%/cover no-repeat;" data-overlay="5">
 	<div class="container">
 		<div class="row">
 
@@ -181,4 +175,17 @@ import { process2 } from '../lib/data/context';
 	<SearchOffcanvas />
 
   <Footer />
+
+<style is:global>
+  @media (max-width: 767px) {
+    /* Island of Rhodes band: shorter on mobile */
+    .island-section .py-5 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+    .island-section .my-4 { margin-top: 0 !important; margin-bottom: 0 !important; }
+    .island-section .fs-5 { font-size: 0.95rem !important; }
+    /* Mission: bring the image closer to the heading/text, less empty space */
+    section.pb-5 { padding-bottom: 1rem !important; }
+    .missionImg { margin-bottom: 1rem; }
+    .missioncaps .d-block.mb-4 { margin-bottom: 0.75rem !important; }
+  }
+</style>
 </Base>

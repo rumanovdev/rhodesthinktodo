@@ -35,7 +35,7 @@ if (Astro.locals.supabase) {
   title="Rhodes Things to Do | Tours, Hotels & Restaurants"
   description="Discover the best things to do in Rhodes, Greece — top-rated restaurants, hotels, tours, activities, bars & shopping, with real local reviews."
   canonical="/"
-  preloadImage="/assets/img/hero-rhodes.jpg"
+  preloadImage="/assets/img/hero-rhodes.webp"
 >
   <Navbar headerClass="header header-light head-shadow" />
 
@@ -44,7 +44,7 @@ if (Astro.locals.supabase) {
 <div class="clearfix"></div>
 
 <!-- Hero Start -->
-<div class="image-cover hero-header full-height position-relative" style="background:url(/assets/img/hero-rhodes.jpg)no-repeat;" data-overlay="6">
+<div class="image-cover hero-header full-height position-relative" style="background:url(/assets/img/hero-rhodes.webp)no-repeat;" data-overlay="6">
 	<div class="container">
 
 		<!-- Heading Rwo -->
@@ -75,9 +75,8 @@ if (Astro.locals.supabase) {
 							</div>
 						</div>
 						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-							<div class="form-group fw-medium lights-bg">
-								<div class="selects">
-									<select name="category" class="categories form-control">
+							<div class="form-group position-relative">
+									<select name="category" class="form-control fs-6 fw-medium hero-cat">
 										<option value="">{t('hero.allCategories')}</option>
 										<option value="restaurant">Eat & Drinking</option>
 										<option value="real-estate">Accommodations</option>
@@ -90,7 +89,6 @@ if (Astro.locals.supabase) {
 										<option value="tours">Tours</option>
 									</select>
 								</div>
-							</div>
 						</div>
 						<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12">
 							<div class="form-group">

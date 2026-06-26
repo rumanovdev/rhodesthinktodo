@@ -73,7 +73,6 @@ const markersPayload = mappable.map((l) => ({
           {hasFilter ? `Results for ${filterLabel}` : 'Explore listings on the map'}
         </h1>
         <p class="text-muted mb-0">
-          {totalCount} {totalCount === 1 ? 'listing' : 'listings'} {hasFilter ? 'matching' : 'published'} · {mappableCount} on the map
           {hasFilter && (
             <> · <a href="/listings-map/" class="text-primary fw-medium">clear filters</a></>
           )}

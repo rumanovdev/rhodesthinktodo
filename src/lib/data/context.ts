@@ -307,7 +307,7 @@ export const blogs = [
   {
     id: 1,
     slug: 'best-things-to-do-in-rhodes',
-    img: '/assets/img/blog-1.jpg',
+    img: '/assets/img/blog-1.webp',
     title: 'Best Things to Do in Rhodes: 15 Top Experiences (2026 Guide)',
     desc: 'From the medieval Old Town and the Acropolis of Lindos to the best beaches and a day trip to Symi — here are the top things to do in Rhodes, Greece.',
     author: 'Rhodes Things To Do',
@@ -335,7 +335,7 @@ export const blogs = [
   {
     id: 2,
     slug: 'rhodes-3-day-itinerary',
-    img: '/assets/img/blog-2.jpg',
+    img: '/assets/img/blog-2.webp',
     title: 'The Perfect 3 Days in Rhodes: A Complete Itinerary',
     desc: 'How to spend 3 perfect days in Rhodes, Greece — the Old Town, Lindos and the east coast beaches, plus the Valley of the Butterflies and a day trip.',
     author: 'Rhodes Things To Do',
@@ -355,7 +355,7 @@ export const blogs = [
   {
     id: 3,
     slug: 'best-beaches-in-rhodes',
-    img: '/assets/img/blog-3.jpg',
+    img: '/assets/img/blog-3.webp',
     title: 'Best Beaches in Rhodes: 10 You Shouldn\'t Miss',
     desc: 'The 10 best beaches in Rhodes, Greece — from family-friendly Tsambika to the snorkelling coves of Anthony Quinn Bay and the windsurf haven of Prasonisi.',
     author: 'Rhodes Things To Do',
@@ -3008,27 +3008,27 @@ export const experts = [
 // articles data
 export const articles = [
   {
-    img: '/assets/img/blog-1.jpg',
+    img: '/assets/img/blog-1.webp',
     title: 'Top 10 Free Bootstrap Templates for Your Next Project',
     date: 'Sep 10 2025',
   },
   {
-    img: '/assets/img/blog-2.jpg',
+    img: '/assets/img/blog-2.webp',
     title: 'Top 10 Free Bootstrap Templates for Your Next Project',
     date: 'Sep 10 2025',
   },
   {
-    img: '/assets/img/blog-3.jpg',
+    img: '/assets/img/blog-3.webp',
     title: 'Top 10 Free Bootstrap Templates for Your Next Project',
     date: 'Sep 10 2025',
   },
   {
-    img: '/assets/img/blog-4.jpg',
+    img: '/assets/img/blog-4.webp',
     title: 'Top 10 Free Bootstrap Templates for Your Next Project',
     date: 'Sep 10 2025',
   },
   {
-    img: '/assets/img/blog-5.jpg',
+    img: '/assets/img/blog-5.webp',
     title: 'Top 10 Free Bootstrap Templates for Your Next Project',
     date: 'Sep 10 2025',
   },

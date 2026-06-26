@@ -5,7 +5,7 @@ export const SITE = {
   url: 'https://rhodesthingstodo.com',
   description:
     'Discover the best things to do in Rhodes, Greece — restaurants & tavernas, hotels & stays, tours, activities, bars, shopping and more. Browse high-rated listings and local reviews.',
-  defaultOgImage: '/assets/img/hero-rhodes.jpg',
+  defaultOgImage: '/assets/img/hero-rhodes.webp',
   locale: 'en_US',
   // Contact / NAP — keep in sync with the footer and LocalBusiness schema.
   phone: '+30 690 791 7676',
