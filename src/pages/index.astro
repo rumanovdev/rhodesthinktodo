@@ -14,6 +14,35 @@ export const prerender = false;
 const locale: Locale = (Astro.locals as any).locale ?? DEFAULT_LOCALE;
 const t = useTranslations(locale);
 
+// GEO/AEO: concise, factual answers AI engines and Google can cite directly.
+const homeFaq = [
+  {
+    q: 'When is the best time to visit Rhodes?',
+    a: 'The best time to visit Rhodes is from late April to June and in September to October, when the weather is warm, the sea is swimmable and the crowds are smaller. July and August are the hottest and busiest months, ideal for beach holidays and nightlife.',
+  },
+  {
+    q: 'How many days do you need in Rhodes?',
+    a: '3 to 4 days are enough to see the highlights of Rhodes — the medieval Old Town, Lindos and a few of the best beaches. With 5 to 7 days you can also add boat trips, the Valley of the Butterflies and day excursions to nearby islands like Symi.',
+  },
+  {
+    q: 'Is Rhodes expensive?',
+    a: 'Rhodes is moderately priced and generally cheaper than islands like Mykonos or Santorini. Traditional tavernas and local beaches are affordable, while prices for hotels and tours rise in peak season (July–August). Travelling in spring or autumn is the most budget-friendly.',
+  },
+  {
+    q: 'Can you explore Rhodes without a car?',
+    a: 'Yes. Rhodes Town and the Old Town are easily explored on foot, and regular buses and boats connect to Lindos, Faliraki and the main beaches. A rental car or scooter is only needed if you want to reach remote villages and quieter coves on your own schedule.',
+  },
+];
+const homeFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: homeFaq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 // Show the 8 most recent / featured listings on the home page. Falls back to an empty array
 // if Supabase isn't reachable — the rest of the page still renders.
 const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 6 });
@@ -36,6 +65,7 @@ if (Astro.locals.supabase) {
   description="Discover the best things to do in Rhodes, Greece — top-rated restaurants, hotels, tours, activities, bars & shopping, with real local reviews."
   canonical="/"
   preloadImage="/assets/img/hero-rhodes.webp"
+  schema={homeFaqSchema}
 >
   <Navbar headerClass="header header-light head-shadow" />
 
@@ -449,9 +479,43 @@ if (Astro.locals.supabase) {
 <!-- Latest Updates End -->
 
 
-<!-- Call To Action Start -->
-
-<!-- Call To Action Start -->
+<!-- Rhodes Travel FAQ (GEO/AEO) -->
+<section class="bg-light">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center mb-4">
+					<h2 class="sectionHeading">Rhodes Travel <span class="text-primary">Questions</span></h2>
+				</div>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-xl-9 col-lg-10 col-md-12">
+				<div class="accordion accordion-flush homeFaq" id="homeFaqAcc">
+					{homeFaq.map((item, i) => (
+					<div class="accordion-item border rounded-3 mb-3">
+						<h3 class="accordion-header">
+							<button class={`accordion-button ${i === 0 ? '' : 'collapsed'} fw-medium`} type="button" data-bs-toggle="collapse" data-bs-target={`#hfaq-${i}`} aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`hfaq-${i}`}>
+								{item.q}
+							</button>
+						</h3>
+						<div id={`hfaq-${i}`} class={`accordion-collapse collapse ${i === 0 ? 'show' : ''}`} data-bs-parent="#homeFaqAcc">
+							<div class="accordion-body text-muted">{item.a}</div>
+						</div>
+					</div>
+					))}
+				</div>
+				<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+					<a href="/listings-map/?category=tours" class="badge badge-primary rounded-pill px-3 py-2">Boat Trips & Tours</a>
+					<a href="/listings-map/?category=restaurant" class="badge badge-primary rounded-pill px-3 py-2">Restaurants</a>
+					<a href="/listings-map/?category=real-estate" class="badge badge-primary rounded-pill px-3 py-2">Hotels & Stays</a>
+					<a href="/listings-map/?category=activities" class="badge badge-primary rounded-pill px-3 py-2">Beaches & Attractions</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Rhodes Travel FAQ End -->
 
 
 	<!-- Components/Home/index/log.html -->
