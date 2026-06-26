@@ -13,6 +13,7 @@ const STATIC_PATHS = [
   '/listings/',
   '/listings-map/',
   '/about-us/',
+  '/why/',
   '/blog/',
   '/contact-us/',
   '/faq/',
