@@ -4,96 +4,234 @@ import Navbar from '../components/nav/Navbar.astro';
 import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import { DEFAULT_LOCALE, type Locale } from '../lib/i18n';
 
-const bestOf = [
-  'Εστιατόρια', 'Τοπικά προϊόντα & γεύσεις', 'Boat trips', 'Beaches',
-  'Hotels', 'Travel agencies', 'Transfers', 'Rent a car & moto',
-  'Water sports', 'Spa', 'Bars', 'Cafés', 'Χωριά', 'Κρυμμένα σημεία',
-];
+const locale: Locale = (Astro.locals as any).locale ?? DEFAULT_LOCALE;
+
+const en = {
+  meta: { title: 'Why we created Rhodes Things To Do', desc: 'The story and philosophy behind Rhodes Things To Do — the digital showcase of the best experiences in Rhodes, with no commissions and no middlemen.' },
+  kicker: 'Our story',
+  title: 'Why we created<br><span class="text-primary">Rhodes Things To Do</span>',
+  tagline: 'Rhodes tourism deserves something better.',
+  lead: 'We are not building yet another tourist portal. We are building the <strong>digital showcase of the best experiences in Rhodes</strong>.',
+  p1: 'Local businesses have grown increasingly dependent on large international booking platforms that charge high commissions, limit their visibility and often turn the local professional into just another number among millions of listings.',
+  p2: 'To get noticed today, a business needs big advertising budgets, specialised know-how, complex marketing tools and commissions that often absorb a large part of its profit.',
+  quote1a: 'Many remarkable people do not fall short on quality.',
+  quote1b: 'They only fall short on visibility.',
+  p3: 'And that is exactly what we want to change. Rhodes Things To Do brings together in one place the very best the island has to offer — not the most businesses, <strong>the best ones</strong>. The ones that stand out for their quality, authenticity, hospitality and the experience they offer.',
+  statement: 'Visitors will not just find a list of businesses. They will discover the real Rhodes.',
+  bestOfLabel: 'Best of',
+  bestOf: ['Restaurants', 'Local flavours', 'Boat trips', 'Beaches', 'Hotels', 'Travel agencies', 'Transfers', 'Rent a car & moto', 'Water sports', 'Spa', 'Bars & Cafés', 'Villages & hidden gems'],
+  pAfterGrid: '…and the experiences you will not easily find in an ordinary travel guide.',
+  quote2a: 'We want every visitor to feel not like they are seeing an advert,',
+  quote2b: 'but like a local friend who truly loves Rhodes is showing them around.',
+  pillars: ['No middlemen', 'We don’t sell experiences', 'No commissions', 'No price markups'],
+  p4: 'Each partner presents their business exactly as they wish — with their own photos, their own content, their own website and their own contact details. Visitors reach the professional <strong>directly</strong>: no intermediaries, no hidden fees, no restrictions.',
+  p5: 'All we ask for is <strong>quality, consistency and a shared vision</strong>: to build together the most trustworthy, human and high-quality travel guide for Rhodes.',
+  finale: 'When local entrepreneurship is showcased properly, everyone wins.',
+  winsLabel: 'Wins',
+  wins: ['the visitor', 'the business', 'Rhodes'],
+  cta: 'Become a partner',
+};
+
+const el = {
+  meta: { title: 'Γιατί δημιουργήσαμε το Rhodes Things To Do', desc: 'Η ιστορία και η φιλοσοφία πίσω από το Rhodes Things To Do — η ψηφιακή βιτρίνα των καλύτερων εμπειριών της Ρόδου, χωρίς προμήθειες και χωρίς μεσάζοντες.' },
+  kicker: 'Η ιστορία μας',
+  title: 'Γιατί δημιουργήσαμε το<br><span class="text-primary">Rhodes Things To Do</span>',
+  tagline: 'Ο τουρισμός της Ρόδου αξίζει κάτι καλύτερο.',
+  lead: 'Δεν δημιουργούμε ακόμη ένα τουριστικό portal. Δημιουργούμε τη <strong>ψηφιακή βιτρίνα των καλύτερων εμπειριών της Ρόδου</strong>.',
+  p1: 'Οι τοπικές επιχειρήσεις έχουν γίνει όλο και πιο εξαρτημένες από μεγάλες διεθνείς πλατφόρμες κρατήσεων που επιβάλλουν υψηλές προμήθειες, περιορίζουν την προβολή τους και συχνά μετατρέπουν τον τοπικό επαγγελματία σε έναν ακόμη αριθμό μέσα σε εκατομμύρια καταχωρήσεις.',
+  p2: 'Σήμερα, για να προβληθεί μια επιχείρηση, χρειάζονται μεγάλα διαφημιστικά budgets, εξειδικευμένες γνώσεις, πολύπλοκα εργαλεία marketing και προμήθειες που απορροφούν ένα σημαντικό μέρος του κέρδους της.',
+  quote1a: 'Πολλοί αξιόλογοι άνθρωποι δεν υστερούν στην ποιότητα.',
+  quote1b: 'Υστερούν μόνο στην προβολή.',
+  p3: 'Και αυτό ακριβώς θέλουμε να αλλάξουμε. Το Rhodes Things To Do ενώνει σε ένα σημείο ό,τι καλύτερο έχει να προσφέρει η Ρόδος — όχι τις περισσότερες επιχειρήσεις, <strong>τις καλύτερες</strong>. Εκείνες που ξεχωρίζουν για την ποιότητα, την αυθεντικότητα, τη φιλοξενία και την εμπειρία που προσφέρουν.',
+  statement: 'Ο επισκέπτης δεν θα βρίσκει απλώς μια λίστα επιχειρήσεων. Θα ανακαλύπτει την πραγματική Ρόδο.',
+  bestOfLabel: 'Τα καλύτερα',
+  bestOf: ['Εστιατόρια', 'Τοπικές γεύσεις', 'Boat trips', 'Παραλίες', 'Ξενοδοχεία', 'Travel agencies', 'Transfers', 'Rent a car & moto', 'Water sports', 'Spa', 'Bars & Cafés', 'Χωριά & κρυμμένα σημεία'],
+  pAfterGrid: '…και τις εμπειρίες που δεν βρίσκονται εύκολα σε έναν συνηθισμένο ταξιδιωτικό οδηγό.',
+  quote2a: 'Θέλουμε κάθε επισκέπτης να νιώθει ότι δεν βλέπει μια διαφήμιση,',
+  quote2b: 'αλλά ότι τον ξεναγεί ένας ντόπιος φίλος που αγαπά πραγματικά τη Ρόδο.',
+  pillars: ['Χωρίς μεσάζοντες', 'Δεν πουλάμε εμπειρίες', 'Χωρίς προμήθειες', 'Χωρίς αύξηση τιμών'],
+  p4: 'Κάθε συνεργάτης παρουσιάζει την επιχείρησή του ακριβώς όπως επιθυμεί — με τις δικές του φωτογραφίες, το δικό του περιεχόμενο, το δικό του website και τα δικά του στοιχεία. Ο επισκέπτης επικοινωνεί <strong>απευθείας</strong> με τον επαγγελματία: χωρίς ενδιάμεσους, χωρίς κρυφές χρεώσεις, χωρίς περιορισμούς.',
+  p5: 'Το μόνο που ζητάμε είναι <strong>ποιότητα, συνέπεια και κοινό όραμα</strong>: να δημιουργήσουμε όλοι μαζί τον πιο αξιόπιστο, ανθρώπινο και ποιοτικό τουριστικό οδηγό της Ρόδου.',
+  finale: 'Όταν αναδεικνύεται σωστά η τοπική επιχειρηματικότητα, κερδίζουν όλοι.',
+  winsLabel: 'Κερδίζει',
+  wins: ['ο επισκέπτης', 'η επιχείρηση', 'η Ρόδος'],
+  cta: 'Γίνε συνεργάτης',
+};
+
+const de = {
+  meta: { title: 'Warum wir Rhodes Things To Do erschaffen haben', desc: 'Die Geschichte und Philosophie hinter Rhodes Things To Do — das digitale Schaufenster der besten Erlebnisse auf Rhodos, ohne Provisionen und ohne Mittelsmänner.' },
+  kicker: 'Unsere Geschichte',
+  title: 'Warum wir<br><span class="text-primary">Rhodes Things To Do</span> erschaffen haben',
+  tagline: 'Der Tourismus auf Rhodos verdient etwas Besseres.',
+  lead: 'Wir bauen nicht noch ein weiteres Tourismusportal. Wir bauen das <strong>digitale Schaufenster der besten Erlebnisse auf Rhodos</strong>.',
+  p1: 'Lokale Unternehmen sind zunehmend von großen internationalen Buchungsplattformen abhängig geworden, die hohe Provisionen verlangen, ihre Sichtbarkeit einschränken und den lokalen Anbieter oft zu einer weiteren Nummer unter Millionen von Einträgen machen.',
+  p2: 'Um heute sichtbar zu sein, braucht ein Unternehmen große Werbebudgets, Spezialwissen, komplexe Marketing-Tools und Provisionen, die oft einen großen Teil des Gewinns verschlingen.',
+  quote1a: 'Vielen großartigen Menschen mangelt es nicht an Qualität.',
+  quote1b: 'Es mangelt ihnen nur an Sichtbarkeit.',
+  p3: 'Und genau das wollen wir ändern. Rhodes Things To Do vereint an einem Ort das Beste, was die Insel zu bieten hat — nicht die meisten Unternehmen, <strong>die besten</strong>. Jene, die sich durch Qualität, Authentizität, Gastfreundschaft und Erlebnis auszeichnen.',
+  statement: 'Besucher finden nicht einfach eine Liste von Unternehmen. Sie entdecken das echte Rhodos.',
+  bestOfLabel: 'Das Beste',
+  bestOf: ['Restaurants', 'Lokale Spezialitäten', 'Bootstouren', 'Strände', 'Hotels', 'Reisebüros', 'Transfers', 'Auto- & Rollervermietung', 'Wassersport', 'Spa', 'Bars & Cafés', 'Dörfer & versteckte Orte'],
+  pAfterGrid: '…und die Erlebnisse, die man in einem gewöhnlichen Reiseführer nicht leicht findet.',
+  quote2a: 'Jeder Besucher soll nicht das Gefühl haben, eine Werbung zu sehen,',
+  quote2b: 'sondern als würde ein einheimischer Freund, der Rhodos liebt, ihn herumführen.',
+  pillars: ['Keine Mittelsmänner', 'Wir verkaufen keine Erlebnisse', 'Keine Provisionen', 'Keine Preisaufschläge'],
+  p4: 'Jeder Partner präsentiert sein Unternehmen genau so, wie er möchte — mit eigenen Fotos, eigenem Inhalt, eigener Website und eigenen Kontaktdaten. Besucher erreichen den Anbieter <strong>direkt</strong>: keine Zwischenhändler, keine versteckten Gebühren, keine Einschränkungen.',
+  p5: 'Wir verlangen nur <strong>Qualität, Beständigkeit und eine gemeinsame Vision</strong>: gemeinsam den vertrauenswürdigsten, menschlichsten und hochwertigsten Reiseführer für Rhodos zu schaffen.',
+  finale: 'Wenn lokales Unternehmertum richtig präsentiert wird, gewinnen alle.',
+  winsLabel: 'Es gewinnt', wins: ['der Besucher', 'das Unternehmen', 'Rhodos'], cta: 'Partner werden',
+};
+const fr = {
+  meta: { title: 'Pourquoi nous avons créé Rhodes Things To Do', desc: 'L’histoire et la philosophie derrière Rhodes Things To Do — la vitrine numérique des meilleures expériences de Rhodes, sans commissions ni intermédiaires.' },
+  kicker: 'Notre histoire',
+  title: 'Pourquoi nous avons créé<br><span class="text-primary">Rhodes Things To Do</span>',
+  tagline: 'Le tourisme de Rhodes mérite quelque chose de mieux.',
+  lead: 'Nous ne créons pas un énième portail touristique. Nous créons la <strong>vitrine numérique des meilleures expériences de Rhodes</strong>.',
+  p1: 'Les entreprises locales sont devenues de plus en plus dépendantes des grandes plateformes de réservation internationales qui imposent des commissions élevées, limitent leur visibilité et transforment souvent le professionnel local en un numéro parmi des millions d’annonces.',
+  p2: 'Aujourd’hui, pour être visible, une entreprise a besoin de gros budgets publicitaires, de connaissances spécialisées, d’outils marketing complexes et de commissions qui absorbent souvent une grande partie de son bénéfice.',
+  quote1a: 'Beaucoup de personnes remarquables ne manquent pas de qualité.',
+  quote1b: 'Elles manquent seulement de visibilité.',
+  p3: 'Et c’est exactement ce que nous voulons changer. Rhodes Things To Do réunit en un seul endroit le meilleur de l’île — pas le plus d’entreprises, <strong>les meilleures</strong>. Celles qui se distinguent par leur qualité, leur authenticité, leur hospitalité et l’expérience qu’elles offrent.',
+  statement: 'Les visiteurs ne trouveront pas seulement une liste d’entreprises. Ils découvriront la vraie Rhodes.',
+  bestOfLabel: 'Le meilleur',
+  bestOf: ['Restaurants', 'Saveurs locales', 'Excursions en bateau', 'Plages', 'Hôtels', 'Agences de voyage', 'Transferts', 'Location voiture & moto', 'Sports nautiques', 'Spa', 'Bars & Cafés', 'Villages & lieux cachés'],
+  pAfterGrid: '…et les expériences que l’on ne trouve pas facilement dans un guide de voyage ordinaire.',
+  quote2a: 'Nous voulons que chaque visiteur ait l’impression non pas de voir une publicité,',
+  quote2b: 'mais qu’un ami local qui aime vraiment Rhodes lui fasse découvrir l’île.',
+  pillars: ['Sans intermédiaires', 'Nous ne vendons pas d’expériences', 'Sans commissions', 'Sans majoration de prix'],
+  p4: 'Chaque partenaire présente son entreprise exactement comme il le souhaite — avec ses propres photos, son propre contenu, son propre site web et ses propres coordonnées. Les visiteurs contactent le professionnel <strong>directement</strong> : sans intermédiaires, sans frais cachés, sans restrictions.',
+  p5: 'Tout ce que nous demandons, c’est <strong>la qualité, la constance et une vision commune</strong> : construire ensemble le guide de voyage le plus fiable, le plus humain et le plus qualitatif de Rhodes.',
+  finale: 'Quand l’entrepreneuriat local est bien mis en valeur, tout le monde y gagne.',
+  winsLabel: 'Gagne', wins: ['le visiteur', 'l’entreprise', 'Rhodes'], cta: 'Devenir partenaire',
+};
+const es = {
+  meta: { title: 'Por qué creamos Rhodes Things To Do', desc: 'La historia y la filosofía detrás de Rhodes Things To Do — el escaparate digital de las mejores experiencias de Rodas, sin comisiones ni intermediarios.' },
+  kicker: 'Nuestra historia',
+  title: 'Por qué creamos<br><span class="text-primary">Rhodes Things To Do</span>',
+  tagline: 'El turismo de Rodas merece algo mejor.',
+  lead: 'No creamos un portal turístico más. Creamos el <strong>escaparate digital de las mejores experiencias de Rodas</strong>.',
+  p1: 'Las empresas locales se han vuelto cada vez más dependientes de las grandes plataformas internacionales de reservas, que imponen comisiones altas, limitan su visibilidad y a menudo convierten al profesional local en un número más entre millones de anuncios.',
+  p2: 'Hoy, para destacar, una empresa necesita grandes presupuestos publicitarios, conocimientos especializados, herramientas de marketing complejas y comisiones que a menudo absorben gran parte de su beneficio.',
+  quote1a: 'A muchas personas valiosas no les falta calidad.',
+  quote1b: 'Solo les falta visibilidad.',
+  p3: 'Y eso es exactamente lo que queremos cambiar. Rhodes Things To Do reúne en un solo lugar lo mejor de la isla — no las más empresas, <strong>las mejores</strong>. Las que destacan por su calidad, autenticidad, hospitalidad y la experiencia que ofrecen.',
+  statement: 'Los visitantes no encontrarán solo una lista de empresas. Descubrirán la verdadera Rodas.',
+  bestOfLabel: 'Lo mejor',
+  bestOf: ['Restaurantes', 'Sabores locales', 'Excursiones en barco', 'Playas', 'Hoteles', 'Agencias de viajes', 'Traslados', 'Alquiler de coche y moto', 'Deportes acuáticos', 'Spa', 'Bares y cafés', 'Pueblos y rincones escondidos'],
+  pAfterGrid: '…y las experiencias que no se encuentran fácilmente en una guía de viajes corriente.',
+  quote2a: 'Queremos que cada visitante sienta que no ve un anuncio,',
+  quote2b: 'sino que un amigo local que ama Rodas le muestra la isla.',
+  pillars: ['Sin intermediarios', 'No vendemos experiencias', 'Sin comisiones', 'Sin recargos de precio'],
+  p4: 'Cada socio presenta su negocio exactamente como desea — con sus propias fotos, su propio contenido, su propia web y sus propios datos de contacto. Los visitantes contactan con el profesional <strong>directamente</strong>: sin intermediarios, sin cargos ocultos, sin restricciones.',
+  p5: 'Lo único que pedimos es <strong>calidad, constancia y una visión común</strong>: construir juntos la guía de viajes más fiable, humana y de mayor calidad de Rodas.',
+  finale: 'Cuando se da a conocer bien el emprendimiento local, todos ganan.',
+  winsLabel: 'Gana', wins: ['el visitante', 'la empresa', 'Rodas'], cta: 'Hazte socio',
+};
+const it = {
+  meta: { title: 'Perché abbiamo creato Rhodes Things To Do', desc: 'La storia e la filosofia dietro Rhodes Things To Do — la vetrina digitale delle migliori esperienze di Rodi, senza commissioni e senza intermediari.' },
+  kicker: 'La nostra storia',
+  title: 'Perché abbiamo creato<br><span class="text-primary">Rhodes Things To Do</span>',
+  tagline: 'Il turismo di Rodi merita qualcosa di meglio.',
+  lead: 'Non stiamo creando l’ennesimo portale turistico. Stiamo creando la <strong>vetrina digitale delle migliori esperienze di Rodi</strong>.',
+  p1: 'Le attività locali sono diventate sempre più dipendenti dalle grandi piattaforme di prenotazione internazionali che impongono commissioni elevate, ne limitano la visibilità e spesso trasformano il professionista locale in un numero tra milioni di annunci.',
+  p2: 'Oggi, per farsi notare, un’attività ha bisogno di grandi budget pubblicitari, competenze specializzate, strumenti di marketing complessi e commissioni che spesso assorbono gran parte del profitto.',
+  quote1a: 'A molte persone valide non manca la qualità.',
+  quote1b: 'Manca loro solo la visibilità.',
+  p3: 'Ed è esattamente ciò che vogliamo cambiare. Rhodes Things To Do riunisce in un unico posto il meglio dell’isola — non le attività più numerose, <strong>le migliori</strong>. Quelle che si distinguono per qualità, autenticità, ospitalità e per l’esperienza che offrono.',
+  statement: 'I visitatori non troveranno solo un elenco di attività. Scopriranno la vera Rodi.',
+  bestOfLabel: 'Il meglio',
+  bestOf: ['Ristoranti', 'Sapori locali', 'Gite in barca', 'Spiagge', 'Hotel', 'Agenzie di viaggio', 'Transfer', 'Noleggio auto e moto', 'Sport acquatici', 'Spa', 'Bar e caffè', 'Villaggi e luoghi nascosti'],
+  pAfterGrid: '…e le esperienze che non si trovano facilmente in una normale guida di viaggio.',
+  quote2a: 'Vogliamo che ogni visitatore non senta di vedere una pubblicità,',
+  quote2b: 'ma che un amico del posto che ama Rodi gli faccia da guida.',
+  pillars: ['Senza intermediari', 'Non vendiamo esperienze', 'Senza commissioni', 'Senza ricarichi sui prezzi'],
+  p4: 'Ogni partner presenta la propria attività esattamente come desidera — con le proprie foto, i propri contenuti, il proprio sito e i propri contatti. I visitatori raggiungono il professionista <strong>direttamente</strong>: senza intermediari, senza costi nascosti, senza restrizioni.',
+  p5: 'Tutto ciò che chiediamo è <strong>qualità, costanza e una visione comune</strong>: costruire insieme la guida di viaggio più affidabile, umana e di qualità di Rodi.',
+  finale: 'Quando l’imprenditoria locale viene valorizzata bene, vincono tutti.',
+  winsLabel: 'Vince', wins: ['il visitatore', 'l’attività', 'Rodi'], cta: 'Diventa partner',
+};
+const nl = {
+  meta: { title: 'Waarom we Rhodes Things To Do hebben gemaakt', desc: 'Het verhaal en de filosofie achter Rhodes Things To Do — het digitale uitstalraam van de beste ervaringen op Rhodos, zonder commissies en zonder tussenpersonen.' },
+  kicker: 'Ons verhaal',
+  title: 'Waarom we<br><span class="text-primary">Rhodes Things To Do</span> hebben gemaakt',
+  tagline: 'Het toerisme van Rhodos verdient iets beters.',
+  lead: 'We bouwen niet zomaar nóg een toeristisch portaal. We bouwen het <strong>digitale uitstalraam van de beste ervaringen op Rhodos</strong>.',
+  p1: 'Lokale bedrijven zijn steeds afhankelijker geworden van grote internationale boekingsplatforms die hoge commissies opleggen, hun zichtbaarheid beperken en de lokale ondernemer vaak veranderen in zomaar een nummer tussen miljoenen vermeldingen.',
+  p2: 'Om vandaag op te vallen heeft een bedrijf grote reclamebudgetten, gespecialiseerde kennis, complexe marketingtools en commissies nodig die vaak een groot deel van de winst opslokken.',
+  quote1a: 'Veel waardevolle mensen komen niet tekort in kwaliteit.',
+  quote1b: 'Ze komen alleen tekort in zichtbaarheid.',
+  p3: 'En dat is precies wat we willen veranderen. Rhodes Things To Do brengt op één plek het beste samen wat het eiland te bieden heeft — niet de meeste bedrijven, <strong>de beste</strong>. Die zich onderscheiden door kwaliteit, authenticiteit, gastvrijheid en de ervaring die ze bieden.',
+  statement: 'Bezoekers vinden niet zomaar een lijst met bedrijven. Ze ontdekken het echte Rhodos.',
+  bestOfLabel: 'Het beste',
+  bestOf: ['Restaurants', 'Lokale smaken', 'Boottochten', 'Stranden', 'Hotels', 'Reisbureaus', 'Transfers', 'Auto- & scooterverhuur', 'Watersport', 'Spa', 'Bars & cafés', 'Dorpen & verborgen plekjes'],
+  pAfterGrid: '…en de ervaringen die je niet gemakkelijk vindt in een gewone reisgids.',
+  quote2a: 'We willen dat elke bezoeker niet het gevoel heeft een advertentie te zien,',
+  quote2b: 'maar dat een lokale vriend die echt van Rhodos houdt hem rondleidt.',
+  pillars: ['Geen tussenpersonen', 'We verkopen geen ervaringen', 'Geen commissies', 'Geen prijsverhogingen'],
+  p4: 'Elke partner presenteert zijn bedrijf precies zoals hij wil — met eigen foto’s, eigen content, eigen website en eigen contactgegevens. Bezoekers bereiken de professional <strong>rechtstreeks</strong>: geen tussenpersonen, geen verborgen kosten, geen beperkingen.',
+  p5: 'Het enige wat we vragen is <strong>kwaliteit, consistentie en een gedeelde visie</strong>: samen de meest betrouwbare, menselijke en hoogwaardige reisgids voor Rhodos bouwen.',
+  finale: 'Wanneer lokaal ondernemerschap goed wordt belicht, wint iedereen.',
+  winsLabel: 'Wint', wins: ['de bezoeker', 'het bedrijf', 'Rhodos'], cta: 'Word partner',
+};
+
+const byLocale: Record<string, typeof en> = { en, el, de, fr, es, it, nl } as any;
+const c = byLocale[locale] ?? en;
 ---
-<Base
-  title="Γιατί δημιουργήσαμε το Rhodes Things To Do"
-  description="Η ιστορία και η φιλοσοφία πίσω από το Rhodes Things To Do — η ψηφιακή βιτρίνα των καλύτερων εμπειριών της Ρόδου, χωρίς προμήθειες και χωρίς μεσάζοντες."
-  canonical="/why/"
->
+<Base title={c.meta.title} description={c.meta.desc} canonical="/why/">
   <Navbar headerClass="header header-light head-shadow" />
 
-  <!-- Hero -->
   <section class="why-hero">
     <div class="container text-center">
-      <span class="why-kicker">Η ιστορία μας</span>
-      <h1 class="why-title">Γιατί δημιουργήσαμε το<br><span class="text-primary">Rhodes Things To Do</span></h1>
-      <p class="why-tagline">Ο τουρισμός της Ρόδου αξίζει κάτι καλύτερο.</p>
+      <span class="why-kicker">{c.kicker}</span>
+      <h1 class="why-title" set:html={c.title}></h1>
+      <p class="why-tagline">{c.tagline}</p>
     </div>
   </section>
 
-  <!-- Body -->
   <section class="why-body">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-xl-8 col-lg-9 col-md-11">
-
-          <p class="why-lead">Δεν δημιουργούμε ακόμη ένα τουριστικό portal. Δημιουργούμε τη <strong>ψηφιακή βιτρίνα των καλύτερων εμπειριών της Ρόδου</strong>.</p>
-
-          <p>Έναν χώρο αφιερωμένο στους ανθρώπους που αγαπούν πραγματικά αυτόν τον τόπο. Στους επαγγελματίες που εργάζονται καθημερινά με πάθος, ποιότητα και σεβασμό προς τον επισκέπτη, αλλά συχνά παραμένουν στη σκιά των μεγάλων διεθνών πλατφορμών.</p>
-
-          <p>Σήμερα, για να προβληθεί μια τοπική επιχείρηση, χρειάζονται μεγάλα διαφημιστικά budgets, εξειδικευμένες γνώσεις, πολύπλοκα εργαλεία marketing και προμήθειες που πολλές φορές απορροφούν ένα σημαντικό μέρος του κέρδους της.</p>
-
-          <blockquote class="why-quote">
-            Πολλοί αξιόλογοι άνθρωποι δεν υστερούν στην ποιότητα.<br>
-            <span class="text-primary">Υστερούν μόνο στην προβολή.</span>
-          </blockquote>
-
-          <p>Και αυτό ακριβώς θέλουμε να αλλάξουμε. Το Rhodes Things To Do δημιουργείται για να ενώσει σε ένα σημείο ό,τι καλύτερο έχει να προσφέρει η Ρόδος. Όχι τις περισσότερες επιχειρήσεις — <strong>τις καλύτερες</strong>. Εκείνες που ξεχωρίζουν για την ποιότητα, την αυθεντικότητα, τη φιλοξενία και την εμπειρία που προσφέρουν.</p>
-
-          <p class="why-statement">Ο επισκέπτης δεν θα βρίσκει απλώς μια λίστα επιχειρήσεων. Θα ανακαλύπτει την πραγματική Ρόδο.</p>
+          <p class="why-lead" set:html={c.lead}></p>
+          <p set:html={c.p1}></p>
+          <p set:html={c.p2}></p>
+          <blockquote class="why-quote">{c.quote1a}<br><span class="text-primary">{c.quote1b}</span></blockquote>
+          <p set:html={c.p3}></p>
+          <p class="why-statement">{c.statement}</p>
         </div>
       </div>
 
-      <!-- Best-of grid -->
       <div class="row justify-content-center">
         <div class="col-xl-9 col-lg-10">
+          <p class="why-grid-label">{c.bestOfLabel}</p>
           <div class="why-grid">
-            {bestOf.map((x) => (
-              <div class="why-grid-item"><span>Τα καλύτερα</span>{x}</div>
-            ))}
+            {c.bestOf.map((x) => (<div class="why-grid-item">{x}</div>))}
           </div>
         </div>
       </div>
 
       <div class="row justify-content-center">
         <div class="col-xl-8 col-lg-9 col-md-11">
-          <p class="mt-5">…και τις εμπειρίες που δεν βρίσκονται εύκολα σε έναν συνηθισμένο ταξιδιωτικό οδηγό.</p>
-
-          <blockquote class="why-quote">
-            Θέλουμε κάθε επισκέπτης να μη νιώθει ότι βλέπει μια διαφήμιση,<br>
-            <span class="text-primary">αλλά ότι τον ξεναγεί ένας ντόπιος φίλος που αγαπά τη Ρόδο.</span>
-          </blockquote>
-
+          <p class="mt-4">{c.pAfterGrid}</p>
+          <blockquote class="why-quote">{c.quote2a}<br><span class="text-primary">{c.quote2b}</span></blockquote>
           <div class="why-pillars">
-            <div class="why-pill">Δεν λειτουργούμε ως μεσάζοντας</div>
-            <div class="why-pill">Δεν πουλάμε εμπειρίες</div>
-            <div class="why-pill">Δεν κρατάμε προμήθειες</div>
-            <div class="why-pill">Δεν ανεβάζουμε τις τιμές</div>
+            {c.pillars.map((x) => (<div class="why-pill">{x}</div>))}
           </div>
-
-          <p>Ο κάθε συνεργάτης παρουσιάζει την επιχείρησή του ακριβώς όπως ο ίδιος επιθυμεί — με τις δικές του φωτογραφίες, το δικό του περιεχόμενο, το δικό του website και τα δικά του στοιχεία επικοινωνίας. Ο επισκέπτης επικοινωνεί <strong>απευθείας</strong> με τον επαγγελματία: χωρίς ενδιάμεσους, χωρίς κρυφές χρεώσεις, χωρίς περιορισμούς.</p>
-
-          <p>Το μόνο που ζητάμε είναι <strong>ποιότητα, συνέπεια και κοινό όραμα</strong>: να δημιουργήσουμε όλοι μαζί τον πιο αξιόπιστο, ανθρώπινο και ποιοτικό τουριστικό οδηγό της Ρόδου.</p>
+          <p set:html={c.p4}></p>
+          <p set:html={c.p5}></p>
         </div>
       </div>
 
-      <!-- Finale -->
       <div class="row justify-content-center mt-5">
         <div class="col-xl-9 col-lg-10">
-          <p class="text-center why-statement" style="margin-bottom:2.2rem !important;">Όταν αναδεικνύεται σωστά η τοπική επιχειρηματικότητα, κερδίζουν όλοι.</p>
+          <p class="text-center why-statement" style="margin-bottom:2.2rem !important;">{c.finale}</p>
           <div class="why-wins">
-            <div class="why-win"><span>Κερδίζει</span><strong>ο επισκέπτης</strong></div>
-            <div class="why-win"><span>Κερδίζει</span><strong>η επιχείρηση</strong></div>
-            <div class="why-win"><span>Κερδίζει</span><strong>η Ρόδος</strong></div>
+            {c.wins.map((w) => (<div class="why-win"><span>{c.winsLabel}</span><strong>{w}</strong></div>))}
           </div>
           <div class="text-center mt-5">
-            <a href="/contact-us/" class="btn btn-primary rounded-pill px-5 fw-medium">Γίνε συνεργάτης</a>
+            <a href="/contact-us/" class="btn btn-primary rounded-pill px-5 fw-medium">{c.cta}</a>
           </div>
         </div>
       </div>
@@ -115,18 +253,17 @@ const bestOf = [
     .why-lead { font-size: 1.3rem !important; font-weight: 600; color: #14233a !important; }
     .why-statement { font-size: 1.3rem !important; font-weight: 700; color: #14233a !important; text-align: center; margin: 2.5rem 0 !important; }
     .why-quote { border: 0; text-align: center; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.3; color: #14233a; margin: 3rem 0; }
-    .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin: 1rem 0; }
-    .why-grid-item { background: #fff; border: 1px solid #e7e3d8; border-radius: 12px; padding: 16px 18px; font-weight: 700; color: #14233a; box-shadow: 0 4px 14px rgba(0,0,0,.04); }
-    .why-grid-item span { display: block; color: var(--bs-primary); font-size: .8rem; font-weight: 700; margin-bottom: 3px; }
+    .why-grid-label { text-align:center; color:#8a93a1; font-weight:700; text-transform:uppercase; letter-spacing:.12em; font-size:.8rem; margin-bottom:1rem !important; }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin: .5rem 0; }
+    .why-grid-item { display:flex; align-items:center; gap:10px; background: #fff; border: 1px solid #e7e3d8; border-radius: 12px; padding: 15px 18px; font-weight: 700; color: #14233a; box-shadow: 0 4px 14px rgba(0,0,0,.04); }
+    .why-grid-item:before { content:""; width:9px; height:9px; border-radius:50%; background:var(--bs-primary); flex:0 0 auto; }
     .why-pillars { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 2.5rem 0; }
-    .why-pill { background: #fff; border: 1px solid #e7e3d8; border-left: 4px solid var(--bs-primary); border-radius: 12px; padding: 14px 22px; font-weight: 600; color: #14233a; font-size: 1.02rem; box-shadow: 0 4px 14px rgba(0,0,0,.04); }
+    .why-pill { background: #14233a; color:#fff; border-radius: 30px; padding: 13px 24px; font-weight: 700; font-size: 1.02rem; }
+    .why-pill:before { content:"✓ "; color:#ff8a8a; font-weight:900; }
     .why-wins { display: flex; flex-wrap: wrap; gap: 18px; }
     .why-win { flex: 1; min-width: 220px; text-align: center; background: #14233a; color: #fff; border-radius: 18px; padding: 34px 20px; }
     .why-win span { display: block; color: #cdd6e2; font-size: 1rem; margin-bottom: 6px; }
     .why-win strong { font-size: 1.5rem; color: #fff; }
-    @media (max-width: 575px) {
-      .why-body p { font-size: 1.05rem; }
-      .why-pill { width: 100%; }
-    }
+    @media (max-width: 575px) { .why-body p { font-size: 1.05rem; } }
   </style>
 </Base>
