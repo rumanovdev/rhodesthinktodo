@@ -15,14 +15,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect(target.toString(), 301);
   }
 
-  // Locale from the URL prefix (/de/, /el/ …). For non-default locales we render
-  // the un-prefixed page (rewrite). The Vercel route config is patched at build
-  // time (scripts/patch-vercel-i18n.mjs) so these prefixed URLs return 200.
-  const parsed = parsePath(context.url.pathname);
-  context.locals.locale = parsed.locale;
-  const path = parsed.path;
-  const localeRewrite =
-    parsed.locale !== DEFAULT_LOCALE ? parsed.path + context.url.search : null;
+  // Locale handling. A /de/ URL is rewritten to the un-prefixed page so the
+  // route exists; we carry the locale through the rewrite via a `__locale`
+  // query param (the rewrite re-runs this middleware, which then reads it).
+  // The Vercel route config is patched at build time so /de/* returns 200.
+  const qpLocale = context.url.searchParams.get('__locale');
+  let locale: typeof DEFAULT_LOCALE;
+  let path: string;
+  let localeRewrite: string | null = null;
+  if (qpLocale && isLocale(qpLocale)) {
+    locale = qpLocale;
+    path = context.url.pathname; // already un-prefixed by the first pass
+  } else {
+    const parsed = parsePath(context.url.pathname);
+    locale = parsed.locale;
+    path = parsed.path;
+    if (locale !== DEFAULT_LOCALE) {
+      const sp = new URLSearchParams(context.url.search);
+      sp.set('__locale', locale);
+      localeRewrite = `${parsed.path}?${sp.toString()}`;
+    }
+  }
+  context.locals.locale = locale;
 
   context.locals.user = null;
   context.locals.session = null;
