@@ -47,7 +47,7 @@ if (Astro.locals.supabase) {
 			<div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
 				<div class="position-relative text-center">
 					<h1 class="hero-title">Rhodes Things To Do</h1>
-					<p class="fs-5 fw-bold">Find top-rated restaurants, hotels, tours, beaches and activities across Rhodes, Greece, all in one place.</p>
+					<p class="fs-5 fw-bold hero-sub">Discover top-rated restaurants hotels tours beaches and activities across Rhodes — all in one place.</p>
 				</div>
 			</div>
 		</div>
@@ -479,6 +479,9 @@ if (Astro.locals.supabase) {
       font-size: clamp(2rem, 4.2vw, 3rem);
       line-height: 1.15;
       font-weight: 600;
+    }
+    @media (max-width: 575px) {
+      .hero-header .hero-sub { font-size: 0.95rem !important; line-height: 1.5; }
     }
     /* Equal-height testimonial cards so the avatar+name rows line up uniformly */
     .reviewsSlide .owl-stage { display: flex; align-items: stretch; }

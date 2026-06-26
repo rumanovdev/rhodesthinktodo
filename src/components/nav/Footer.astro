@@ -31,6 +31,7 @@ import { SITE } from '../../lib/data/site';
                         <li><a href="/help-center/">Help Center</a></li>
                         <li><a href="/faq/">FAQ</a></li>
                         <li><a href="/privacy-policy/">Privacy Policy</a></li>
+                        <li><a href="/cookie-policy/">Cookie Policy</a></li>
                         <li><a href="/register/">Create an Account</a></li>
                         <li><a href="/login/">Sign In</a></li>
                         <li><a href="/blog/">Blog</a></li>
@@ -140,4 +141,18 @@ import { SITE } from '../../lib/data/site';
   }
   /* Kill horizontal scroll on small screens */
   html, body { overflow-x: hidden; }
+  /* Mobile: stack footer columns one under the other, in order, left-aligned */
+  @media (max-width: 767px) {
+    footer.skin-dark-footer .row > [class*="col-"] {
+      flex: 0 0 100%;
+      max-width: 100%;
+      width: 100%;
+      margin-left: 0 !important;
+    }
+    footer.skin-dark-footer .footer-widget {
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    footer.skin-dark-footer .contactInfowrap { justify-content: flex-start; }
+  }
 </style>

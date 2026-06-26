@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import Subscribe from '../components/shared/Subscribe.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+---
+<Base
+  title="Cookie Policy | Rhodes Things To Do"
+  description="How Rhodes Things To Do uses cookies and Google Analytics, and how you can control your cookie preferences."
+  canonical="/cookie-policy/"
+>
+  <Navbar headerClass="header header-light head-shadow" />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Page Title Start -->
+<section class="bg-light">
+	<div class="container">
+		<div class="row justify-content-start align-items-center pt-lg-0 pt-5">
+			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
+				<div class="position-relative">
+					<h1 class="xl-heading">Cookie Policy</h1>
+					<nav id="breadcrumbs" class="breadcrumbs">
+						<ul>
+							<li><a href="/">Home</a></li>
+							<li><a href="#">Pages</a></li>
+							<li>Cookie Policy</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Page Title End -->
+
+
+<!-- Articles Section -->
+<section>
+	<div class="container">
+		<div class="row justify-content-start g-4">
+			<div class="col-xl-10 col-lg-12 col-md-12">
+				<article class="article">
+				<h2>Cookie Policy</h2>
+					<p>This Cookie Policy explains how Rhodes Things To Do uses cookies and similar technologies when you visit our website, and the choices you have.</p>
+					<h4 class="fs-4">What are cookies?</h4>
+					<p>Cookies are small text files stored on your device when you visit a website. They help the site work properly, remember your preferences, and understand how the site is used.</p>
+					<h4 class="fs-4">Which cookies we use</h4>
+					<p>We use two types of cookies:</p>
+					<ul>
+						<li><strong>Essential cookies</strong> — required for the site to function, for example to keep you signed in and to remember your cookie choice. These are always active.</li>
+						<li><strong>Analytics cookies</strong> — set by Google Analytics (GA4) to help us understand how visitors use the site so we can improve it. These are only used if you accept them.</li>
+					</ul>
+					<h4 class="fs-4">Your choices &amp; consent</h4>
+					<p>When you first visit, a banner lets you <strong>Accept</strong> or <strong>Decline</strong> analytics cookies. We use Google Consent Mode, so analytics tracking stays disabled until you accept. You can change your mind at any time by clearing your cookies, and you can also block or delete cookies through your browser settings.</p>
+					<h4 class="fs-4">Third-party cookies</h4>
+					<p>Some cookies may be set by third-party services we use, such as Google Analytics and embedded maps. These providers have their own privacy and cookie policies.</p>
+					<h4 class="fs-4">More information</h4>
+					<p>For more on how we handle your data, see our <a href="/privacy-policy/">Privacy Policy</a>. If you have any questions, contact us at <a href="mailto:info@rhodesthingstodo.com">info@rhodesthingstodo.com</a>.</p>
+				</article>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Articles Section End -->
+
+
+<!-- Call To Action Start -->
+<section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+	<div class="container">
+		<Subscribe />
+	</div>
+</section>
+<!-- Call To Action End -->
+
+
+	<LoginModal />
+	<SearchOffcanvas />
+
+	<Footer />
+</Base>

@@ -6,7 +6,7 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { counters, process2 } from '../lib/data/context';
+import { process2 } from '../lib/data/context';
 ---
 <Base
   title="About Us — Your Local Guide to Rhodes | Rhodes Things To Do"
@@ -66,14 +66,13 @@ import { counters, process2 } from '../lib/data/context';
 				<!-- Components/Pages/about-us/our-mission.html -->
 				<div class="col-xl-5 col-lg-5 col-md-6 col-sm-12">
 				    <div class="missionImg">
-				        <img src="/assets/img/side-img.png" class="img-fluid" alt="">
+				        <img src="/assets/img/hero-rhodes.jpg" class="img-fluid rounded-4" alt="Rhodes Old Town and the Palace of the Grand Master">
 				    </div>
 				</div>
 				<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 				    <div class="missioncaps">
 				        <div class="d-block mb-4">
-				            <div class="d-flex align-items-start mb-2"><span class="badge badge-xs badge-success rounded-pill">About Mission</span></div>
-				            <h2>Explore Our Aim & Mission</h2>
+				            <h2>Explore Our Aim &amp; Mission</h2>
 				        </div>
 				        <p>Rhodes Things To Do is a local guide and directory built to help visitors and residents discover the very best of the island of Rhodes, Greece. From the medieval Old Town and the Acropolis of Lindos to hidden beaches, family tavernas, boat trips and wellness spots, we bring it all together in one easy place.</p>
 				        <p>Our mission is simple: make it effortless to find great places to eat, stay and explore in Rhodes, and to connect travellers with trusted local businesses. Every listing is organised by category and shown on an interactive map, so you can plan your trip with confidence.</p>
@@ -85,20 +84,6 @@ import { counters, process2 } from '../lib/data/context';
 
 			</div>
 			<!-- Our Mission -->
-
-			<div class="row justify-content-between align-items-center g-4 border-top">
-
-				<!-- Components/Pages/about-us/counter.html -->
-				{counters.map((item) => (
-				<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6">
-				    <div class="counter-wrap text-center">
-				        <h2 class="mb-0"><span class={`ctr text-primary ${item.style} counter-value`} data-target={item.number}>{item.price}</span>{item.symbol}</h2>
-				        <p class="m-0">{item.title}</p>
-				    </div>
-				</div>
-				))}
-
-			</div>
 
 		</div>
 	</div>

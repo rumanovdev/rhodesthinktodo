@@ -18,6 +18,7 @@ const STATIC_PATHS = [
   '/faq/',
   '/help-center/',
   '/privacy-policy/',
+  '/cookie-policy/',
   '/pricing/',
 ];
 
