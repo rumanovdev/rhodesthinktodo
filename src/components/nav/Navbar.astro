@@ -10,7 +10,7 @@ interface Props {
 
 const {
   headerClass = 'header header-light head-shadow',
-  logo = '/assets/img/logo.svg',
+  logo = '/assets/img/rhodes-logo-dark.svg',
   addListingLight = false,
 } = Astro.props;
 
@@ -60,7 +60,7 @@ if (user) {
       <div class="nav-menus-wrapper">
         <!-- Mobile-only logo inside the slide-in drawer -->
         <div class="mobile-menu-logo d-lg-none d-flex align-items-center justify-content-center py-3 border-bottom">
-          <a class="d-inline-block" href="/"><img src="/assets/img/logo.svg" alt="Rhodes Things To Do" style="height: 32px;" /></a>
+          <a class="d-inline-block" href="/"><img src="/assets/img/rhodes-logo-dark.svg" alt="Rhodes Things To Do" style="height: 30px;" /></a>
         </div>
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href="/" class="home-link">Home</a></li>
@@ -172,6 +172,18 @@ if (user) {
   .header.header-transparent .nav-menu > li > a.home-link,
   .header.header-transparent .nav-menu.nav-menu-social > li > a {
     color: var(--bs-white) !important;
+  }
+
+  /* Bigger, more prominent brand logo in the header */
+  .header .nav-brand img.logo {
+    width: 230px;
+    max-width: 58vw;
+    height: auto;
+  }
+  @media (max-width: 1024px) {
+    .header .nav-brand img.logo {
+      width: 170px;
+    }
   }
   /* Add Listing button stays red even when the navbar is in its initial
      (non-scrolled) "light" state on transparent/dark hero variants. */
