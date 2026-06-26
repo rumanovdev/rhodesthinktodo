@@ -1,18 +1,21 @@
 ---
 // Modern cookie-consent banner. Wired to Google Consent Mode (see Analytics.astro):
 // Accept → analytics_storage granted; Decline → stays denied. Choice stored in localStorage.
+import { useTranslations, DEFAULT_LOCALE, type Locale } from '../../lib/i18n';
+const locale: Locale = (Astro.locals as any).locale ?? DEFAULT_LOCALE;
+const t = useTranslations(locale);
 ---
 <div id="cookie-consent" class="cookie-consent" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
   <div class="cookie-consent__icon" aria-hidden="true"><i class="bi bi-cookie"></i></div>
   <div class="cookie-consent__body">
-    <h6 class="cookie-consent__title">We value your privacy</h6>
+    <h6 class="cookie-consent__title">{t('cookie.title')}</h6>
     <p class="cookie-consent__text">
-      We use cookies to analyse traffic and improve your experience on Rhodes Things To Do.
-      <a href="/privacy-policy/">Learn more</a>.
+      {t('cookie.text')}
+      <a href="/privacy-policy/">{t('cookie.learn')}</a>.
     </p>
     <div class="cookie-consent__actions">
-      <button type="button" class="cookie-btn cookie-btn--accept" data-cookie="granted">Accept</button>
-      <button type="button" class="cookie-btn cookie-btn--decline" data-cookie="denied">Decline</button>
+      <button type="button" class="cookie-btn cookie-btn--accept" data-cookie="granted">{t('cookie.accept')}</button>
+      <button type="button" class="cookie-btn cookie-btn--decline" data-cookie="denied">{t('cookie.decline')}</button>
     </div>
   </div>
   <button type="button" class="cookie-consent__close" aria-label="Dismiss" data-cookie="denied">&times;</button>

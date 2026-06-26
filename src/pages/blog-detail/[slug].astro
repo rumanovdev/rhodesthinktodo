@@ -9,17 +9,15 @@ import Preloader from '../../components/shared/Preloader.astro';
 import { articles, tags, blogs } from '../../lib/data/context';
 import { absUrl } from '../../lib/data/site';
 
-export async function getStaticPaths() {
-  const { blogs } = await import('../../lib/data/context');
-  const slugifyFn = (s: string) =>
-    s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return blogs.map((blog) => ({
-    params: { slug: (blog as any).slug || slugifyFn((blog as any).title) },
-    props: { blog },
-  }));
+const slugifyFn = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const { slug: routeSlug } = Astro.params as { slug: string };
+const blog = (blogs as any[]).find(
+  (b) => (b.slug || slugifyFn(b.title)) === routeSlug,
+);
+if (!blog) {
+  return new Response('Article not found', { status: 404 });
 }
-
-const { blog } = Astro.props as { blog: any };
 const heroImg = blog.img || '/assets/img/gal-4.jpg';
 const heroTitle = blog.title || 'Top 10 Free Bootstrap Templates for Your Next Project';
 const heroDate = blog.date || '6 Sep 2025';

@@ -7,7 +7,7 @@ const en = {
   'nav.addListing': 'Add Listing',
   'nav.signIn': 'Sign In',
   'hero.subtitle':
-    'Find top-rated restaurants, hotels, tours, beaches and activities across Rhodes, Greece, all in one place.',
+    'Discover top-rated restaurants hotels tours beaches and activities across Rhodes all in one place.',
   'hero.searchWhat': 'What are you looking for?',
   'hero.location': 'Location',
   'hero.allCategories': 'All categories',

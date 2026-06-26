@@ -1,5 +1,6 @@
 ---
 import { SITE, absUrl } from '../lib/data/site';
+import { LOCALES, DEFAULT_LOCALE, localizePath, type Locale } from '../lib/i18n';
 import Analytics from '../components/shared/Analytics.astro';
 import CookieConsent from '../components/shared/CookieConsent.astro';
 
@@ -31,10 +32,16 @@ const {
   bodyClass = '',
 } = Astro.props;
 
-// Canonical: strip query/hash so paginated/filtered variants point to the clean URL.
-const canonicalUrl = canonical
-  ? absUrl(canonical)
-  : absUrl(Astro.url.pathname);
+// Current locale (set by middleware) and the un-prefixed base path.
+const locale: Locale = (Astro.locals as any).locale ?? DEFAULT_LOCALE;
+const basePath = canonical ?? Astro.url.pathname;
+
+// Canonical points to the localized URL; hreflang lists every language.
+const canonicalUrl = absUrl(localizePath(basePath, locale));
+const hreflangs = [
+  ...LOCALES.map((l) => ({ lang: l, href: absUrl(localizePath(basePath, l)) })),
+  { lang: 'x-default', href: absUrl(localizePath(basePath, DEFAULT_LOCALE)) },
+];
 const ogImageUrl = absUrl(ogImage);
 
 // Always advertise the site-level WebSite + Organization graph, plus any page schema.
@@ -65,7 +72,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 const jsonLd = [...baseSchema, ...pageSchema];
 ---
 <!doctype html>
-<html lang="en" data-bs-theme="" class={htmlClass}>
+<html lang={locale} data-bs-theme="" class={htmlClass}>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -73,6 +80,9 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonicalUrl} />
+    {!noindex && hreflangs.map((h) => (
+      <link rel="alternate" hreflang={h.lang} href={h.href} />
+    ))}
 
     <title>{title}</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />

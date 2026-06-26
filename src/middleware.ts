@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { getSupabaseServer } from './lib/supabase/server';
+import { parsePath, DEFAULT_LOCALE } from './lib/i18n';
 
 const AUTH_REDIRECT_PREFIXES = ['/dashboard-'];
 const PUBLIC_API_PREFIXES = ['/api/auth/'];
@@ -13,6 +14,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
     target.protocol = 'https:';
     return context.redirect(target.toString(), 301);
   }
+
+  // Resolve locale from the first path segment (/de/, /el/ …) and rewrite to
+  // the un-prefixed route so the same pages render in the selected language.
+  const { locale, path } = parsePath(context.url.pathname);
+  context.locals.locale = locale;
+  const rewriteTarget =
+    locale !== DEFAULT_LOCALE ? path + context.url.search : null;
 
   context.locals.user = null;
   context.locals.session = null;
@@ -43,7 +51,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  const path = context.url.pathname;
+  // Use the locale-stripped `path` for auth matching (e.g. /de/dashboard-… → /dashboard-…).
   const needsAuth =
     AUTH_REDIRECT_PREFIXES.some((p) => path.startsWith(p)) ||
     (path.startsWith('/api/') && !PUBLIC_API_PREFIXES.some((p) => path.startsWith(p)));
@@ -58,5 +66,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect(`/login/?next=${encodeURIComponent(path)}`);
   }
 
-  return next();
+  // For non-default locales, render the un-prefixed route (locale stays in locals).
+  return rewriteTarget ? next(rewriteTarget) : next();
 });
