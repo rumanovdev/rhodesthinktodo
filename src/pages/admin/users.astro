@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Navbar from '../../components/nav/Navbar.astro';
-import Footer from '../../components/nav/Footer.astro';
 import AdminSidebar from '../../components/admin/AdminSidebar.astro';
 import { getServiceClient } from '../../lib/supabase/admin';
 import { getAdminUsers } from '../../lib/admin/users';
@@ -134,5 +133,4 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
       </div>
     </div>
   </section>
-  <Footer />
 </Base>

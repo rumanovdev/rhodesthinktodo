@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Navbar from '../../components/nav/Navbar.astro';
-import Footer from '../../components/nav/Footer.astro';
 import AdminSidebar from '../../components/admin/AdminSidebar.astro';
 import { getServiceClient } from '../../lib/supabase/admin';
 
@@ -183,5 +182,4 @@ const drafts = listingsByStatus['draft'] ?? 0;
       </div>
     </div>
   </section>
-  <Footer />
 </Base>

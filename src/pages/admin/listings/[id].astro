@@ -1,7 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import Navbar from '../../../components/nav/Navbar.astro';
-import Footer from '../../../components/nav/Footer.astro';
 import AdminSidebar from '../../../components/admin/AdminSidebar.astro';
 import { getServiceClient } from '../../../lib/supabase/admin';
 
@@ -177,5 +176,4 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
       </div>
     </div>
   </section>
-  <Footer />
 </Base>

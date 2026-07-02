@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Navbar from '../../components/nav/Navbar.astro';
-import Footer from '../../components/nav/Footer.astro';
 import AdminSidebar from '../../components/admin/AdminSidebar.astro';
 import { getServiceClient } from '../../lib/supabase/admin';
 
@@ -128,5 +127,4 @@ const childrenOf = (id: number) => areas.filter((a) => a.parent_id === id);
       </div>
     </div>
   </section>
-  <Footer />
 </Base>

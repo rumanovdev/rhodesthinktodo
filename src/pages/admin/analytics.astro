@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Navbar from '../../components/nav/Navbar.astro';
-import Footer from '../../components/nav/Footer.astro';
 import AdminSidebar from '../../components/admin/AdminSidebar.astro';
 import { getServiceClient } from '../../lib/supabase/admin';
 
@@ -137,5 +136,4 @@ const maxOf = (rows: [string, number][]) => Math.max(1, ...rows.map(([, n]) => n
       </div>
     </div>
   </section>
-  <Footer />
 </Base>
