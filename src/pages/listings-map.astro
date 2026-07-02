@@ -228,9 +228,9 @@ const markersPayload = mappable.map((l) => ({
       try { listings = JSON.parse(dataEl.textContent || '[]'); } catch (e) { listings = []; }
 
       const map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: true });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }).addTo(map);
 
       const markers = {};
@@ -238,7 +238,14 @@ const markersPayload = mappable.map((l) => ({
 
       listings.forEach(function (l) {
         if (l.lat == null || l.lng == null) return;
-        const marker = L.marker([l.lat, l.lng]).addTo(map);
+        const pinLabel = l.price || (l.rating ? '★ ' + l.rating : '•');
+        const pinIcon = L.divIcon({
+          className: 'lm-pin-wrap',
+          iconSize: [0, 0],
+          iconAnchor: [0, 0],
+          html: '<div class="lm-pin">' + escapeHtml(pinLabel) + '</div>',
+        });
+        const marker = L.marker([l.lat, l.lng], { icon: pinIcon, riseOnHover: true }).addTo(map);
         const popupHtml = [
           l.img ? '<img src="' + escapeHtml(l.img) + '" alt="" class="lm-popup-img" />' : '',
           '<a class="lm-popup-title" href="/listing/' + escapeHtml(l.slug) + '/">' + escapeHtml(l.title) + '</a>',
@@ -268,6 +275,8 @@ const markersPayload = mappable.map((l) => ({
             focusMarker(m, id, { openPopup: true });
           }
         });
+        card.addEventListener('mouseenter', function () { setPinHover(card.getAttribute('data-listing-id'), true); });
+        card.addEventListener('mouseleave', function () { setPinHover(card.getAttribute('data-listing-id'), false); });
       });
 
       // Center the map on the target marker. On narrow viewports the popup
@@ -285,9 +294,25 @@ const markersPayload = mappable.map((l) => ({
         highlightCard(id);
       }
 
+      function pinFor(id) {
+        var m = id ? markers[id] : null;
+        var el = m ? m.getElement() : null;
+        return el ? el.querySelector('.lm-pin') : null;
+      }
+      function setPinHover(id, on) {
+        var pin = pinFor(id);
+        if (!pin) return;
+        var card = id ? document.querySelector('.lm-card[data-listing-id="' + id + '"]') : null;
+        var selected = card && card.classList.contains('is-active');
+        pin.classList.toggle('is-active', on || selected);
+      }
       function highlightCard(id) {
         document.querySelectorAll('.lm-card').forEach(function (c) {
           c.classList.toggle('is-active', c.getAttribute('data-listing-id') === id);
+        });
+        Object.keys(markers).forEach(function (mid) {
+          var pin = pinFor(mid);
+          if (pin) pin.classList.toggle('is-active', mid === id);
         });
         const active = document.querySelector('.lm-card.is-active');
         if (active && active.scrollIntoView) {

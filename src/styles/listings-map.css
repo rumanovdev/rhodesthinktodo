@@ -50,7 +50,36 @@
   gap: 0.75rem; padding: 4rem 1.5rem; text-align: center; color: #6b7280;
 }
 
+/* Airbnb-style pill markers */
+.leaflet-marker-icon.lm-pin-wrap { background: transparent; border: 0; }
+.lm-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #222;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+.lm-pin:hover,
+.lm-pin.is-active {
+  background: #222;
+  color: #fff;
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
+  z-index: 650 !important;
+}
+
 .leaflet-popup-content { min-width: 200px; margin: 0.75rem 0.9rem; }
+.leaflet-popup-content-wrapper { border-radius: 14px; }
 .lm-popup-title { font-weight: 600; margin-bottom: 0.25rem; display: block; color: #111827; text-decoration: none; }
 .lm-popup-title:hover { color: var(--bs-primary, #6366f1); }
 .lm-popup-meta { font-size: 0.8rem; color: #6b7280; }
