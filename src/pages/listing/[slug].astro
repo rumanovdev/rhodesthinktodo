@@ -620,6 +620,19 @@ const breadcrumbSchema = {
 						)}
 						<!-- Booking Form End -->
 
+						<!-- Request Booking -->
+						<div class="card">
+							<div class="card-body p-4 text-center">
+								<h6 class="fw-medium mb-2">Interested in this place?</h6>
+								<p class="text-md text-muted mb-3">Send a booking request — no payment now, the host confirms.</p>
+								{Astro.locals.user ? (
+									<a href={`/booking-page/?slug=${event.slug}`} class="btn btn-primary rounded-pill w-100"><i class="bi bi-calendar2-check me-2"></i>Request Booking</a>
+								) : (
+									<a href={`/login/?next=${encodeURIComponent(`/booking-page/?slug=${event.slug}`)}`} class="btn btn-primary rounded-pill w-100"><i class="bi bi-calendar2-check me-2"></i>Sign in to Book</a>
+								)}
+							</div>
+						</div>
+
 						<!-- Share option -->
 						<div class="card">
 
