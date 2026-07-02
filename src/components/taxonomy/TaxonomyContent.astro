@@ -67,33 +67,33 @@ const markers = mappable.map((l) => ({
     </div>
   </section>
 
-  <!-- Faceted internal links -->
+  <!-- Faceted filters — side-by-side dropdowns -->
   <section class="pt-4 pb-0">
     <div class="container">
-      {subs.length > 0 && (
-        <div class="mb-3">
-          <span class="text-sm text-muted d-block mb-2 text-uppercase fw-semibold">Browse by type</span>
-          <div class="d-flex flex-wrap gap-2">
-            <a href={'/' + [catSlug, null, curArea].filter(Boolean).join('/') + '/'}
-               class={`badge rounded-pill px-3 py-2 ${!curSub ? 'bg-primary' : 'bg-light-primary text-primary'}`}>All {res.category.name}</a>
-            {subs.map((s) => (
-              <a href={subUrl(s.slug)} class={`badge rounded-pill px-3 py-2 ${curSub === s.slug ? 'bg-primary' : 'bg-light-primary text-primary'}`}>{s.name}</a>
-            ))}
+      <div class="row g-3 align-items-end">
+        {subs.length > 0 && (
+          <div class="col-6">
+            <label for="browse-type" class="form-label text-sm text-muted mb-1 text-uppercase fw-semibold">Browse by type</label>
+            <select id="browse-type" class="form-select rounded-pill" aria-label="Browse by type" onchange="if(this.value)window.location.href=this.value;">
+              <option value={'/' + [catSlug, null, curArea].filter(Boolean).join('/') + '/'} selected={!curSub}>All {res.category.name}</option>
+              {subs.map((s) => (
+                <option value={subUrl(s.slug)} selected={curSub === s.slug}>{s.name}</option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
-      {topAreas.length > 0 && (
-        <div class="mb-2">
-          <span class="text-sm text-muted d-block mb-2 text-uppercase fw-semibold">Browse by area</span>
-          <div class="d-flex flex-wrap gap-2">
-            <a href={'/' + [catSlug, curSub].filter(Boolean).join('/') + '/'}
-               class={`badge rounded-pill px-3 py-2 ${!curArea ? 'bg-dark' : 'bg-light text-dark border'}`}>All of Rhodes</a>
-            {topAreas.map((a) => (
-              <a href={areaUrl(a.slug)} class={`badge rounded-pill px-3 py-2 ${curArea === a.slug ? 'bg-dark' : 'bg-light text-dark border'}`}>{a.name}</a>
-            ))}
+        )}
+        {topAreas.length > 0 && (
+          <div class="col-6">
+            <label for="browse-area" class="form-label text-sm text-muted mb-1 text-uppercase fw-semibold">Browse by area</label>
+            <select id="browse-area" class="form-select rounded-pill" aria-label="Browse by area" onchange="if(this.value)window.location.href=this.value;">
+              <option value={'/' + [catSlug, curSub].filter(Boolean).join('/') + '/'} selected={!curArea}>All of Rhodes</option>
+              {topAreas.map((a) => (
+                <option value={areaUrl(a.slug)} selected={curArea === a.slug}>{a.name}</option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   </section>
 
