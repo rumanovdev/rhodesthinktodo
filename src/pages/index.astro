@@ -440,6 +440,13 @@ const motherCount = (m: any) =>
       color: #fff !important;
       text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.55);
     }
+    /* Move the hero text into the lower portion of the image. */
+    .hero-header {
+      align-items: flex-end !important;
+    }
+    .hero-header > .container {
+      padding-bottom: 8vh;
+    }
     @media (max-width: 575px) {
       .hero-header .hero-sub { font-size: 0.95rem !important; line-height: 1.5; }
     }
