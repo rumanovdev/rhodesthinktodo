@@ -94,41 +94,6 @@ const motherCount = (m: any) =>
 		</div>
 		<!-- </row> -->
 
-		<!-- Search Form row -->
-		<div class="row align-items-start justify-content-center">
-			<div class="col-xl-11 col-lg-12 col-md-12 col-sm-12">
-				<form class="heroSearch style-02" action="/listings-map/" method="get">
-					<div class="row gx-lg-2 gx-md-2 gx-3 gy-sm-2 gy-2">
-						<div class="col-xl-4 col-lg-3 col-md-12 col-sm-12">
-							<div class="form-group position-relative">
-								<input type="text" name="q" class="form-control fs-6 fw-medium" placeholder={t('hero.searchWhat')}>
-							</div>
-						</div>
-						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-							<div class="form-group position-relative">
-								<input type="text" name="city" class="form-control fs-6 fw-medium" placeholder={t('hero.location')}>
-								<span class="position-absolute top-50 end-0 translate-middle me-2"><i class="fa-solid fa-location-dot text-muted opacity-50 fs-5"></i></span>
-							</div>
-						</div>
-						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-							<div class="form-group position-relative">
-									<select name="category" class="form-control fs-6 fw-medium hero-cat" aria-label="Category">
-										<option value="">{t('hero.allCategories')}</option>
-										{catTree.map((m) => (<option value={m.slug}>{m.name}</option>))}
-										</select>
-								</div>
-						</div>
-						<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12">
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary full-width fw-medium"><i class="bi bi-search me-2"></i>{t('hero.search')}</button>
-							</div>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-		<!-- End Search Form Row -->
-
 	</div>
 </div>
 <!-- Hero End -->
