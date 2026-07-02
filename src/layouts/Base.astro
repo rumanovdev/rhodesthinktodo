@@ -16,6 +16,8 @@ interface Props {
   noindex?: boolean;
   /** Preload a critical (LCP) image, e.g. the homepage hero. */
   preloadImage?: string;
+  /** Optional mobile variant; preloaded via media query for phones. */
+  preloadImageMobile?: string;
   /** One or more JSON-LD objects injected into <head>. */
   schema?: Record<string, any> | Record<string, any>[];
   htmlClass?: string;
@@ -30,6 +32,7 @@ const {
   ogType = 'website',
   noindex = false,
   preloadImage,
+  preloadImageMobile,
   schema,
   htmlClass = '',
   bodyClass = '',
@@ -111,7 +114,12 @@ const jsonLd = [...baseSchema, ...pageSchema];
     <!-- Google Analytics (GA4) + Consent Mode -->
     <Analytics />
 
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+    {preloadImage && (preloadImageMobile
+      ? <>
+          <link rel="preload" as="image" href={preloadImage} media="(min-width: 768px)" fetchpriority="high" />
+          <link rel="preload" as="image" href={preloadImageMobile} media="(max-width: 767px)" fetchpriority="high" />
+        </>
+      : <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />)}
 
     <!-- Preload icon fonts to prevent late-swap layout shift (CLS) -->
     <link rel="preload" as="font" type="font/woff2" href="/assets/webfonts/fa-solid-900.woff2" crossorigin />
