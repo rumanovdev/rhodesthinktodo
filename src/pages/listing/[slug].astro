@@ -51,10 +51,12 @@ const reviewsList = (reviewRows ?? []).map((r: any) => ({
 // --- SEO: title, description, structured data -----------------------------
 const areaLabel = event.city || 'Rhodes';
 const categoryLabel = event.name || 'Listing';
-const seoTitle = `${event.title} — ${categoryLabel} in ${areaLabel}, Rhodes | Rhodes Things To Do`;
+// Avoid "in Rhodes, Rhodes" when the listing has no specific area/city.
+const placeInRhodes = areaLabel === 'Rhodes' ? 'Rhodes' : `${areaLabel}, Rhodes`;
+const seoTitle = `${event.title} — ${categoryLabel} in ${placeInRhodes} | Rhodes Things To Do`;
 const seoDescription = (event.desc && String(event.desc).trim())
   ? String(event.desc).replace(/\s+/g, ' ').trim().slice(0, 160)
-  : `${event.title} — ${categoryLabel} in ${areaLabel}, Rhodes. See details, photos, location and reviews on Rhodes Things To Do.`;
+  : `${event.title} — ${categoryLabel} in ${placeInRhodes}. See details, photos, location and reviews on Rhodes Things To Do.`;
 
 // Map the listing category to the most specific Schema.org business type.
 const TYPE_MAP: Record<string, string> = {

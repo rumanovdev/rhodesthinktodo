@@ -605,6 +605,10 @@
         });
 	
         function initRangeSlider(selector, options) {
+            // Guard: the ionRangeSlider plugin is only loaded on listings/dashboard
+            // pages, and the target element only exists there. Avoid throwing on
+            // public content pages (home, search, listing detail, …).
+            if (!$.fn || typeof $.fn.ionRangeSlider !== 'function' || $(selector).length === 0) return;
             $(selector).ionRangeSlider(options);
         }
         

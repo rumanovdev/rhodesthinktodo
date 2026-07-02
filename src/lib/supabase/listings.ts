@@ -44,6 +44,10 @@ export function row2card(r: any): ListingCard {
     : null;
   const img = r.hero_image || firstImage || '/assets/img/list-1.jpg';
   const categoryName = r.categories?.name || 'Listing';
+  // Fall back to the taxonomy area name for display when free-text city is empty,
+  // so listings created with only a "Main area" still show a location.
+  const areaName = (r.areas?.name as string | null | undefined) || null;
+  const cityVal = r.city || areaName || '';
   const tier = Math.min(Math.max(Number(r.price_tier) || 1, 1), 4);
   const verified = !!r.is_verified;
   // Owner avatar: use uploaded one if present, else a stable fallback per slug
@@ -61,14 +65,14 @@ export function row2card(r: any): ListingCard {
     img1,
     number: r.phone || '',
     name: categoryName,
-    city: r.city || '',
+    city: cityVal,
     address: r.address || '',
     rating: r.rating != null ? String(r.rating) : '4.5',
     reviews: `${r.review_count ?? 0} Reviews`,
     btn: verified ? 'Verified' : 'Open',
     dollar: '€'.repeat(tier),
     tag: !!r.is_featured,
-    miles: r.city ? `${r.city}` : '',
+    miles: cityVal ? `${cityVal}` : '',
     color: verified ? 'success' : 'primary',
     icon: 'bi-patch-check-fill',
     check: 'text-success',
@@ -76,7 +80,7 @@ export function row2card(r: any): ListingCard {
     span: verified ? 'Verified' : 'New',
     avarage: r.rating != null ? String(r.rating) : '4.5',
     plus: '',
-    location: [r.city, r.country].filter(Boolean).join(', '),
+    location: [cityVal, r.country].filter(Boolean).join(', '),
     lat: r.lat ?? null,
     lng: r.lng ?? null,
   };
@@ -85,7 +89,7 @@ export function row2card(r: any): ListingCard {
 // `categories` is embedded via the explicit FK hint because listing_categories
 // (subcategories join) introduced a second listings<->categories relationship,
 // which would otherwise make the embed ambiguous (PGRST201).
-export const LISTING_SELECT = '*, listing_images(url, sort_order), categories!listings_category_id_fkey(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
+export const LISTING_SELECT = '*, listing_images(url, sort_order), categories!listings_category_id_fkey(name, slug), areas!listings_area_id_fkey(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
 // Back-compat alias for internal use in this module.
 const SELECT = LISTING_SELECT;
 
