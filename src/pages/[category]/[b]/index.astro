@@ -1,0 +1,14 @@
+---
+import TaxonomyContent from '../../../components/taxonomy/TaxonomyContent.astro';
+import { loadTaxonomyPage } from '../../../lib/supabase/taxonomy';
+
+export const prerender = false;
+
+const segments = [Astro.params.category, Astro.params.b].filter(Boolean) as string[];
+const page = await loadTaxonomyPage(Astro.locals.supabase, segments);
+if (page.kind === 'redirect') return Astro.redirect(page.to, 301);
+if (page.kind === 'notfound') return Astro.rewrite('/404');
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+---
+<TaxonomyContent page={page.data} />

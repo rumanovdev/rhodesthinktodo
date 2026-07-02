@@ -6,6 +6,10 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
+
+// Ensure a real 404 status, including when reached via Astro.rewrite('/404')
+// from the dynamic taxonomy routes.
+Astro.response.status = 404;
 ---
 <Base noindex title="Page Not Found - Rhodes Things To Do">
   <Navbar headerClass="header header-light head-shadow" />

@@ -38,7 +38,7 @@ export type ListingCard = {
   lng: number | null;
 };
 
-function row2card(r: any): ListingCard {
+export function row2card(r: any): ListingCard {
   const firstImage = Array.isArray(r.listing_images) && r.listing_images.length > 0
     ? r.listing_images[0].url
     : null;
@@ -82,7 +82,12 @@ function row2card(r: any): ListingCard {
   };
 }
 
-const SELECT = '*, listing_images(url, sort_order), categories(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
+// `categories` is embedded via the explicit FK hint because listing_categories
+// (subcategories join) introduced a second listings<->categories relationship,
+// which would otherwise make the embed ambiguous (PGRST201).
+export const LISTING_SELECT = '*, listing_images(url, sort_order), categories!listings_category_id_fkey(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
+// Back-compat alias for internal use in this module.
+const SELECT = LISTING_SELECT;
 
 export async function getPublishedListings(
   supabase: DB | null,

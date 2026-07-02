@@ -8,6 +8,7 @@ import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
 import { features, gallerys3, authors } from '../../lib/data/context';
 import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
+import { getListingTaxonomy } from '../../lib/supabase/taxonomy';
 import { absUrl } from '../../lib/data/site';
 export const prerender = false;
 
@@ -124,14 +125,27 @@ if (avgRating && ratings.length) {
       ...(r.body ? { reviewBody: r.body } : {}),
     }));
 }
+// Taxonomy links for breadcrumbs + chips (main category, subcategories, area, tags).
+const tax = await getListingTaxonomy(Astro.locals.supabase, detail);
+const motherCat = tax.mother;
+const catHref = motherCat ? `/${motherCat.slug}/` : '/listings-grid/';
+const areaHref = motherCat && tax.area ? `/${motherCat.slug}/${tax.area.slug}/` : null;
+
+const crumbLinks = [
+  { name: 'Home', href: '/' },
+  motherCat ? { name: motherCat.name, href: catHref } : { name: 'Listings', href: '/listings-grid/' },
+  ...(areaHref && tax.area ? [{ name: tax.area.name, href: areaHref }] : []),
+  { name: event.title, href: `/listing/${event.slug}/` },
+];
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
-    { '@type': 'ListItem', position: 2, name: 'Listings', item: absUrl('/listings-grid/') },
-    { '@type': 'ListItem', position: 3, name: event.title, item: listingUrl },
-  ],
+  itemListElement: crumbLinks.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    item: absUrl(c.href),
+  })),
 };
 ---
 <Base
@@ -202,6 +216,21 @@ const breadcrumbSchema = {
 </section>
 <!-- Property Detail End -->
 
+<!-- Breadcrumb -->
+<section class="py-2 border-bottom bg-white">
+	<div class="container">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb mb-0">
+				{crumbLinks.map((c, i) => (
+					i === crumbLinks.length - 1
+						? <li class="breadcrumb-item active" aria-current="page">{c.name}</li>
+						: <li class="breadcrumb-item"><a href={c.href}>{c.name}</a></li>
+				))}
+			</ol>
+		</nav>
+	</div>
+</section>
+
 
 <!-- All Section Content -->
 <section class="gray-simple pt-4 pt-xl-5">
@@ -240,12 +269,17 @@ const breadcrumbSchema = {
 									<div class="interioramenities-body">
 										<div class="row align-items-start justify-content-start g-3">
 
-											<!-- Components/Listings/Single-Listings/single-listing-01/features.html -->
-											{features.map((item) => (
-											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
-											    <div class="d-flex align-items-center"><i class={`fa-solid ${item.icon} text-primary me-2`}></i>{item.title}</div>
+											<div class="col-12">
+											    <div class="d-flex flex-wrap gap-2">
+											        {motherCat && (<a href={catHref} class="badge rounded-pill bg-light-primary text-primary px-3 py-2">{motherCat.name}</a>)}
+											        {tax.subcategories.map((s) => (
+											            <a href={`/${s.motherSlug}/${s.slug}/`} class="badge rounded-pill bg-light-primary text-primary px-3 py-2">{s.name}</a>
+											        ))}
+											        {areaHref && tax.area && (<a href={areaHref} class="badge rounded-pill bg-light text-dark border px-3 py-2"><i class="bi bi-geo-alt me-1"></i>{tax.area.name}</a>)}
+											        {tax.tags.map((t) => (<span class="badge rounded-pill bg-light text-dark border px-3 py-2">{t.name}</span>))}
+											        {!motherCat && tax.subcategories.length === 0 && tax.tags.length === 0 && !tax.area && (<span class="text-muted">No tags yet.</span>)}
+											    </div>
 											</div>
-											))}
 
 										</div>
 									</div>
@@ -506,7 +540,7 @@ const breadcrumbSchema = {
 									        <div class="square--40 rounded bg-light-primary"><i class="bi bi-tag text-primary"></i></div>
 									        <div class="infoDetails">
 									            <p class="text-muted lh-base mb-0">Category</p>
-									            <p class="text-dark lh-base fw-medium fs-6 mb-0">{event.name}</p>
+									            <p class="text-dark lh-base fw-medium fs-6 mb-0">{motherCat ? (<a href={catHref} class="text-reset">{motherCat.name}</a>) : event.name}</p>
 									        </div>
 									    </div>
 									</div>

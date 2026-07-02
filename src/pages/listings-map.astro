@@ -30,7 +30,7 @@ const mappableCount = mappable.length;
 
 // Load the category list so the inline search form's dropdown reflects reality.
 const { data: categoryRows } =
-  (await supabase?.from('categories').select('slug, name').order('sort_order')) ?? { data: [] };
+  (await supabase?.from('categories').select('slug, name').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const categories = categoryRows ?? [];
 
 // Friendly label for the active filter (shown above the results list).

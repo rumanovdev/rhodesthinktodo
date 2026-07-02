@@ -49,6 +49,8 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   const address = String(form.get('address') ?? '').trim() || null;
   const city = String(form.get('city') ?? '').trim() || null;
   const country = String(form.get('country') ?? '').trim() || null;
+  const areaRaw = String(form.get('area_id') ?? '').trim();
+  const areaId = areaRaw ? Number(areaRaw) : null;
   const latRaw = String(form.get('lat') ?? '').trim();
   const lngRaw = String(form.get('lng') ?? '').trim();
   const lat = latRaw ? Number(latRaw) : null;
@@ -74,6 +76,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       title,
       description,
       category_id: categoryId,
+      area_id: areaId,
       phone,
       address,
       city,
@@ -95,6 +98,32 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   if (amenityValues.length > 0) {
     await supabase.from('listing_amenities').insert(
       amenityValues.map((amenity_id) => ({ listing_id: inserted.id, amenity_id }))
+    );
+  }
+
+  // Subcategories (many-to-many) — the main category lives on listings.category_id.
+  const subcatIds = form.getAll('subcategory_ids').map((v) => Number(v)).filter((n) => Number.isFinite(n));
+  if (subcatIds.length > 0) {
+    await supabase.from('listing_categories').insert(
+      subcatIds.map((category_id) => ({ listing_id: inserted.id, category_id }))
+    );
+  }
+
+  // Extra service areas — the main area lives on listings.area_id.
+  const serviceAreaIds = form.getAll('service_area_ids')
+    .map((v) => Number(v))
+    .filter((n) => Number.isFinite(n) && n !== areaId);
+  if (serviceAreaIds.length > 0) {
+    await supabase.from('listing_areas').insert(
+      serviceAreaIds.map((area_id) => ({ listing_id: inserted.id, area_id }))
+    );
+  }
+
+  // Tags (many-to-many).
+  const tagIds = form.getAll('tag_ids').map((v) => Number(v)).filter((n) => Number.isFinite(n));
+  if (tagIds.length > 0) {
+    await supabase.from('listing_tags').insert(
+      tagIds.map((tag_id) => ({ listing_id: inserted.id, tag_id }))
     );
   }
 

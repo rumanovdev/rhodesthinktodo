@@ -8,6 +8,7 @@ import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import { categories, cities, reviews, blogs } from '../lib/data/context';
 import { getPublishedListings, slugify } from '../lib/supabase/listings';
+import { getCategoryTree } from '../lib/supabase/taxonomy';
 import { useTranslations, DEFAULT_LOCALE, type Locale } from '../lib/i18n';
 export const prerender = false;
 
@@ -52,13 +53,18 @@ const categoryCounts: Record<string, number> = {};
 if (Astro.locals.supabase) {
   const { data: countRows } = await Astro.locals.supabase
     .from('listings')
-    .select('categories(slug)')
+    .select('categories!listings_category_id_fkey(slug)')
     .eq('status', 'published');
   for (const r of countRows ?? []) {
     const slug = (r as any).categories?.slug;
     if (slug) categoryCounts[slug] = (categoryCounts[slug] ?? 0) + 1;
   }
 }
+
+// Category tree (mother categories + subcategories) drives the hero filter + tiles.
+const catTree = await getCategoryTree(Astro.locals.supabase);
+const motherCount = (m: any) =>
+  (categoryCounts[m.slug] ?? 0) + m.subcategories.reduce((s: number, sc: any) => s + (categoryCounts[sc.slug] ?? 0), 0);
 ---
 <Base
   title="Rhodes Things to Do | Tours, Hotels & Restaurants"
@@ -108,16 +114,8 @@ if (Astro.locals.supabase) {
 							<div class="form-group position-relative">
 									<select name="category" class="form-control fs-6 fw-medium hero-cat" aria-label="Category">
 										<option value="">{t('hero.allCategories')}</option>
-										<option value="restaurant">Eat & Drinking</option>
-										<option value="real-estate">Accommodations</option>
-										<option value="shopping">Shopping</option>
-										<option value="fitness">Fitness & Gym</option>
-										<option value="automotive">Automotive</option>
-										<option value="entertainment">Entertainment</option>
-										<option value="spa">Spa & Wellness</option>
-										<option value="activities">Activities</option>
-										<option value="tours">Tours</option>
-									</select>
+										{catTree.map((m) => (<option value={m.slug}>{m.name}</option>))}
+																																																																																									</select>
 								</div>
 						</div>
 						<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12">
@@ -157,16 +155,16 @@ if (Astro.locals.supabase) {
 				<div class="owl-carousel categorySlider">
 
 					<!-- Components/Home/index/categories.html -->
-					{categories.map((item) => {
-						const count = categoryCounts[item.slug] ?? 0;
+					{catTree.map((item) => {
+						const count = motherCount(item);
 						const label = count === 1 ? '1 Listing' : `${count} Listings`;
 						return (
 							<div class="singleCategory">
 								<div class="category-small-wrapper light">
-									<a href={`/listings-map/?category=${item.slug}`} class="categoryBox">
+									<a href={`/${item.slug}/`} class="categoryBox">
 										<div class="categoryCapstions">
-											<div class="catsIcons"><div class="icoBoxx"><i class={item.icon}></i></div></div>
-											<div class="catsTitle"><h5>{item.title}</h5></div>
+											<div class="catsIcons"><div class="icoBoxx"><i class={`fa-solid ${item.icon}`}></i></div></div>
+											<div class="catsTitle"><h5>{item.name}</h5></div>
 											<div class="CatsLists"><span class="categorycounter">{label}</span></div>
 										</div>
 									</a>
@@ -502,10 +500,11 @@ if (Astro.locals.supabase) {
 					))}
 				</div>
 				<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
-					<a href="/listings-map/?category=tours" class="badge badge-primary rounded-pill px-3 py-2">Boat Trips & Tours</a>
-					<a href="/listings-map/?category=restaurant" class="badge badge-primary rounded-pill px-3 py-2">Restaurants</a>
-					<a href="/listings-map/?category=real-estate" class="badge badge-primary rounded-pill px-3 py-2">Hotels & Stays</a>
-					<a href="/listings-map/?category=activities" class="badge badge-primary rounded-pill px-3 py-2">Beaches & Attractions</a>
+					<a href="/things-to-do/boat-trips/" class="badge badge-primary rounded-pill px-3 py-2">Boat Trips & Cruises</a>
+					<a href="/restaurants/" class="badge badge-primary rounded-pill px-3 py-2">Restaurants</a>
+					<a href="/accommodation/" class="badge badge-primary rounded-pill px-3 py-2">Hotels & Stays</a>
+					<a href="/beaches/" class="badge badge-primary rounded-pill px-3 py-2">Beaches</a>
+					<a href="/things-to-do/" class="badge badge-primary rounded-pill px-3 py-2">Things to Do</a>
 				</div>
 			</div>
 		</div>

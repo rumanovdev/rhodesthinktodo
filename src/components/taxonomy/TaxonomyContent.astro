@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../nav/Navbar.astro';
+import Footer from '../nav/Footer.astro';
+import Subscribe from '../shared/Subscribe.astro';
+import LoginModal from '../shared/LoginModal.astro';
+import SearchOffcanvas from '../shared/SearchOffcanvas.astro';
+import Preloader from '../shared/Preloader.astro';
+import ListingCard from '../listings/ListingCard.astro';
+import type { TaxonomyPageData } from '../../lib/supabase/taxonomy';
+
+interface Props { page: TaxonomyPageData; }
+const { page } = Astro.props;
+const { res, meta, crumbs, schema, listings, total, tree, topAreas } = page;
+
+const catSlug = res.category.slug;
+const curSub = res.subcategory?.slug ?? null;
+const curArea = res.area?.slug ?? null;
+
+const motherNode = tree.find((n) => n.id === res.category.id);
+const subs = motherNode?.subcategories ?? [];
+
+// Chip URLs keep the "other" dimension fixed (canonical order cat/sub/area).
+const subUrl = (subSlug: string | null) => '/' + [catSlug, subSlug, curArea].filter(Boolean).join('/') + '/';
+const areaUrl = (aSlug: string | null) => '/' + [catSlug, curSub, aSlug].filter(Boolean).join('/') + '/';
+
+const place = res.area ? res.area.name : 'Rhodes';
+const thing = res.subcategory ? res.subcategory.name : res.category.name;
+---
+<Base title={meta.title} description={meta.description} canonical={meta.path} noindex={meta.noindex} schema={schema}>
+  <Navbar headerClass="header header-light head-shadow" />
+  <Preloader />
+
+  <!-- Hero / heading -->
+  <section class="pt-5 pb-4 gray-simple">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+          {crumbs.map((c, i) => (
+            i === crumbs.length - 1
+              ? <li class="breadcrumb-item active" aria-current="page">{c.name}</li>
+              : <li class="breadcrumb-item"><a href={c.href}>{c.name}</a></li>
+          ))}
+        </ol>
+      </nav>
+      <h1 class="fs-2 fw-semibold mb-2">{meta.h1}</h1>
+      <p class="text-muted mb-0">
+        {total > 0
+          ? `${total} ${total === 1 ? 'place' : 'places'} · ${thing} in ${place}, Rhodes`
+          : `We're still adding ${thing.toLowerCase()} in ${place}. Check back soon.`}
+      </p>
+    </div>
+  </section>
+
+  <!-- Faceted internal links -->
+  <section class="pt-4 pb-0">
+    <div class="container">
+      {subs.length > 0 && (
+        <div class="mb-3">
+          <span class="text-sm text-muted d-block mb-2 text-uppercase fw-semibold">Browse by type</span>
+          <div class="d-flex flex-wrap gap-2">
+            <a href={'/' + [catSlug, null, curArea].filter(Boolean).join('/') + '/'}
+               class={`badge rounded-pill px-3 py-2 ${!curSub ? 'bg-primary' : 'bg-light-primary text-primary'}`}>All {res.category.name}</a>
+            {subs.map((s) => (
+              <a href={subUrl(s.slug)} class={`badge rounded-pill px-3 py-2 ${curSub === s.slug ? 'bg-primary' : 'bg-light-primary text-primary'}`}>{s.name}</a>
+            ))}
+          </div>
+        </div>
+      )}
+      {topAreas.length > 0 && (
+        <div class="mb-2">
+          <span class="text-sm text-muted d-block mb-2 text-uppercase fw-semibold">Browse by area</span>
+          <div class="d-flex flex-wrap gap-2">
+            <a href={'/' + [catSlug, curSub].filter(Boolean).join('/') + '/'}
+               class={`badge rounded-pill px-3 py-2 ${!curArea ? 'bg-dark' : 'bg-light text-dark border'}`}>All of Rhodes</a>
+            {topAreas.map((a) => (
+              <a href={areaUrl(a.slug)} class={`badge rounded-pill px-3 py-2 ${curArea === a.slug ? 'bg-dark' : 'bg-light text-dark border'}`}>{a.name}</a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Listings -->
+  <section class="pt-4 pb-5">
+    <div class="container">
+      {listings.length === 0 ? (
+        <div class="text-center py-5">
+          <p class="text-muted mb-3">No published listings here yet.</p>
+          <a href={`/${catSlug}/`} class="btn btn-light rounded-pill me-2">All {res.category.name}</a>
+          <a href="/listings-map/" class="btn btn-primary rounded-pill">Explore the map</a>
+        </div>
+      ) : (
+        <div class="row g-4">
+          {listings.map((item) => (
+            <div class="col-xl-4 col-lg-6 col-md-6">
+              <ListingCard item={item} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <Subscribe />
+  <Footer />
+  <LoginModal />
+  <SearchOffcanvas />
+</Base>

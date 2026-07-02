@@ -15,6 +15,7 @@ const {
 } = Astro.props;
 
 import { useTranslations, localizePath, LOCALES, LOCALE_NAMES, LOCALE_FLAGS, DEFAULT_LOCALE, type Locale } from '../../lib/i18n';
+import { getCategoryTree } from '../../lib/supabase/taxonomy';
 const locale: Locale = (Astro.locals as any).locale ?? DEFAULT_LOCALE;
 const t = useTranslations(locale);
 // After middleware rewrite, Astro.url.pathname is the un-prefixed base path.
@@ -23,6 +24,9 @@ const currentBase = Astro.url.pathname;
 const user = Astro.locals?.user ?? null;
 const supabase = Astro.locals?.supabase ?? null;
 const isAdmin = Astro.locals?.isAdmin ?? false;
+
+// Category mega-menu (mother categories -> subcategories), DB-driven.
+const categoryTree = await getCategoryTree(supabase);
 
 let userLabel: string | null = null;
 let userAvatar: string | null = null;
@@ -71,7 +75,25 @@ if (user) {
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href={localizePath('/', locale)} class="home-link">{t('nav.home')}</a></li>
 
-          <li class="parent-parent-menu-item"><a href={localizePath('/listings-map/', locale)} class="home-link">{t('nav.explore')}</a></li>
+          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">{t('nav.explore')}<span class="submenu-indicator"></span></a>
+            <ul class="nav-dropdown nav-submenu">
+              {categoryTree.map((m) => (
+                <li class="parent-menu-item">
+                  <a href={localizePath(`/${m.slug}/`, locale)} class="sub-menu-item">{m.name}{m.subcategories.length > 0 && <span class="submenu-indicator"></span>}</a>
+                  {m.subcategories.length > 0 && (
+                    <ul class="nav-dropdown nav-submenu">
+                      <li><a href={localizePath(`/${m.slug}/`, locale)} class="sub-menu-item">All {m.name}</a></li>
+                      {m.subcategories.map((s) => (
+                        <li><a href={localizePath(`/${m.slug}/${s.slug}/`, locale)} class="sub-menu-item">{s.name}</a></li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+              <li><a href={localizePath('/listings-map/', locale)} class="sub-menu-item"><i class="bi bi-map me-1"></i>Map</a></li>
+              <li><a href={localizePath('/listings-grid/', locale)} class="sub-menu-item"><i class="bi bi-grid me-1"></i>All Listings</a></li>
+            </ul>
+          </li>
 
           <li class="parent-parent-menu-item"><a href={localizePath('/about-us/', locale)} class="home-link">{t('nav.about')}</a></li>
 

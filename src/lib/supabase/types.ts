@@ -136,8 +136,112 @@ export type Database = {
       }
       categories: {
         Row: {
+          description: string | null
+          hero_image: string | null
           icon: string | null
           id: number
+          is_active: boolean
+          name: string
+          parent_id: number | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          description?: string | null
+          hero_image?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean
+          name: string
+          parent_id?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          description?: string | null
+          hero_image?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean
+          name?: string
+          parent_id?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      areas: {
+        Row: {
+          description: string | null
+          hero_image: string | null
+          id: number
+          is_active: boolean
+          lat: number | null
+          lng: number | null
+          name: string
+          parent_id: number | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          description?: string | null
+          hero_image?: string | null
+          id?: number
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name: string
+          parent_id?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          description?: string | null
+          hero_image?: string | null
+          id?: number
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          parent_id?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          icon: string | null
+          id: number
+          is_active: boolean
           name: string
           slug: string
           sort_order: number | null
@@ -145,6 +249,7 @@ export type Database = {
         Insert: {
           icon?: string | null
           id?: number
+          is_active?: boolean
           name: string
           slug: string
           sort_order?: number | null
@@ -152,11 +257,102 @@ export type Database = {
         Update: {
           icon?: string | null
           id?: number
+          is_active?: boolean
           name?: string
           slug?: string
           sort_order?: number | null
         }
         Relationships: []
+      }
+      listing_categories: {
+        Row: {
+          category_id: number
+          listing_id: string
+        }
+        Insert: {
+          category_id: number
+          listing_id: string
+        }
+        Update: {
+          category_id?: number
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_categories_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_areas: {
+        Row: {
+          area_id: number
+          listing_id: string
+        }
+        Insert: {
+          area_id: number
+          listing_id: string
+        }
+        Update: {
+          area_id?: number
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_areas_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_areas_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_tags: {
+        Row: {
+          listing_id: string
+          tag_id: number
+        }
+        Insert: {
+          listing_id: string
+          tag_id: number
+        }
+        Update: {
+          listing_id?: string
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_tags_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       listing_amenities: {
         Row: {
@@ -223,6 +419,7 @@ export type Database = {
       listings: {
         Row: {
           address: string | null
+          area_id: number | null
           category_id: number | null
           city: string | null
           country: string | null
@@ -247,6 +444,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          area_id?: number | null
           category_id?: number | null
           city?: string | null
           country?: string | null
@@ -271,6 +469,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          area_id?: number | null
           category_id?: number | null
           city?: string | null
           country?: string | null
@@ -294,6 +493,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "listings_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "listings_category_id_fkey"
             columns: ["category_id"]
@@ -372,6 +578,7 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string
+          is_admin: boolean
           lat: number | null
           lng: number | null
           phone: string | null
@@ -390,6 +597,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean
           lat?: number | null
           lng?: number | null
           phone?: string | null
@@ -408,6 +616,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean
           lat?: number | null
           lng?: number | null
           phone?: string | null

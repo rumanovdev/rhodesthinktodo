@@ -334,7 +334,7 @@ export const blogs = [
    <h2>7. Bathe at Kallithea Springs</h2>
    <p>A beautifully restored 1920s thermal spa with domed pavilions and a small swimming cove — equal parts architecture and beach.</p>
    <h2>8. Eat at a traditional taverna</h2>
-   <p>Try local specialities like pitaroudia (chickpea fritters), fresh grilled fish and melekouni (sesame and honey bars). Browse <a href="/listings-map/?category=restaurant">restaurants in Rhodes</a>.</p>
+   <p>Try local specialities like pitaroudia (chickpea fritters), fresh grilled fish and melekouni (sesame and honey bars). Browse <a href="/restaurants/">restaurants in Rhodes</a>.</p>
    <h2>How to plan your trip</h2>
    <p>Most visitors base themselves in Rhodes Town, Lindos or Faliraki. You can see the highlights car-free using buses and boats, but a rental car helps for the west coast and quiet villages. See <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a> and <a href="/blog-detail/where-to-stay-in-rhodes/">where to stay</a>.</p>
    <h2>FAQ</h2>
@@ -423,7 +423,7 @@ export const blogs = [
      <li><strong>Best time:</strong> June and September offer warm water with fewer crowds — see <a href="/blog-detail/best-time-to-visit-rhodes/">the best time to visit Rhodes</a>.</li>
      <li><strong>Bring:</strong> water shoes for pebbly coves, and a snorkel for Anthony Quinn and Kallithea.</li>
    </ul>
-   <p>Find <a href="/listings-map/?category=activities">beaches and activities</a> and nearby <a href="/listings-map/?category=restaurant">tavernas</a> across the island.</p>
+   <p>Find <a href="/things-to-do/">beaches and activities</a> and nearby <a href="/restaurants/">tavernas</a> across the island.</p>
    <h2>FAQ</h2>
    <h3>Which is the best beach in Rhodes for families?</h3>
    <p>Tsambika and Agathi — both have shallow, calm, sandy water and good facilities.</p>
@@ -461,7 +461,7 @@ export const blogs = [
      <li>Carry water and sun protection — there is little shade on the climb.</li>
      <li>Stay for dinner on a rooftop taverna for the best atmosphere.</li>
    </ul>
-   <p>Plan the rest of your trip with <a href="/listings-map/?category=tours">boat trips</a>, <a href="/listings-map/?category=restaurant">restaurants</a> and <a href="/listings-map/?category=real-estate">places to stay</a>.</p>
+   <p>Plan the rest of your trip with <a href="/things-to-do/">boat trips</a>, <a href="/restaurants/">restaurants</a> and <a href="/accommodation/">places to stay</a>.</p>
    <h2>FAQ</h2>
    <h3>Is Lindos worth visiting?</h3>
    <p>Absolutely — the acropolis, the village and St Paul's Bay make it the most scenic spot on Rhodes.</p>
@@ -498,7 +498,7 @@ export const blogs = [
    </ul>
    <h2>Sea temperature through the year</h2>
    <p>The sea is coolest in spring (around 18°C in April), comfortable by June (23°C), warmest in late August and September (25°C), and still swimmable in October (22–23°C). For the warmest swims, target late summer and early autumn.</p>
-   <p>Once you have your dates, browse <a href="/listings-map/?category=real-estate">hotels</a>, plan <a href="/blog-detail/best-beaches-in-rhodes/">the best beaches</a> and find <a href="/listings-map/?category=activities">things to do</a>.</p>
+   <p>Once you have your dates, browse <a href="/accommodation/">hotels</a>, plan <a href="/blog-detail/best-beaches-in-rhodes/">the best beaches</a> and find <a href="/things-to-do/">things to do</a>.</p>
    <h2>FAQ</h2>
    <h3>What is the best month to visit Rhodes?</h3>
    <p>September offers the best balance — warm sea, sunny weather, fewer crowds and lower prices than peak summer. June is the best early-season choice.</p>
@@ -524,7 +524,7 @@ export const blogs = [
    <h2>Local buses</h2>
    <p>A reliable and inexpensive bus network connects Rhodes Town with Lindos, Faliraki, Kalithea, Tsambika and most coastal resorts. Services are frequent in summer, making buses a great option for car-free travellers. Buy tickets at kiosks or on board.</p>
    <h2>Car &amp; scooter hire</h2>
-   <p>To reach quieter villages, the west coast, Prasonisi and remote beaches on your own schedule, a rental car or scooter is well worth it. Roads are generally good and distances manageable. Compare <a href="/listings-map/?category=automotive">transfers and car hire</a>.</p>
+   <p>To reach quieter villages, the west coast, Prasonisi and remote beaches on your own schedule, a rental car or scooter is well worth it. Roads are generally good and distances manageable. Compare <a href="/transport/">transfers and car hire</a>.</p>
    <h2>Taxis</h2>
    <p>Taxis are widely available in Rhodes Town and the resorts and are reasonable for short hops, though long cross-island trips add up. Agree the fare or ensure the meter is running.</p>
    <h2>Do you need a car in Rhodes?</h2>
@@ -563,7 +563,7 @@ export const blogs = [
      <li>Explore early or late to beat the heat and the cruise-ship crowds.</li>
      <li>Carry water and step into the side streets to escape the busy main lanes.</li>
    </ul>
-   <p>The Old Town is full of <a href="/listings-map/?category=restaurant">tavernas and restaurants</a> for a break, and close to more <a href="/listings-map/?category=activities">attractions</a>.</p>
+   <p>The Old Town is full of <a href="/restaurants/">tavernas and restaurants</a> for a break, and close to more <a href="/things-to-do/">attractions</a>.</p>
    <h2>FAQ</h2>
    <h3>How long do you need in Rhodes Old Town?</h3>
    <p>Half a day covers the main sights; a full day lets you add museums and a relaxed lunch.</p>
@@ -596,7 +596,7 @@ export const blogs = [
      <li>Bring sun protection, water and a towel — shade on board can be limited.</li>
      <li>Check whether lunch and snorkelling gear are included.</li>
    </ul>
-   <p>Browse and book <a href="/listings-map/?category=tours">boat trips and tours</a>, and combine them with <a href="/listings-map/?category=activities">beaches</a> and <a href="/listings-map/?category=restaurant">waterfront dining</a>.</p>
+   <p>Browse and book <a href="/things-to-do/">boat trips and tours</a>, and combine them with <a href="/things-to-do/">beaches</a> and <a href="/restaurants/">waterfront dining</a>.</p>
    <h2>FAQ</h2>
    <h3>What is the best boat trip from Rhodes?</h3>
    <p>The day trip to Symi island is the most popular and scenic full-day excursion.</p>
@@ -653,7 +653,7 @@ export const blogs = [
      <li><strong>Resorts &amp; spa:</strong> Ixia / Ialysos.</li>
      <li><strong>Peace &amp; nature:</strong> the south (with a car).</li>
    </ul>
-   <p>Compare <a href="/listings-map/?category=real-estate">hotels and stays</a>, and see <a href="/listings-map/?category=restaurant">where to eat</a> and <a href="/listings-map/?category=activities">what to do</a> nearby. For transport between areas, read <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a>.</p>
+   <p>Compare <a href="/accommodation/">hotels and stays</a>, and see <a href="/restaurants/">where to eat</a> and <a href="/things-to-do/">what to do</a> nearby. For transport between areas, read <a href="/blog-detail/getting-around-rhodes/">getting around Rhodes</a>.</p>
    <h2>FAQ</h2>
    <h3>Where is the best area to stay in Rhodes?</h3>
    <p>Rhodes Town for first-timers and short trips; the east coast (Faliraki) for beaches and families; Lindos for couples and scenery.</p>
@@ -738,7 +738,7 @@ export const cities = [
     title: 'Restaurants & Tavernas',
     lists: 'Browse',
     style: 'col-xl-6 col-lg-6 col-md-4 col-sm-6',
-    href: '/search/?category=restaurant',
+    href: '/restaurants/',
     tags: ['Tavernas', 'Seafood', 'Mezze', 'Fine Dining'],
   },
   {
@@ -746,7 +746,7 @@ export const cities = [
     title: 'Hotels & Stays',
     lists: 'Browse',
     style: 'col-xl-3 col-lg-3 col-md-4 col-sm-6',
-    href: '/search/?category=travel',
+    href: '/accommodation/',
     tags: ['Boutique', 'Resorts', 'Villas'],
   },
   {
@@ -754,7 +754,7 @@ export const cities = [
     title: 'Spa & Wellness',
     lists: 'Browse',
     style: 'col-xl-3 col-lg-3 col-md-4 col-sm-6',
-    href: '/search/?category=spa',
+    href: '/services/spa-wellness/',
     tags: ['Massage', 'Hammam', 'Yoga'],
   },
   {
@@ -762,7 +762,7 @@ export const cities = [
     title: 'Bars & Nightlife',
     lists: 'Browse',
     style: 'col-xl-3 col-lg-3 col-md-4 col-sm-6',
-    href: '/search/?category=entertainment',
+    href: '/bars-nightlife/',
     tags: ['Beach Bars', 'Live Music', 'Cocktails'],
   },
   {
@@ -770,7 +770,7 @@ export const cities = [
     title: 'Shopping',
     lists: 'Browse',
     style: 'col-xl-3 col-lg-3 col-md-4 col-sm-6',
-    href: '/search/?category=shopping',
+    href: '/shopping/',
     tags: ['Boutiques', 'Souvenirs', 'Crafts'],
   },
   {
@@ -778,7 +778,7 @@ export const cities = [
     title: 'Accommodations',
     lists: 'Browse',
     style: 'col-xl-6 col-lg-6 col-md-4 col-sm-6',
-    href: '/search/?category=real-estate',
+    href: '/accommodation/',
     tags: ['Villas', 'Apartments', 'Sea View'],
   },
 ] as const;
