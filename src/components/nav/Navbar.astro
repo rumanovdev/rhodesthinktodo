@@ -26,6 +26,10 @@ const supabase = Astro.locals?.supabase ?? null;
 
 // Category mega-menu (mother categories -> subcategories), DB-driven.
 const categoryTree = await getCategoryTree(supabase);
+// "Things to Do" and "Map" are promoted to top-level nav items, so exclude
+// Things to Do from the Explore dropdown.
+const thingsToDo = categoryTree.find((m) => m.slug === 'things-to-do');
+const exploreCats = categoryTree.filter((m) => m.slug !== 'things-to-do');
 
 let userLabel: string | null = null;
 let userAvatar: string | null = null;
@@ -74,9 +78,22 @@ if (user) {
         <ul class="nav-menu">
           <li class="parent-parent-menu-item"><a href={localizePath('/', locale)} class="home-link">{t('nav.home')}</a></li>
 
+          {thingsToDo && (
+          <li class="parent-parent-menu-item"><a href={localizePath('/things-to-do/', locale)} class="home-link">Things to Do{thingsToDo.subcategories.length > 0 && <span class="submenu-indicator"></span>}</a>
+            {thingsToDo.subcategories.length > 0 && (
+              <ul class="nav-dropdown nav-submenu">
+                <li><a href={localizePath('/things-to-do/', locale)} class="sub-menu-item">All Things to Do</a></li>
+                {thingsToDo.subcategories.map((s) => (
+                  <li><a href={localizePath(`/things-to-do/${s.slug}/`, locale)} class="sub-menu-item">{s.name}</a></li>
+                ))}
+              </ul>
+            )}
+          </li>
+          )}
+
           <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">{t('nav.explore')}<span class="submenu-indicator"></span></a>
             <ul class="nav-dropdown nav-submenu">
-              {categoryTree.map((m) => (
+              {exploreCats.map((m) => (
                 <li class="parent-menu-item">
                   <a href={localizePath(`/${m.slug}/`, locale)} class="sub-menu-item">{m.name}{m.subcategories.length > 0 && <span class="submenu-indicator"></span>}</a>
                   {m.subcategories.length > 0 && (
@@ -89,10 +106,11 @@ if (user) {
                   )}
                 </li>
               ))}
-              <li><a href={localizePath('/listings-map/', locale)} class="sub-menu-item"><i class="bi bi-map me-1"></i>Map</a></li>
               <li><a href={localizePath('/listings-grid/', locale)} class="sub-menu-item"><i class="bi bi-grid me-1"></i>All Listings</a></li>
             </ul>
           </li>
+
+          <li class="parent-parent-menu-item"><a href={localizePath('/listings-map/', locale)} class="home-link"><i class="bi bi-map me-1"></i>Map</a></li>
 
           {/* User Dashboard submenu removed from the primary nav — the logged-in user reaches dashboard pages via the avatar dropdown (right-aligned) instead. */}
 
