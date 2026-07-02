@@ -18,7 +18,7 @@ const { data: listing } = await admin.from('listings').select('*').eq('id', id).
 if (!listing) return Astro.redirect('/admin/listings/?error=' + encodeURIComponent('Listing not found'));
 
 const [{ data: catRows }, { data: areaRows }, { data: tagRows }, { data: amenityRows },
-       { data: subLinks }, { data: areaLinks }, { data: tagLinks }, { data: amenityLinks }] = await Promise.all([
+       { data: subLinks }, { data: areaLinks }, { data: tagLinks }, { data: amenityLinks }, { data: imageRows }] = await Promise.all([
   admin.from('categories').select('id, slug, name, parent_id').eq('is_active', true).order('sort_order'),
   admin.from('areas').select('id, name').eq('is_active', true).order('sort_order'),
   admin.from('tags').select('id, name').eq('is_active', true).order('sort_order'),
@@ -27,7 +27,9 @@ const [{ data: catRows }, { data: areaRows }, { data: tagRows }, { data: amenity
   admin.from('listing_areas').select('area_id').eq('listing_id', id),
   admin.from('listing_tags').select('tag_id').eq('listing_id', id),
   admin.from('listing_amenities').select('amenity_id').eq('listing_id', id),
+  admin.from('listing_images').select('id, url, sort_order').eq('listing_id', id).order('sort_order'),
 ]);
+const images = imageRows ?? [];
 
 const cats = catRows ?? [];
 const motherCats = cats.filter((c: any) => c.parent_id == null);
@@ -61,7 +63,7 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
 
           {error && <div class="alert alert-danger">{error}</div>}
 
-          <form method="post" action={`/api/admin/listings/${listing.id}`} class="card rounded-4 shadow-sm p-4">
+          <form method="post" action={`/api/admin/listings/${listing.id}`} enctype="multipart/form-data" class="card rounded-4 shadow-sm p-4">
             <div class="row g-3">
               <div class="col-12"><label class="form-label fw-medium">Title *</label>
                 <input type="text" name="title" required maxlength="140" class="form-control" value={listing.title} /></div>
@@ -140,6 +142,26 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
                     </div></div>
                   ))}
                 </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-medium">Photos</label>
+                {images.length > 0 && (
+                  <div class="d-flex flex-wrap gap-3 mb-2">
+                    {images.map((img: any) => (
+                      <div class="text-center">
+                        <img src={img.url} alt="" style="width:110px;height:80px;object-fit:cover" class={`rounded-3 border ${listing.hero_image === img.url ? 'border-primary border-2' : ''}`} />
+                        <div class="form-check d-flex justify-content-center gap-1 mt-1">
+                          <input id={`rm-${img.id}`} class="form-check-input" type="checkbox" name="remove_images" value={img.id} />
+                          <label for={`rm-${img.id}`} class="form-check-label text-sm text-danger">remove</label>
+                        </div>
+                        {listing.hero_image === img.url && <span class="badge bg-primary rounded-pill">hero</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
+                <small class="text-muted">Add up to 5 new photos (JPEG/PNG/WebP, 5 MB each). The first image becomes the hero when none is set.</small>
               </div>
 
               <div class="col-12 d-flex gap-2 mt-2">
