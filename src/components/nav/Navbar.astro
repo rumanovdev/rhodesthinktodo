@@ -25,6 +25,11 @@ const user = Astro.locals?.user ?? null;
 const supabase = Astro.locals?.supabase ?? null;
 const isAdmin = Astro.locals?.isAdmin ?? false;
 
+// Transparent variant (homepage hero): white links + light logo until the user
+// scrolls, then the theme's scroll handler adds `header-fixed` (white background)
+// and the CSS below switches to dark links + dark logo.
+const isTransparent = headerClass.includes('header-transparent');
+
 // Category mega-menu (mother categories -> subcategories), DB-driven.
 const categoryTree = await getCategoryTree(supabase);
 // Promoted mother categories ("Things to Do", "Tours") and "Map" get their own
@@ -51,7 +56,10 @@ if (user) {
   <div class="container-fluid">
     <nav id="navigation" class="navigation navigation-landscape">
       <div class="nav-header">
-        <a class="nav-brand" href="/" aria-label="Rhodes Things To Do home"><img src={logo} class="logo" alt="Rhodes Things To Do" /></a>
+        <a class="nav-brand" href="/" aria-label="Rhodes Things To Do home">
+          {isTransparent && <img src="/assets/img/rhodes-logo.svg" class="logo logo-light" alt="Rhodes Things To Do" />}
+          <img src={logo} class={`logo${isTransparent ? ' logo-dark' : ''}`} alt="Rhodes Things To Do" />
+        </a>
         <div class="nav-toggle"></div>
         <div class="mobile_nav">
           <ul>
@@ -220,13 +228,40 @@ if (user) {
     width: 100% !important;
   }
 
-  /* On the transparent (homepage) header the theme renders nav links at 50%
-     white (grey). Force full white for the menu links and the Sign In link.
-     Inner pages use the light header, so this selector never affects them;
-     the scrolled state of this variant has a dark background, so white stays readable. */
-  .header.header-transparent .nav-menu > li > a.home-link,
-  .header.header-transparent .nav-menu.nav-menu-social > li > a {
-    color: var(--bs-white) !important;
+  /* Transparent (homepage) header. Desktop-only: below 993px the theme always
+     gives .header a white background, so the drawer/mobile bar keeps dark styling. */
+  @media (min-width: 993px) {
+    /* Over the hero (not scrolled): full-white links — the theme's default is
+       50% white — plus the light logo. */
+    .header.header-transparent:not(.header-fixed) .nav-menu > li > a.home-link,
+    .header.header-transparent:not(.header-fixed) .nav-menu.nav-menu-social > li > a {
+      color: var(--bs-white) !important;
+    }
+    .header.header-transparent:not(.header-fixed) .nav-menu > li > a .submenu-indicator-chevron {
+      border-color: transparent var(--bs-white) var(--bs-white) transparent !important;
+    }
+    .header.header-transparent:not(.header-fixed) .nav-brand img.logo-dark {
+      display: none;
+    }
+    /* Scrolled (header-fixed = white background): dark links + dark logo.
+       The stock theme keeps links white here because it expects the colored
+       .theme/.dark fixed variants. */
+    .header.header-transparent.header-fixed .nav-menu > li > a.home-link,
+    .header.header-transparent.header-fixed .nav-menu.nav-menu-social > li > a {
+      color: var(--bs-nav-color) !important;
+    }
+    .header.header-transparent.header-fixed .nav-menu > li > a .submenu-indicator-chevron {
+      border-color: transparent var(--bs-nav-color) var(--bs-nav-color) transparent !important;
+    }
+    .header.header-transparent.header-fixed .nav-brand img.logo-light {
+      display: none;
+    }
+  }
+  /* Mobile always shows the dark logo (white header bar). */
+  @media (max-width: 992px) {
+    .header.header-transparent .nav-brand img.logo-light {
+      display: none;
+    }
   }
 
   /* Bigger, more prominent brand logo in the header */
