@@ -257,8 +257,8 @@ const listings = await getPublishedListings(Astro.locals.supabase);
 					                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
 					                            <span class="badge badge-xs badge-transparent">{item.dollar}</span>
 
-					                            {item.tag === 'true' && (
-					                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>{item.btn1}</span>
+					                            {item.tag && (
+					                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>Featured</span>
 					                            )}
 
 					                        </div>

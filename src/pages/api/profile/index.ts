@@ -153,7 +153,10 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     await supabase.auth.updateUser({ data: { full_name: patch.full_name } });
   }
 
-  const { error } = await supabase.from('profiles').update(patch).eq('id', user.id);
+  const { error } = await supabase
+    .from('profiles')
+    .update(patch as Database['public']['Tables']['profiles']['Update'])
+    .eq('id', user.id);
   if (error) {
     return redirectErr(redirect, error.message);
   }

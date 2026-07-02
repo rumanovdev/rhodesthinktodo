@@ -6,7 +6,7 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { categories, cities, reviews, blogs } from '../lib/data/context';
+import { cities, reviews, blogs } from '../lib/data/context';
 import { getPublishedListings, slugify } from '../lib/supabase/listings';
 import { getCategoryTree } from '../lib/supabase/taxonomy';
 import { useTranslations, DEFAULT_LOCALE, type Locale } from '../lib/i18n';
@@ -115,7 +115,7 @@ const motherCount = (m: any) =>
 									<select name="category" class="form-control fs-6 fw-medium hero-cat" aria-label="Category">
 										<option value="">{t('hero.allCategories')}</option>
 										{catTree.map((m) => (<option value={m.slug}>{m.name}</option>))}
-																																																																																									</select>
+										</select>
 								</div>
 						</div>
 						<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12">
@@ -209,8 +209,8 @@ const motherCount = (m: any) =>
 			                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
 			                            <span class="badge badge-xs badge-transparent">{item.dollar}</span>
 
-			                            {item.tag === 'true' && (
-			                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>{item.btn1}</span>
+			                            {item.tag && (
+			                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>Featured</span>
 			                            )}
 
 			                        </div>

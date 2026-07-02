@@ -316,8 +316,8 @@ const listings6 = await getPublishedListings(Astro.locals.supabase);
 			                <div class="listThumb overflow-hidden position-relative">
 			                    <div class="position-absolute start-0 top-0 ms-3 mt-3"><span class={`badge badge-xs text-uppercase ${item.color} rounded-pill`}>{item.btn}</span></div>
 
-			                    {item.tag === 'true' && (
-			                        <div class="position-absolute end-0 bottom-0 me-3 mb-3"><span class="badge badge-xs featuredList rounded-pill"><i class="fa-solid fa-star me-1"></i>{item.btn1}</span></div>
+			                    {item.tag && (
+			                        <div class="position-absolute end-0 bottom-0 me-3 mb-3"><span class="badge badge-xs featuredList rounded-pill"><i class="fa-solid fa-star me-1"></i>Featured</span></div>
 			                    )}
 
 			                    <a href="#" class="d-block"><img src={item.img} class="img-fluid list-thumb object-fit" alt="Listing Img"></a>
@@ -335,23 +335,12 @@ const listings6 = await getPublishedListings(Astro.locals.supabase);
 			                                        <div class="bg-light border rounded-pill py-1 ps-1 pe-3">
 			                                            <div class="d-inline-flex align-items-center justify-content-start gap-2">
 			                                                <span class="square--25 circle bg-price text-light text-sm"><i class="bi bi-coin lh-1 h-auto"></i></span>
-			                                                <span class="text-sm fw-medium">{item.price}</span>
+			                                                <span class="text-sm fw-medium">{item.dollar}</span>
 			                                            </div>
 			                                        </div>
 			                                    </div>
 
-			                                    {item.tag1 === 'true' && (
-			                                        <div class="singleCaption">
-			                                            <div class="bg-light border rounded-pill py-1 ps-1 pe-3">
-			                                                <div class="d-inline-flex align-items-center justify-content-start gap-2">
-			                                                    <span class="square--25 circle bg-booking text-light text-sm"><i class="bi bi-lightning-charge-fill lh-1 h-auto"></i></span>
-			                                                    <span class="text-sm fw-medium">{item.btn2}</span>
-			                                                </div>
-			                                            </div>
-			                                        </div>
-			                                    )}
-
-			                                </div>
+			                                    </div>
 			                                <h5 class="listItemtitle"><a href={`/listing/${slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
 			                                <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
 			                                    <div class="flex-start"><div class="list-location text-muted"><span><i class="fa-solid fa-location-dot me-2"></i>{item.location}</span></div></div>

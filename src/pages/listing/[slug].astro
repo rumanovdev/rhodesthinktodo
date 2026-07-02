@@ -6,7 +6,7 @@ import Subscribe from '../../components/shared/Subscribe.astro';
 import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
-import { features, gallerys3, authors } from '../../lib/data/context';
+import { gallerys3 } from '../../lib/data/context';
 import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
 import { getListingTaxonomy } from '../../lib/supabase/taxonomy';
 import { absUrl } from '../../lib/data/site';
@@ -446,8 +446,8 @@ const breadcrumbSchema = {
 									                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
 									                            <span class="badge badge-xs badge-transparent">{item.dollar}</span>
 
-									                            {item.tag === 'true' && (
-									                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>{item.btn1}</span>
+									                            {item.tag && (
+									                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>Featured</span>
 									                            )}
 
 									                        </div>

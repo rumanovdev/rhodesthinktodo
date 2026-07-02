@@ -12,7 +12,7 @@ import { absUrl } from '../../lib/data/site';
 const slugifyFn = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const { slug: routeSlug } = Astro.params as { slug: string };
-const blog = (blogs as any[]).find(
+const blog = (blogs as unknown as any[]).find(
   (b) => (b.slug || slugifyFn(b.title)) === routeSlug,
 );
 if (!blog) {
@@ -23,7 +23,7 @@ const heroTitle = blog.title || 'Top 10 Free Bootstrap Templates for Your Next P
 const heroDate = blog.date || '6 Sep 2025';
 
 const slug = (blog as any).slug || heroTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-const recentPosts = (blogs as any[]).filter((b) => b.slug !== slug).slice(0, 4);
+const recentPosts = (blogs as unknown as any[]).filter((b) => b.slug !== slug).slice(0, 4);
 const postUrl = absUrl(`/blog-detail/${slug}/`);
 const seoDescription = (blog.desc || blog.excerpt || `${heroTitle} — a Rhodes travel story and guide from Rhodes Things To Do.`)
   .toString().replace(/\s+/g, ' ').trim().slice(0, 160);
