@@ -113,7 +113,7 @@ const markers = mappable.map((l) => ({
           ) : (
             <div class="row g-4">
               {listings.map((item) => (
-                <div class="col-12 col-md-6"><ListingCard item={item} /></div>
+                <div class="col-12 col-md-6 taxo-listing" data-listing-id={item.id}><ListingCard item={item} /></div>
               ))}
             </div>
           )}
@@ -136,14 +136,45 @@ const markers = mappable.map((l) => ({
 
   <style is:global>
     .taxonomy-map-wrap { position: sticky; top: 90px; }
-    .taxonomy-map { height: calc(100vh - 130px); min-height: 420px; width: 100%; position: relative; z-index: 0; }
+    .taxonomy-map { height: calc(100vh - 130px); min-height: 420px; width: 100%; position: relative; z-index: 0; background: #eef0f2; }
     @media (max-width: 991px) {
       .taxonomy-map-wrap { position: relative; top: 0; margin-bottom: 1.25rem; }
       .taxonomy-map { height: 360px; min-height: 0; }
     }
-    .leaflet-popup-content { min-width: 180px; }
-    .leaflet-popup-content .lm-popup-img { width: 100%; height: 96px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; }
-    .leaflet-popup-content .lm-popup-title { font-weight: 600; color: #1a1a1a; display: block; text-decoration: none; }
+    /* Airbnb-style pill markers */
+    .taxo-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      color: #222;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      border-radius: 999px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.12);
+      border: 1px solid rgba(0,0,0,.05);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .12s ease, background-color .12s ease, color .12s ease, box-shadow .12s ease;
+    }
+    .taxo-pin:hover, .taxo-pin.is-active {
+      background: #222;
+      color: #fff;
+      transform: translate(-50%, -50%) scale(1.06);
+      box-shadow: 0 3px 12px rgba(0,0,0,.32);
+      z-index: 650 !important;
+    }
+    .leaflet-marker-icon.taxo-pin-wrap { background: transparent; border: 0; }
+    /* Card highlight when its marker is selected */
+    .taxo-listing .fr-listing-cards { transition: box-shadow .15s ease, outline-color .15s ease; outline: 2px solid transparent; }
+    .taxo-listing.is-active .fr-listing-cards { outline-color: var(--bs-primary, #e11d48); box-shadow: 0 10px 26px rgba(0,0,0,.14) !important; }
+    /* Popup */
+    .leaflet-popup-content-wrapper { border-radius: 14px; }
+    .leaflet-popup-content { min-width: 190px; }
+    .leaflet-popup-content .lm-popup-img { width: 100%; height: 104px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+    .leaflet-popup-content .lm-popup-title { font-weight: 700; color: #1a1a1a; display: block; text-decoration: none; margin-bottom: 2px; }
     .leaflet-popup-content .lm-popup-meta { font-size: 12px; color: #666; }
   </style>
 
@@ -156,32 +187,80 @@ const markers = mappable.map((l) => ({
       if (!dataEl || !mapEl || typeof L === 'undefined') return;
       var listings = [];
       try { listings = JSON.parse(dataEl.textContent || '[]'); } catch (e) { listings = []; }
+
       var map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      // Clean, muted Airbnb-style base map (CARTO Positron) — no API key required.
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }).addTo(map);
+
+      var markers = {};
       var bounds = [];
+
+      function pinLabel(l) {
+        if (l.price) return l.price;
+        if (l.rating) return '\u2605 ' + l.rating;
+        return '\u2022';
+      }
+
       listings.forEach(function (l) {
         if (l.lat == null || l.lng == null) return;
-        var m = L.marker([l.lat, l.lng]).addTo(map);
+        var icon = L.divIcon({
+          className: 'taxo-pin-wrap',
+          iconSize: [0, 0],
+          iconAnchor: [0, 0],
+          html: '<div class="taxo-pin">' + esc(pinLabel(l)) + '</div>'
+        });
+        var m = L.marker([l.lat, l.lng], { icon: icon, riseOnHover: true }).addTo(map);
         var html = [
           l.img ? '<img src="' + esc(l.img) + '" class="lm-popup-img" alt="">' : '',
           '<a class="lm-popup-title" href="/listing/' + esc(l.slug) + '/">' + esc(l.title) + '</a>',
           '<div class="lm-popup-meta">' + esc(l.category || '') + ' \u00b7 ' + esc(l.price || '') + '</div>',
           '<div class="lm-popup-meta">\u2605 ' + esc(l.rating || '') + ' \u00b7 ' + esc(l.reviews || '') + ' Reviews</div>'
         ].join('');
-        m.bindPopup(html);
+        m.bindPopup(html, { autoPan: true });
+        m.on('click', function () { activateCard(l.id, true); });
+        m.on('popupclose', function () { activateCard(l.id, false); });
+        markers[l.id] = m;
         bounds.push([l.lat, l.lng]);
       });
-      if (bounds.length > 0) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+
+      if (bounds.length > 0) map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
       else map.setView([36.44, 28.22], 10);
       setTimeout(function () { map.invalidateSize(); }, 200);
+
+      // Card <-> marker sync (Airbnb behaviour).
+      function pinEl(id) {
+        var m = markers[id];
+        if (!m) return null;
+        var el = m.getElement();
+        return el ? el.querySelector('.taxo-pin') : null;
+      }
+      function setPinActive(id, on) {
+        var p = pinEl(id);
+        if (p) p.classList.toggle('is-active', on);
+      }
+      function activateCard(id, on) {
+        var card = document.querySelector('.taxo-listing[data-listing-id="' + cssEsc(id) + '"]');
+        if (card) {
+          card.classList.toggle('is-active', on);
+          if (on && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        setPinActive(id, on);
+      }
+      document.querySelectorAll('.taxo-listing[data-listing-id]').forEach(function (card) {
+        var id = card.getAttribute('data-listing-id');
+        card.addEventListener('mouseenter', function () { setPinActive(id, true); });
+        card.addEventListener('mouseleave', function () { if (!card.classList.contains('is-active')) setPinActive(id, false); });
+      });
+
       function esc(s) {
         return String(s == null ? '' : s)
           .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
+      function cssEsc(s) { return String(s == null ? '' : s).replace(/["\\]/g, '\\$&'); }
     })();
   </script>
 
