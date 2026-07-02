@@ -94,6 +94,9 @@ const avgRating = ratings.length
   : null;
 
 const listingUrl = absUrl(`/listing/${event.slug}/`);
+// Business website (optional column) — shown in the sidebar + schema sameAs.
+const websiteUrl: string | null = (detail as any).website ?? null;
+const websiteLabel = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '').replace(/\/$/, '') : '';
 const businessSchema: Record<string, any> = {
   '@context': 'https://schema.org',
   '@type': schemaType,
@@ -102,6 +105,7 @@ const businessSchema: Record<string, any> = {
   ...(event.desc ? { description: String(event.desc).replace(/\s+/g, ' ').trim() } : {}),
   ...(event.img ? { image: absUrl(event.img) } : {}),
   ...(event.number ? { telephone: event.number } : {}),
+  ...(websiteUrl ? { sameAs: [websiteUrl] } : {}),
   address: {
     '@type': 'PostalAddress',
     ...(event.address ? { streetAddress: event.address } : {}),
@@ -527,6 +531,17 @@ const breadcrumbSchema = {
 									        <div class="infoDetails">
 									            <p class="text-muted lh-base mb-0">Phone</p>
 									            <p class="text-dark lh-base fw-medium fs-6 mb-0"><a href={`tel:${event.number}`} class="text-reset">{event.number}</a></p>
+									        </div>
+									    </div>
+									</div>
+									)}
+									{websiteUrl && (
+									<div class="py-3 px-3 border-top">
+									    <div class="infoFlexio d-flex align-items-center justify-content-start gap-2">
+									        <div class="square--40 rounded bg-light-primary"><i class="bi bi-globe2 text-primary"></i></div>
+									        <div class="infoDetails">
+									            <p class="text-muted lh-base mb-0">Website</p>
+									            <p class="text-dark lh-base fw-medium fs-6 mb-0"><a href={websiteUrl} target="_blank" rel="noopener nofollow" class="text-reset">{websiteLabel}</a></p>
 									        </div>
 									    </div>
 									</div>

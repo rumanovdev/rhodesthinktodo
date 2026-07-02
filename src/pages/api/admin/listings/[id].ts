@@ -35,6 +35,16 @@ export const POST: APIRoute = async ({ request, params, locals, redirect }) => {
   const status = ['draft', 'published', 'archived'].includes(statusRaw)
     ? (statusRaw as Database['public']['Enums']['listing_status']) : 'draft';
 
+  // Website: accept bare domains, normalize to https://, drop if unparseable.
+  let website: string | null = String(form.get('website') ?? '').trim() || null;
+  if (website) {
+    if (!/^https?:\/\//i.test(website)) website = `https://${website}`;
+    try {
+      const u = new URL(website);
+      if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) website = null;
+    } catch { website = null; }
+  }
+
   const { error: upErr } = await admin.from('listings').update({
     title,
     category_id: categoryId,
@@ -42,6 +52,7 @@ export const POST: APIRoute = async ({ request, params, locals, redirect }) => {
     status,
     price_tier: Number(String(form.get('price_tier') ?? '2')) || 2,
     phone: String(form.get('phone') ?? '').trim() || null,
+    website,
     address: String(form.get('address') ?? '').trim() || null,
     city: String(form.get('city') ?? '').trim() || null,
     lat, lng,

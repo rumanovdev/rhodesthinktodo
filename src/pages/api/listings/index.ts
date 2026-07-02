@@ -46,6 +46,18 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
 
   const description = String(form.get('description') ?? '').trim() || null;
   const phone = String(form.get('phone') ?? '').trim() || null;
+  // Website: accept bare domains, store with a scheme; reject anything that
+  // still doesn't parse as http(s).
+  let website: string | null = String(form.get('website') ?? '').trim() || null;
+  if (website) {
+    if (!/^https?:\/\//i.test(website)) website = `https://${website}`;
+    try {
+      const u = new URL(website);
+      if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) website = null;
+    } catch {
+      website = null;
+    }
+  }
   const address = String(form.get('address') ?? '').trim() || null;
   const city = String(form.get('city') ?? '').trim() || null;
   const country = String(form.get('country') ?? '').trim() || null;
@@ -86,6 +98,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       category_id: categoryId,
       area_id: areaId,
       phone,
+      website,
       address,
       city,
       country,

@@ -113,6 +113,8 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
 
               <div class="col-md-6"><label class="form-label fw-medium">Phone</label>
                 <input type="tel" name="phone" class="form-control" value={listing.phone ?? ''} /></div>
+              <div class="col-md-6"><label class="form-label fw-medium">Website</label>
+                <input type="text" name="website" class="form-control" value={(listing as any).website ?? ''} placeholder="www.example.com" /></div>
               <div class="col-md-6"><label class="form-label fw-medium">Street address</label>
                 <input type="text" name="address" class="form-control" value={listing.address ?? ''} /></div>
               <div class="col-md-4"><label class="form-label fw-medium">City</label>

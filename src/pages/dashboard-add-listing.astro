@@ -93,6 +93,13 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
+                              <label for="website" class="lableTitle">Website</label>
+                              <input type="text" id="website" name="website" class="form-control rounded" placeholder="www.example.com" inputmode="url" autocomplete="url" />
+                              <small class="text-muted">The business website or social page (optional).</small>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
                               <label for="price_tier" class="lableTitle">Price tier</label>
                               <select id="price_tier" name="price_tier" class="form-control">
                                 <option value="1">$ — Inexpensive</option>

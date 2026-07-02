@@ -441,6 +441,7 @@ export type Database = {
           status: Database["public"]["Enums"]["listing_status"] | null
           title: string
           updated_at: string | null
+          website: string | null
         }
         Insert: {
           address?: string | null
@@ -466,6 +467,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["listing_status"] | null
           title: string
           updated_at?: string | null
+          website?: string | null
         }
         Update: {
           address?: string | null
@@ -491,6 +493,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string
           updated_at?: string | null
+          website?: string | null
         }
         Relationships: [
           {
