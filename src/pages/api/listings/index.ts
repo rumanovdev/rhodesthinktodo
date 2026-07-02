@@ -55,6 +55,14 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   const lngRaw = String(form.get('lng') ?? '').trim();
   const lat = latRaw ? Number(latRaw) : null;
   const lng = lngRaw ? Number(lngRaw) : null;
+  // Coordinates are required so every listing shows on the map.
+  if (
+    lat === null || lng === null ||
+    !Number.isFinite(lat) || !Number.isFinite(lng) ||
+    lat < -90 || lat > 90 || lng < -180 || lng > 180
+  ) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('Valid latitude and longitude are required so the listing appears on the map.'));
+  }
   const priceTier = Number(String(form.get('price_tier') ?? '2')) || 2;
   const statusRaw = String(form.get('status') ?? 'draft');
   const status = ['draft', 'published', 'archived'].includes(statusRaw)
