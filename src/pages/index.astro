@@ -435,9 +435,10 @@ const motherCount = (m: any) =>
       line-height: 1.15;
       font-weight: 600;
     }
-    /* No dark overlay on the hero image — keep the white text readable with a shadow instead. */
-    .hero-title,
+    /* Hero text stays white over the photo (no dark overlay), with a shadow for readability. */
+    .hero-header .hero-title,
     .hero-header .hero-sub {
+      color: #fff !important;
       text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.55);
     }
     @media (max-width: 575px) {
