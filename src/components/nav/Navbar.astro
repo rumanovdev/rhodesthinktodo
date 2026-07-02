@@ -23,7 +23,6 @@ const currentBase = Astro.url.pathname;
 
 const user = Astro.locals?.user ?? null;
 const supabase = Astro.locals?.supabase ?? null;
-const isAdmin = Astro.locals?.isAdmin ?? false;
 
 // Category mega-menu (mother categories -> subcategories), DB-driven.
 const categoryTree = await getCategoryTree(supabase);
@@ -95,37 +94,7 @@ if (user) {
             </ul>
           </li>
 
-          <li class="parent-parent-menu-item"><a href={localizePath('/about-us/', locale)} class="home-link">{t('nav.about')}</a></li>
-
           {/* User Dashboard submenu removed from the primary nav — the logged-in user reaches dashboard pages via the avatar dropdown (right-aligned) instead. */}
-
-          {isAdmin && (
-          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Pages<span class="submenu-indicator"></span></a>
-            <ul class="nav-dropdown nav-submenu">
-              <li class="parent-menu-item"><a href="JavaScript:Void(0);"><i class="bi bi-person-circle me-1"></i>My Account<span class="submenu-indicator"></span></a>
-                <ul class="nav-dropdown nav-submenu">
-                  <li><a href="/login/" class="sub-menu-item"><i class="bi bi-box-arrow-in-right me-1"></i>User Login</a></li>
-                  <li><a href="/register/" class="sub-menu-item"><i class="bi bi-person-plus me-1"></i>Signup Page</a></li>
-                  <li><a href="/forgot-password/" class="sub-menu-item"><i class="bi bi-question-circle me-1"></i>Forget Password</a></li>
-                  <li><a href="/two-factor-auth/" class="sub-menu-item"><i class="bi bi-shield-check me-1"></i>Two Step verification</a></li>
-                </ul>
-              </li>
-              {/* Shop submenu (Checkout / Invoice / Success Payment) hidden in MVP — booking-page handles the checkout flow. */}
-              <li><a href="/author-profile/" class="sub-menu-item"><i class="bi bi-person-vcard me-1"></i>Author Profile</a></li>
-              <li><a href="/booking-page/" class="sub-menu-item"><i class="bi bi-calendar2-check me-1"></i>Booking Page</a></li>
-              <li><a href="/about-us/" class="sub-menu-item"><i class="bi bi-person-check me-1"></i>About Us</a></li>
-              <li><a href="/blog/" class="sub-menu-item"><i class="bi bi-blockquote-left me-1"></i>Blog Page</a></li>
-              <li><a href="/blog-detail/" class="sub-menu-item"><i class="bi bi-blockquote-left me-1"></i>Blog Detail</a></li>
-              <li><a href="/contact-us/" class="sub-menu-item"><i class="bi bi-envelope-check me-1"></i>Contact Us</a></li>
-              <li><a href="/pricing/" class="sub-menu-item"><i class="bi bi-coin me-1"></i>Pricing</a></li>
-              <li><a href="/privacy-policy/" class="sub-menu-item"><i class="bi bi-shield-check me-1"></i>Privacy Policy</a></li>
-              <li><a href="/comingsoon/" class="sub-menu-item"><i class="bi bi-hourglass-top me-1"></i>Coming Soon</a></li>
-              <li><a href="/faq/" class="sub-menu-item"><i class="bi bi-info-circle me-1"></i>FAQ's</a></li>
-              <li><a href="/error/" class="sub-menu-item"><i class="bi bi-x-octagon me-1"></i>Error Page</a></li>
-              <li><a href="/elements/" class="sub-menu-item"><i class="bi bi-gear me-1"></i>Elements</a></li>
-            </ul>
-          </li>
-          )}
 
           <li><a class="mob-addlisting light" href="JavaScript:Void(0);"><i class="bi bi-geo-alt-fill me-1"></i>{t('nav.addListing')}</a></li>
         </ul>
