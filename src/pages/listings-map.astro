@@ -263,7 +263,7 @@ const markersPayload = mappable.map((l) => ({
       if (bounds.length > 0) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
       } else {
-        map.setView([20, 0], 2);
+        map.setView([36.30, 28.10], 10); // focus on Rhodes, Greece
       }
 
       document.querySelectorAll('.lm-card').forEach(function (card) {
