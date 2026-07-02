@@ -1,0 +1,131 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import Footer from '../../components/nav/Footer.astro';
+import AdminSidebar from '../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+
+let mothers: any[] = [];
+let subsByMother: Record<number, any[]> = {};
+let countByCat = new Map<number, number>();
+if (admin) {
+  const [{ data: cats }, { data: listings }] = await Promise.all([
+    admin.from('categories').select('id, slug, name, parent_id, sort_order, is_active').not('slug', 'like', 'legacy-%').order('sort_order'),
+    admin.from('listings').select('category_id'),
+  ]);
+  const all = cats ?? [];
+  mothers = all.filter((c: any) => c.parent_id == null);
+  for (const s of all.filter((c: any) => c.parent_id != null)) (subsByMother[(s as any).parent_id] ??= []).push(s);
+  for (const l of (listings ?? []) as any[]) if (l.category_id) countByCat.set(l.category_id, (countByCat.get(l.category_id) ?? 0) + 1);
+}
+const motherCount = (m: any) => (countByCat.get(m.id) ?? 0) + (subsByMother[m.id] ?? []).reduce((s: number, x: any) => s + (countByCat.get(x.id) ?? 0), 0);
+---
+<Base noindex title="Admin — Categories | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="taxonomy" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <h1 class="fs-3 fw-semibold mb-1">Categories &amp; Subcategories</h1>
+          <p class="text-muted mb-4">Changes apply instantly to the navigation menu, add-listing form, and the auto-generated “Best … in …” pages.</p>
+
+          {notice && <div class="alert alert-success">{notice}</div>}
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <!-- Add mother category -->
+          <div class="card rounded-4 shadow-sm p-3 mb-4">
+            <form method="post" action="/api/admin/taxonomy" class="row g-2 align-items-end">
+              <input type="hidden" name="_action" value="add" />
+              <div class="col-md-6">
+                <label class="form-label text-sm text-muted mb-1">New main category</label>
+                <input type="text" name="name" required maxlength="60" class="form-control" placeholder="e.g. Nightlife Tours" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-sm text-muted mb-1">Icon (Font Awesome)</label>
+                <input type="text" name="icon" maxlength="40" class="form-control" placeholder="fa-star" />
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-plus-lg me-1"></i>Add category</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tree -->
+          <div class="d-flex flex-column gap-3">
+            {mothers.map((m: any) => (
+              <div class="card rounded-4 shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class={`fa-solid ${m.icon ?? 'fa-folder'} text-primary`}></i>
+                    <strong>{m.name}</strong>
+                    <span class="text-sm text-muted">/{m.slug}/ · {motherCount(m)} listings</span>
+                    {!m.is_active && <span class="badge bg-secondary rounded-pill">inactive</span>}
+                  </div>
+                  <div class="d-flex gap-1">
+                    <form method="post" action="/api/admin/taxonomy" class="d-flex gap-1">
+                      <input type="hidden" name="_action" value="rename" />
+                      <input type="hidden" name="id" value={m.id} />
+                      <input type="text" name="name" value={m.name} class="form-control form-control-sm" style="width:200px" />
+                      <button type="submit" class="btn btn-sm btn-light border rounded-pill" title="Rename"><i class="bi bi-check2"></i></button>
+                    </form>
+                    <form method="post" action="/api/admin/taxonomy">
+                      <input type="hidden" name="_action" value="toggle" />
+                      <input type="hidden" name="id" value={m.id} />
+                      <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={m.is_active ? 'Deactivate' : 'Activate'}>
+                        <i class={`bi ${m.is_active ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                <ul class="list-unstyled mt-3 mb-0 ps-4 d-flex flex-column gap-2">
+                  {(subsByMother[m.id] ?? []).map((s: any) => (
+                    <li class="d-flex align-items-center justify-content-between flex-wrap gap-2 border-bottom pb-2">
+                      <span>
+                        {s.name} <span class="text-sm text-muted">/{m.slug}/{s.slug}/ · {countByCat.get(s.id) ?? 0} listings</span>
+                        {!s.is_active && <span class="badge bg-secondary rounded-pill ms-1">inactive</span>}
+                      </span>
+                      <span class="d-flex gap-1">
+                        <form method="post" action="/api/admin/taxonomy" class="d-flex gap-1">
+                          <input type="hidden" name="_action" value="rename" />
+                          <input type="hidden" name="id" value={s.id} />
+                          <input type="text" name="name" value={s.name} class="form-control form-control-sm" style="width:180px" />
+                          <button type="submit" class="btn btn-sm btn-light border rounded-pill" title="Rename"><i class="bi bi-check2"></i></button>
+                        </form>
+                        <form method="post" action="/api/admin/taxonomy">
+                          <input type="hidden" name="_action" value="toggle" />
+                          <input type="hidden" name="id" value={s.id} />
+                          <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={s.is_active ? 'Deactivate' : 'Activate'}>
+                            <i class={`bi ${s.is_active ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </form>
+                      </span>
+                    </li>
+                  ))}
+                  <li>
+                    <form method="post" action="/api/admin/taxonomy" class="d-flex gap-2 align-items-center">
+                      <input type="hidden" name="_action" value="add" />
+                      <input type="hidden" name="parent_id" value={m.id} />
+                      <input type="text" name="name" required maxlength="60" class="form-control form-control-sm" style="max-width:260px" placeholder={`New subcategory in ${m.name}…`} />
+                      <button type="submit" class="btn btn-sm btn-light-primary rounded-pill"><i class="bi bi-plus-lg me-1"></i>Add</button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>

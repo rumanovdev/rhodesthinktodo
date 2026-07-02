@@ -267,6 +267,23 @@ const jsonLd = [...baseSchema, ...pageSchema];
       });
     </script>
 
+    <!-- First-party page-view beacon (admin analytics). Skips private pages and automated browsers. -->
+    <script is:inline>
+      (function () {
+        try {
+          var p = location.pathname;
+          if (/^\/(admin|dashboard|api)/.test(p)) return;
+          if (navigator.webdriver) return;
+          var data = JSON.stringify({ path: p, referrer: document.referrer || '' });
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon('/api/track', new Blob([data], { type: 'application/json' }));
+          } else {
+            fetch('/api/track', { method: 'POST', body: data, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(function () {});
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Cookie consent banner -->
     <CookieConsent />
   </body>

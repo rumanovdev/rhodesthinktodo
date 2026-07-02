@@ -1,0 +1,187 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import Footer from '../../components/nav/Footer.astro';
+import AdminSidebar from '../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+
+let usersCount = 0, bookingsCount = 0, reviewsCount = 0;
+let listingsByStatus: Record<string, number> = {};
+let views: any[] = [];
+let signups: string[] = [];
+let catNames = new Map<number, string>();
+let listingTitles = new Map<string, string>();
+
+if (admin) {
+  const [u, b, r, l, pv, s, cats] = await Promise.all([
+    admin.from('profiles').select('id', { count: 'exact', head: true }),
+    admin.from('bookings').select('id', { count: 'exact', head: true }),
+    admin.from('reviews').select('id', { count: 'exact', head: true }),
+    admin.from('listings').select('status'),
+    admin.from('page_views').select('page_type, category_id, listing_id, visitor_id, created_at, path').gte('created_at', since30).limit(50000),
+    admin.from('profiles').select('created_at').gte('created_at', new Date(Date.now() - 56 * 86400000).toISOString()),
+    admin.from('categories').select('id, name'),
+  ]);
+  usersCount = u.count ?? 0;
+  bookingsCount = b.count ?? 0;
+  reviewsCount = r.count ?? 0;
+  for (const row of l.data ?? []) listingsByStatus[row.status ?? 'draft'] = (listingsByStatus[row.status ?? 'draft'] ?? 0) + 1;
+  views = pv.data ?? [];
+  signups = (s.data ?? []).map((x: any) => x.created_at).filter(Boolean);
+  catNames = new Map((cats.data ?? []).map((c: any) => [c.id, c.name]));
+}
+
+// Aggregations (30d)
+const totalViews = views.length;
+const uniqueVisitors = new Set(views.map((v) => v.visitor_id).filter(Boolean)).size;
+const byCategory: Record<string, number> = {};
+for (const v of views) if (v.category_id) {
+  const name = catNames.get(v.category_id) ?? `#${v.category_id}`;
+  byCategory[name] = (byCategory[name] ?? 0) + 1;
+}
+const catRows = Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 10);
+const catMax = Math.max(1, ...catRows.map(([, n]) => n));
+
+const byListing: Record<string, number> = {};
+for (const v of views) if (v.listing_id) byListing[v.listing_id] = (byListing[v.listing_id] ?? 0) + 1;
+const topListingIds = Object.entries(byListing).sort((a, b) => b[1] - a[1]).slice(0, 5);
+if (admin && topListingIds.length) {
+  const { data } = await admin.from('listings').select('id, title').in('id', topListingIds.map(([id]) => id));
+  listingTitles = new Map((data ?? []).map((l: any) => [l.id, l.title]));
+}
+
+const byPath: Record<string, number> = {};
+for (const v of views) byPath[v.path] = (byPath[v.path] ?? 0) + 1;
+const topPaths = Object.entries(byPath).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+// Signups per week (8 weeks)
+const weeks: { label: string; n: number }[] = [];
+for (let w = 7; w >= 0; w--) {
+  const start = new Date(Date.now() - (w + 1) * 7 * 86400000);
+  const end = new Date(Date.now() - w * 7 * 86400000);
+  const n = signups.filter((c) => { const d = new Date(c); return d >= start && d < end; }).length;
+  weeks.push({ label: `${start.getDate()}/${start.getMonth() + 1}`, n });
+}
+const weekMax = Math.max(1, ...weeks.map((w) => w.n));
+
+const published = listingsByStatus['published'] ?? 0;
+const drafts = listingsByStatus['draft'] ?? 0;
+---
+<Base noindex title="Admin — Overview | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="overview" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <h1 class="fs-3 fw-semibold mb-4">Overview</h1>
+
+          <!-- Stat cards -->
+          <div class="row g-3 mb-4">
+            {[
+              { label: 'Registered users', value: usersCount, icon: 'bi-people', href: '/admin/users/' },
+              { label: 'Published listings', value: published, icon: 'bi-ui-radios-grid', href: '/admin/listings/' },
+              { label: 'Draft listings', value: drafts, icon: 'bi-pencil-square', href: '/admin/listings/' },
+              { label: 'Bookings', value: bookingsCount, icon: 'bi-calendar2-check', href: '/admin/' },
+              { label: 'Reviews', value: reviewsCount, icon: 'bi-star', href: '/admin/' },
+              { label: 'Views (30d)', value: totalViews, icon: 'bi-eye', href: '/admin/analytics/' },
+              { label: 'Unique visitors (30d)', value: uniqueVisitors, icon: 'bi-person-check', href: '/admin/analytics/' },
+            ].map((s) => (
+              <div class="col-6 col-md-4 col-xl-3">
+                <a href={s.href} class="card rounded-4 shadow-sm p-3 d-block text-decoration-none h-100">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="square--50 rounded-3 bg-light-primary d-inline-flex align-items-center justify-content-center"><i class={`bi ${s.icon} text-primary fs-5`}></i></span>
+                    <div>
+                      <div class="fs-4 fw-bold text-dark">{s.value}</div>
+                      <div class="text-sm text-muted">{s.label}</div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <div class="row g-4">
+            <!-- Views by category -->
+            <div class="col-lg-6">
+              <div class="card rounded-4 shadow-sm p-4 h-100">
+                <h5 class="fw-semibold mb-3">Visitors by category <span class="text-sm text-muted fw-normal">(30 days)</span></h5>
+                {catRows.length === 0 ? (
+                  <p class="text-muted mb-0">No category traffic recorded yet — data appears as visitors browse.</p>
+                ) : (
+                  <div class="d-flex flex-column gap-2">
+                    {catRows.map(([name, n]) => (
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="text-sm" style="width:150px">{name}</span>
+                        <div class="flex-grow-1 bg-light rounded-pill" style="height:10px"><div class="bg-primary rounded-pill" style={`height:10px;width:${Math.round((n / catMax) * 100)}%`}></div></div>
+                        <span class="text-sm fw-semibold" style="width:44px;text-align:right">{n}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <!-- Signups -->
+            <div class="col-lg-6">
+              <div class="card rounded-4 shadow-sm p-4 h-100">
+                <h5 class="fw-semibold mb-3">New users per week <span class="text-sm text-muted fw-normal">(8 weeks)</span></h5>
+                <div class="d-flex align-items-end gap-2" style="height:140px">
+                  {weeks.map((w) => (
+                    <div class="d-flex flex-column align-items-center flex-grow-1 h-100 justify-content-end">
+                      <span class="text-sm fw-semibold">{w.n}</span>
+                      <div class="bg-primary rounded-2 w-100" style={`height:${Math.round((w.n / weekMax) * 100)}%;min-height:3px;max-width:38px`}></div>
+                      <span class="text-sm text-muted mt-1">{w.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <!-- Top listings -->
+            <div class="col-lg-6">
+              <div class="card rounded-4 shadow-sm p-4 h-100">
+                <h5 class="fw-semibold mb-3">Most viewed listings <span class="text-sm text-muted fw-normal">(30 days)</span></h5>
+                {topListingIds.length === 0 ? <p class="text-muted mb-0">No listing views yet.</p> : (
+                  <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    {topListingIds.map(([id, n]) => (
+                      <li class="d-flex justify-content-between border-bottom pb-2">
+                        <span>{listingTitles.get(id) ?? id.slice(0, 8)}</span>
+                        <span class="fw-semibold">{n}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            <!-- Top pages -->
+            <div class="col-lg-6">
+              <div class="card rounded-4 shadow-sm p-4 h-100">
+                <h5 class="fw-semibold mb-3">Top pages <span class="text-sm text-muted fw-normal">(30 days)</span></h5>
+                {topPaths.length === 0 ? <p class="text-muted mb-0">No traffic recorded yet.</p> : (
+                  <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    {topPaths.map(([p, n]) => (
+                      <li class="d-flex justify-content-between border-bottom pb-2">
+                        <span class="text-truncate" style="max-width:75%">{p}</span>
+                        <span class="fw-semibold">{n}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>

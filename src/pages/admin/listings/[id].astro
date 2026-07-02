@@ -1,0 +1,157 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Navbar from '../../../components/nav/Navbar.astro';
+import Footer from '../../../components/nav/Footer.astro';
+import AdminSidebar from '../../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const { id } = Astro.params as { id: string };
+const error = Astro.url.searchParams.get('error');
+
+if (!admin) return Astro.redirect('/admin/listings/?error=' + encodeURIComponent('Service client not configured'));
+
+const { data: listing } = await admin.from('listings').select('*').eq('id', id).maybeSingle();
+if (!listing) return Astro.redirect('/admin/listings/?error=' + encodeURIComponent('Listing not found'));
+
+const [{ data: catRows }, { data: areaRows }, { data: tagRows }, { data: amenityRows },
+       { data: subLinks }, { data: areaLinks }, { data: tagLinks }, { data: amenityLinks }] = await Promise.all([
+  admin.from('categories').select('id, slug, name, parent_id').eq('is_active', true).order('sort_order'),
+  admin.from('areas').select('id, name').eq('is_active', true).order('sort_order'),
+  admin.from('tags').select('id, name').eq('is_active', true).order('sort_order'),
+  admin.from('amenities').select('id, name').order('name'),
+  admin.from('listing_categories').select('category_id').eq('listing_id', id),
+  admin.from('listing_areas').select('area_id').eq('listing_id', id),
+  admin.from('listing_tags').select('tag_id').eq('listing_id', id),
+  admin.from('listing_amenities').select('amenity_id').eq('listing_id', id),
+]);
+
+const cats = catRows ?? [];
+const motherCats = cats.filter((c: any) => c.parent_id == null);
+const subsByMother: Record<number, any[]> = {};
+for (const s of cats.filter((c: any) => c.parent_id != null)) (subsByMother[(s as any).parent_id] ??= []).push(s);
+
+const subIds = new Set((subLinks ?? []).map((r: any) => r.category_id));
+const svcAreaIds = new Set((areaLinks ?? []).map((r: any) => r.area_id));
+const tagIds = new Set((tagLinks ?? []).map((r: any) => r.tag_id));
+const amenityIds = new Set((amenityLinks ?? []).map((r: any) => r.amenity_id));
+
+// The main category can be a mother or (legacy) a sub — map to its mother for the select.
+const catById = new Map(cats.map((c: any) => [c.id, c]));
+const mainCat: any = listing.category_id ? catById.get(listing.category_id) : null;
+const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
+---
+<Base noindex title={`Admin — Edit: ${listing.title} | Rhodes Things To Do`}>
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="listings" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <h1 class="fs-3 fw-semibold mb-0">Edit listing</h1>
+            <div class="d-flex gap-2">
+              <a href={`/listing/${listing.slug}/`} target="_blank" class="btn btn-light border rounded-pill"><i class="bi bi-box-arrow-up-right me-2"></i>View live</a>
+              <a href="/admin/listings/" class="btn btn-light rounded-pill">Back</a>
+            </div>
+          </div>
+
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <form method="post" action={`/api/admin/listings/${listing.id}`} class="card rounded-4 shadow-sm p-4">
+            <div class="row g-3">
+              <div class="col-12"><label class="form-label fw-medium">Title *</label>
+                <input type="text" name="title" required maxlength="140" class="form-control" value={listing.title} /></div>
+
+              <div class="col-md-4"><label class="form-label fw-medium">Category *</label>
+                <select name="category_slug" required class="form-select">
+                  {motherCats.map((c: any) => <option value={c.slug} selected={c.id === mainMotherId}>{c.name}</option>)}
+                </select></div>
+              <div class="col-md-4"><label class="form-label fw-medium">Status</label>
+                <select name="status" class="form-select">
+                  {['draft', 'published', 'archived'].map((s) => <option value={s} selected={s === listing.status}>{s}</option>)}
+                </select></div>
+              <div class="col-md-4"><label class="form-label fw-medium">Price tier</label>
+                <select name="price_tier" class="form-select">
+                  {[1, 2, 3, 4].map((t) => <option value={t} selected={t === listing.price_tier}>{'€'.repeat(t)}</option>)}
+                </select></div>
+
+              <div class="col-md-6"><label class="form-label fw-medium">Subcategories</label>
+                <select name="subcategory_ids" multiple size="8" class="form-select">
+                  {motherCats.map((m: any) => (subsByMother[m.id] ?? []).length > 0 && (
+                    <optgroup label={m.name}>
+                      {(subsByMother[m.id] ?? []).map((s: any) => <option value={s.id} selected={subIds.has(s.id)}>{s.name}</option>)}
+                    </optgroup>
+                  ))}
+                </select></div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Tags</label>
+                <div class="row g-1">
+                  {(tagRows ?? []).map((t: any) => (
+                    <div class="col-6"><div class="form-check">
+                      <input id={`t-${t.id}`} class="form-check-input" name="tag_ids" value={t.id} type="checkbox" checked={tagIds.has(t.id)} />
+                      <label for={`t-${t.id}`} class="form-check-label text-sm">{t.name}</label>
+                    </div></div>
+                  ))}
+                </div>
+              </div>
+
+              <div class="col-md-4"><label class="form-label fw-medium">Main area</label>
+                <select name="area_id" class="form-select">
+                  <option value="">—</option>
+                  {(areaRows ?? []).map((a: any) => <option value={a.id} selected={a.id === listing.area_id}>{a.name}</option>)}
+                </select></div>
+              <div class="col-md-8"><label class="form-label fw-medium">Service areas</label>
+                <select name="service_area_ids" multiple size="4" class="form-select">
+                  {(areaRows ?? []).map((a: any) => <option value={a.id} selected={svcAreaIds.has(a.id)}>{a.name}</option>)}
+                </select></div>
+
+              <div class="col-md-6"><label class="form-label fw-medium">Phone</label>
+                <input type="tel" name="phone" class="form-control" value={listing.phone ?? ''} /></div>
+              <div class="col-md-6"><label class="form-label fw-medium">Street address</label>
+                <input type="text" name="address" class="form-control" value={listing.address ?? ''} /></div>
+              <div class="col-md-4"><label class="form-label fw-medium">City</label>
+                <input type="text" name="city" class="form-control" value={listing.city ?? ''} /></div>
+              <div class="col-md-4"><label class="form-label fw-medium">Latitude *</label>
+                <input type="number" step="0.0000001" min="-90" max="90" name="lat" required class="form-control" value={listing.lat ?? ''} /></div>
+              <div class="col-md-4"><label class="form-label fw-medium">Longitude *</label>
+                <input type="number" step="0.0000001" min="-180" max="180" name="lng" required class="form-control" value={listing.lng ?? ''} /></div>
+
+              <div class="col-12"><label class="form-label fw-medium">Description</label>
+                <textarea name="description" rows="5" class="form-control">{listing.description ?? ''}</textarea></div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Flags</label>
+                <div class="d-flex gap-4">
+                  <div class="form-check"><input id="fFeat" class="form-check-input" type="checkbox" name="is_featured" value="1" checked={!!listing.is_featured} /><label for="fFeat" class="form-check-label">Featured</label></div>
+                  <div class="form-check"><input id="fVer" class="form-check-input" type="checkbox" name="is_verified" value="1" checked={!!listing.is_verified} /><label for="fVer" class="form-check-label">Verified</label></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Amenities</label>
+                <div class="row g-1">
+                  {(amenityRows ?? []).map((a: any) => (
+                    <div class="col-6"><div class="form-check">
+                      <input id={`am-${a.id}`} class="form-check-input" name="amenities" value={a.id} type="checkbox" checked={amenityIds.has(a.id)} />
+                      <label for={`am-${a.id}`} class="form-check-label text-sm">{a.name}</label>
+                    </div></div>
+                  ))}
+                </div>
+              </div>
+
+              <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-check2 me-2"></i>Save changes</button>
+                <a href="/admin/listings/" class="btn btn-light rounded-pill">Cancel</a>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>

@@ -568,6 +568,45 @@ export type Database = {
           },
         ]
       }
+      page_views: {
+        Row: {
+          area_id: number | null
+          category_id: number | null
+          created_at: string
+          id: number
+          listing_id: string | null
+          page_type: string
+          path: string
+          referrer: string | null
+          subcategory_id: number | null
+          visitor_id: string | null
+        }
+        Insert: {
+          area_id?: number | null
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          listing_id?: string | null
+          page_type?: string
+          path: string
+          referrer?: string | null
+          subcategory_id?: number | null
+          visitor_id?: string | null
+        }
+        Update: {
+          area_id?: number | null
+          category_id?: number | null
+          created_at?: string
+          id?: number
+          listing_id?: string | null
+          page_type?: string
+          path?: string
+          referrer?: string | null
+          subcategory_id?: number | null
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null

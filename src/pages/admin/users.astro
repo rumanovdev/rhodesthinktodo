@@ -1,0 +1,138 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import Footer from '../../components/nav/Footer.astro';
+import AdminSidebar from '../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../lib/supabase/admin';
+import { getAdminUsers } from '../../lib/admin/users';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const category = Astro.url.searchParams.get('category') ?? '';
+const q = Astro.url.searchParams.get('q') ?? '';
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+
+const users = admin ? await getAdminUsers(admin, { category: category || undefined, q: q || undefined }) : [];
+const { data: motherCats } = admin
+  ? await admin.from('categories').select('slug, name').is('parent_id', null).eq('is_active', true).order('sort_order')
+  : { data: [] };
+
+const exportQS = new URLSearchParams();
+if (category) exportQS.set('category', category);
+if (q) exportQS.set('q', q);
+const meId = Astro.locals.user?.id;
+const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+---
+<Base noindex title="Admin — Users | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="users" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <h1 class="fs-3 fw-semibold mb-0">Users <span class="text-muted fs-6 fw-normal">({users.length})</span></h1>
+            <div class="d-flex gap-2">
+              <a href={`/api/admin/export-users?format=pdf&${exportQS}`} class="btn btn-primary rounded-pill"><i class="bi bi-file-earmark-pdf me-2"></i>Export PDF</a>
+              <a href={`/api/admin/export-users?format=csv&${exportQS}`} class="btn btn-light border rounded-pill"><i class="bi bi-filetype-csv me-2"></i>CSV</a>
+            </div>
+          </div>
+
+          {notice && <div class="alert alert-success">{notice}</div>}
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <!-- Filters -->
+          <form method="get" class="card rounded-4 shadow-sm p-3 mb-4">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-4">
+                <label class="form-label text-sm text-muted mb-1">Filter by category (of their listings)</label>
+                <select name="category" class="form-select">
+                  <option value="">All categories</option>
+                  {(motherCats ?? []).map((c: any) => (
+                    <option value={c.slug} selected={c.slug === category}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label text-sm text-muted mb-1">Search (name, email, phone, location)</label>
+                <input type="search" name="q" value={q} class="form-control" placeholder="Search users…" />
+              </div>
+              <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill px-4">Filter</button>
+                {(category || q) && <a href="/admin/users/" class="btn btn-light rounded-pill">Clear</a>}
+              </div>
+            </div>
+          </form>
+
+          <!-- Users table -->
+          <div class="card rounded-4 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">User</th><th>Email</th><th>Phone</th><th>Location</th>
+                    <th>Listings</th><th>Categories</th><th>Joined</th><th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.length === 0 && (
+                    <tr><td colspan="8" class="text-center text-muted py-5">No users match.</td></tr>
+                  )}
+                  {users.map((u) => (
+                    <tr>
+                      <td class="ps-4">
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="square--40 circle bg-light-primary text-primary fw-semibold d-inline-flex align-items-center justify-content-center">{(u.name || u.email || '?').slice(0, 1).toUpperCase()}</span>
+                          <div>
+                            <div class="fw-medium">{u.name}</div>
+                            {u.isAdmin && <span class="badge bg-dark rounded-pill">admin</span>}
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-sm">{u.email || '—'}</td>
+                      <td class="text-sm">{u.phone || '—'}</td>
+                      <td class="text-sm">{u.location || '—'}</td>
+                      <td>{u.listings}</td>
+                      <td>
+                        <div class="d-flex flex-wrap gap-1">
+                          {u.categories.length === 0 ? <span class="text-muted text-sm">—</span> :
+                            u.categories.map((c) => <span class="badge bg-light-primary text-primary rounded-pill">{c}</span>)}
+                        </div>
+                      </td>
+                      <td class="text-sm">{fmtDate(u.joined)}</td>
+                      <td class="text-end pe-4">
+                        {u.id !== meId ? (
+                          <div class="d-inline-flex gap-1">
+                            <form method="post" action="/api/admin/users">
+                              <input type="hidden" name="user_id" value={u.id} />
+                              <input type="hidden" name="_action" value="toggle_admin" />
+                              <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={u.isAdmin ? 'Remove admin' : 'Make admin'}>
+                                <i class={`bi ${u.isAdmin ? 'bi-shield-slash' : 'bi-shield-check'}`}></i>
+                              </button>
+                            </form>
+                            <form method="post" action="/api/admin/users" onsubmit={`return confirm('Delete ${u.name || u.email}? Their listings, bookings and reviews are removed too.');`}>
+                              <input type="hidden" name="user_id" value={u.id} />
+                              <input type="hidden" name="_action" value="delete" />
+                              <button type="submit" class="btn btn-sm btn-light border rounded-pill text-danger" title="Delete user"><i class="bi bi-trash"></i></button>
+                            </form>
+                          </div>
+                        ) : (
+                          <span class="text-sm text-muted">you</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>

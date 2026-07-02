@@ -43,7 +43,7 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
 
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
               <h2 class="fw-medium mb-0">Add a Listing</h2>
-              <p class="text-muted mt-2 mb-0">Fill in the details below. Your listing starts as a draft — publish it from the My Listings page when ready.</p>
+              <p class="text-muted mt-2 mb-0">Fill in the details below. Your listing starts as a draft — publish it from the My Listings page when ready. Fields marked <span class="text-danger">*</span> are required.</p>
             </div>
 
             <div class="dashCaption p-xl-5 p-3 p-md-4">
@@ -55,27 +55,27 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                 <div class="alert alert-success" role="alert">{notice}</div>
               )}
 
-              <form action="/api/listings" method="post" enctype="multipart/form-data">
+              <form action="/api/listings" method="post" enctype="multipart/form-data" id="addListingForm">
 
                 <!-- Basic info -->
                 <div class="row align-items-start g-4 mb-lg-5 mb-4">
                   <div class="col-12">
                     <div class="card rounded-3 shadow-sm">
                       <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="fa fa-file text-primary me-2"></i>Basic Information</h4>
+                        <h4 class="fs-5 fw-medium"><i class="bi bi-info-circle text-primary me-2"></i>Basic Information</h4>
                       </div>
                       <div class="card-body">
                         <div class="row">
                           <div class="col-12">
                             <div class="form-group">
-                              <label class="lableTitle">Title <span class="text-danger">*</span></label>
-                              <input type="text" name="title" required maxlength="140" class="form-control rounded" placeholder="e.g. The Big Bumble Gym" />
+                              <label for="title" class="lableTitle">Title <span class="text-danger">*</span></label>
+                              <input type="text" id="title" name="title" required maxlength="140" class="form-control rounded" placeholder="e.g. Meltemi Beach Taverna" />
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Category <span class="text-danger">*</span></label>
-                              <select name="category_slug" required class="form-control">
+                              <label for="category_slug" class="lableTitle">Category <span class="text-danger">*</span></label>
+                              <select id="category_slug" name="category_slug" required class="form-control">
                                 <option value="">Choose a category…</option>
                                 {motherCats.map((c: any) => (
                                   <option value={c.slug}>{c.name}</option>
@@ -85,14 +85,16 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Phone</label>
-                              <input type="tel" name="phone" class="form-control rounded" placeholder="+1 555 555 0100" />
+                              <label for="phone" class="lableTitle">Phone</label>
+                              <input type="tel" id="phone" name="phone" class="form-control rounded" placeholder="698 000 0000" inputmode="tel" autocomplete="tel" />
+                              <div class="invalid-feedback">Please enter a Greek phone number, e.g. 698 000 0000 or +30 22410 12345.</div>
+                              <small class="text-muted">Greek number — mobile (69…) or landline (2…), with or without +30.</small>
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Price tier</label>
-                              <select name="price_tier" class="form-control">
+                              <label for="price_tier" class="lableTitle">Price tier</label>
+                              <select id="price_tier" name="price_tier" class="form-control">
                                 <option value="1">$ — Inexpensive</option>
                                 <option value="2" selected>$$ — Moderate</option>
                                 <option value="3">$$$ — Pricey</option>
@@ -102,8 +104,8 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Status</label>
-                              <select name="status" class="form-control">
+                              <label for="status" class="lableTitle">Status</label>
+                              <select id="status" name="status" class="form-control">
                                 <option value="draft" selected>Draft (only visible to you)</option>
                                 <option value="published">Published</option>
                               </select>
@@ -111,8 +113,8 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           </div>
                           <div class="col-12">
                             <div class="form-group">
-                              <label class="lableTitle">Description</label>
-                              <textarea name="description" rows="5" class="form-control rounded" placeholder="What makes this place special?"></textarea>
+                              <label for="description" class="lableTitle">Description</label>
+                              <textarea id="description" name="description" rows="5" class="form-control rounded" placeholder="What makes this place special?"></textarea>
                             </div>
                           </div>
                         </div>
@@ -126,26 +128,34 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                   <div class="col-12">
                     <div class="card rounded-3 shadow-sm">
                       <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="fa fa-tags text-primary me-2"></i>Subcategories &amp; Tags</h4>
-                        <p class="text-muted text-md mb-0 mt-1">Pick the specific types this place fits (e.g. Meat Restaurant) and any tags (e.g. Sea View). These drive the "Best … in …" pages.</p>
+                        <h4 class="fs-5 fw-medium"><i class="bi bi-tags text-primary me-2"></i>Subcategories &amp; Tags</h4>
+                        <p class="text-muted text-md mb-0 mt-1">Tick the specific types this place fits (e.g. Meat Restaurant) and any tags (e.g. Sea View). These drive the "Best … in …" pages.</p>
                       </div>
                       <div class="card-body">
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">
                               <label class="lableTitle">Subcategories</label>
-                              <select name="subcategory_ids" multiple size="8" class="form-control">
+                              <div id="subcatGroups">
                                 {motherCats.map((m: any) => (
                                   (subsByMother[m.id] ?? []).length > 0 && (
-                                    <optgroup label={m.name}>
-                                      {(subsByMother[m.id] ?? []).map((s: any) => (
-                                        <option value={s.id}>{s.name}</option>
-                                      ))}
-                                    </optgroup>
+                                    <div class="mb-3" data-subcat-group={m.slug}>
+                                      <h6 class="text-muted text-uppercase small fw-semibold mb-2">{m.name}</h6>
+                                      <ul class="p-0 row g-2 list-unstyled mb-0">
+                                        {(subsByMother[m.id] ?? []).map((s: any) => (
+                                          <li class="col-6">
+                                            <div class="form-check">
+                                              <input id={`sub-${s.id}`} class="form-check-input" name="subcategory_ids" value={s.id} type="checkbox" />
+                                              <label for={`sub-${s.id}`} class="form-check-label">{s.name}</label>
+                                            </div>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
                                   )
                                 ))}
-                              </select>
-                              <small class="text-muted">Hold Ctrl/Cmd to select more than one.</small>
+                              </div>
+                              <small class="text-muted">Choose a category above to narrow this list to the relevant types.</small>
                             </div>
                           </div>
                           <div class="col-md-6">
@@ -180,14 +190,14 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                         <div class="row">
                           <div class="col-12">
                             <div class="form-group">
-                              <label class="lableTitle">Street address</label>
-                              <input type="text" name="address" class="form-control rounded" placeholder="202 Market Street" />
+                              <label for="address" class="lableTitle">Street address</label>
+                              <input type="text" id="address" name="address" class="form-control rounded" placeholder="e.g. Sokratous 45, Rhodes Old Town" />
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Main area</label>
-                              <select name="area_id" class="form-control">
+                              <label for="area_id" class="lableTitle">Main area</label>
+                              <select id="area_id" name="area_id" class="form-control">
                                 <option value="">Choose an area…</option>
                                 {areas.map((a: any) => (
                                   <option value={a.id}>{a.name}</option>
@@ -198,24 +208,29 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           <div class="col-md-6">
                             <div class="form-group">
                               <label class="lableTitle">Service areas</label>
-                              <select name="service_area_ids" multiple size="6" class="form-control">
+                              <ul class="p-0 row g-2 list-unstyled mb-1">
                                 {areas.map((a: any) => (
-                                  <option value={a.id}>{a.name}</option>
+                                  <li class="col-6">
+                                    <div class="form-check">
+                                      <input id={`sa-${a.id}`} class="form-check-input" name="service_area_ids" value={a.id} type="checkbox" />
+                                      <label for={`sa-${a.id}`} class="form-check-label">{a.name}</label>
+                                    </div>
+                                  </li>
                                 ))}
-                              </select>
+                              </ul>
                               <small class="text-muted">Extra areas this business serves (optional).</small>
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">City</label>
-                              <input type="text" name="city" class="form-control rounded" placeholder="Los Angeles" />
+                              <label for="city" class="lableTitle">City</label>
+                              <input type="text" id="city" name="city" class="form-control rounded" placeholder="e.g. Lindos" />
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Country</label>
-                              <input type="text" name="country" class="form-control rounded" placeholder="United States" />
+                              <label for="country" class="lableTitle">Country</label>
+                              <input type="text" id="country" name="country" value="Greece" class="form-control rounded" placeholder="Greece" />
                             </div>
                           </div>
                           <div class="col-12">
@@ -223,14 +238,14 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Latitude <span class="text-danger">*</span></label>
-                              <input type="number" step="0.0000001" min="-90" max="90" name="lat" required class="form-control rounded" placeholder="36.0917" />
+                              <label for="lat" class="lableTitle">Latitude <span class="text-danger">*</span></label>
+                              <input type="number" step="0.0000001" min="-90" max="90" id="lat" name="lat" required class="form-control rounded" placeholder="36.0917" />
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                              <label class="lableTitle">Longitude <span class="text-danger">*</span></label>
-                              <input type="number" step="0.0000001" min="-180" max="180" name="lng" required class="form-control rounded" placeholder="28.0867" />
+                              <label for="lng" class="lableTitle">Longitude <span class="text-danger">*</span></label>
+                              <input type="number" step="0.0000001" min="-180" max="180" id="lng" name="lng" required class="form-control rounded" placeholder="28.0867" />
                             </div>
                           </div>
                         </div>
@@ -249,7 +264,8 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                       </div>
                       <div class="card-body">
                         <div class="form-group">
-                          <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
+                          <label for="images" class="lableTitle visually-hidden">Photos</label>
+                          <input type="file" id="images" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
                         </div>
                       </div>
                     </div>
@@ -283,7 +299,7 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
 
                 <div class="row align-items-start g-4 mb-lg-5 mb-4">
                   <div class="col-12 d-flex gap-3">
-                    <button type="submit" class="btn btn-primary rounded-pill fw-medium">Save Listing<i class="bi bi-arrow-right-circle ms-2"></i></button>
+                    <button type="submit" id="saveListingBtn" class="btn btn-primary rounded-pill fw-medium">Save Listing<i class="bi bi-arrow-right-circle ms-2"></i></button>
                     <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill fw-medium">Cancel</a>
                   </div>
                 </div>
@@ -307,4 +323,54 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
   <Footer />
   <LoginModal />
   <SearchOffcanvas />
+
+  <script>
+    // Greek phone validation: mobile (69XXXXXXXX) or landline (2XXXXXXXXX),
+    // optionally prefixed with +30 / 0030; spaces, dashes and dots tolerated.
+    const phone = document.getElementById('phone') as HTMLInputElement | null;
+    function checkPhone() {
+      if (!phone) return true;
+      const digits = phone.value.replace(/[\s\-().]/g, '');
+      const ok = !digits || /^(\+30|0030)?(69\d{8}|2\d{9})$/.test(digits);
+      phone.setCustomValidity(ok ? '' : 'Please enter a Greek phone number, e.g. 698 000 0000');
+      phone.classList.toggle('is-invalid', !ok);
+      return ok;
+    }
+    phone?.addEventListener('blur', checkPhone);
+    phone?.addEventListener('input', () => {
+      if (phone.classList.contains('is-invalid')) checkPhone();
+    });
+
+    // Show only the subcategory group matching the chosen category
+    // (groups that already have ticked boxes stay visible so nothing is lost).
+    const catSelect = document.getElementById('category_slug') as HTMLSelectElement | null;
+    const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-subcat-group]'));
+    function syncSubcatGroups() {
+      const slug = catSelect?.value ?? '';
+      for (const g of groups) {
+        const hasChecked = !!g.querySelector('input:checked');
+        g.hidden = !!slug && g.dataset.subcatGroup !== slug && !hasChecked;
+      }
+    }
+    catSelect?.addEventListener('change', syncSubcatGroups);
+    for (const g of groups) {
+      g.addEventListener('change', syncSubcatGroups);
+    }
+    syncSubcatGroups();
+
+    // Disable the submit button while the form is posting so it can't be double-submitted.
+    const form = document.getElementById('addListingForm') as HTMLFormElement | null;
+    form?.addEventListener('submit', (e) => {
+      if (!checkPhone()) {
+        e.preventDefault();
+        phone?.focus();
+        return;
+      }
+      const btn = document.getElementById('saveListingBtn') as HTMLButtonElement | null;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving…';
+      }
+    });
+  </script>
 </Base>

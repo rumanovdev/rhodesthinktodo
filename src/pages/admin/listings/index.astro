@@ -1,0 +1,133 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Navbar from '../../../components/nav/Navbar.astro';
+import Footer from '../../../components/nav/Footer.astro';
+import AdminSidebar from '../../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+const status = Astro.url.searchParams.get('status') ?? '';
+const q = Astro.url.searchParams.get('q') ?? '';
+
+let rows: any[] = [];
+let views30 = new Map<string, number>();
+if (admin) {
+  let query = admin
+    .from('listings')
+    .select('id, slug, title, status, is_featured, is_verified, city, created_at, categories!listings_category_id_fkey(name), areas!listings_area_id_fkey(name), profiles!listings_owner_id_fkey(full_name)')
+    .order('created_at', { ascending: false })
+    .limit(500);
+  if (status) query = query.eq('status', status as any);
+  if (q) query = query.ilike('title', `%${q}%`);
+  const { data } = await query;
+  rows = data ?? [];
+
+  const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+  const { data: pv } = await admin.from('page_views').select('listing_id').gte('created_at', since30).not('listing_id', 'is', null).limit(50000);
+  for (const v of pv ?? []) views30.set(v.listing_id!, (views30.get(v.listing_id!) ?? 0) + 1);
+}
+const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+---
+<Base noindex title="Admin — Listings | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="listings" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <h1 class="fs-3 fw-semibold mb-4">Listings <span class="text-muted fs-6 fw-normal">({rows.length})</span></h1>
+
+          {notice && <div class="alert alert-success">{notice}</div>}
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <form method="get" class="card rounded-4 shadow-sm p-3 mb-4">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label text-sm text-muted mb-1">Status</label>
+                <select name="status" class="form-select">
+                  <option value="">Any status</option>
+                  {['published', 'draft', 'archived'].map((s) => <option value={s} selected={s === status}>{s}</option>)}
+                </select>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label text-sm text-muted mb-1">Search title</label>
+                <input type="search" name="q" value={q} class="form-control" placeholder="Search listings…" />
+              </div>
+              <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill px-4">Filter</button>
+                {(status || q) && <a href="/admin/listings/" class="btn btn-light rounded-pill">Clear</a>}
+              </div>
+            </div>
+          </form>
+
+          <div class="card rounded-4 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Listing</th><th>Owner</th><th>Category</th><th>Area</th>
+                    <th>Status</th><th>Views 30d</th><th>Created</th><th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.length === 0 && <tr><td colspan="8" class="text-center text-muted py-5">No listings.</td></tr>}
+                  {rows.map((l: any) => (
+                    <tr>
+                      <td class="ps-4">
+                        <div class="fw-medium"><a href={`/listing/${l.slug}/`} target="_blank" class="text-dark text-decoration-none">{l.title}</a></div>
+                        <div class="d-flex gap-1 mt-1">
+                          {l.is_featured && <span class="badge bg-warning text-dark rounded-pill">Featured</span>}
+                          {l.is_verified && <span class="badge bg-success rounded-pill">Verified</span>}
+                        </div>
+                      </td>
+                      <td class="text-sm">{l.profiles?.full_name || '—'}</td>
+                      <td class="text-sm">{l.categories?.name || '—'}</td>
+                      <td class="text-sm">{l.areas?.name || l.city || '—'}</td>
+                      <td><span class={`badge rounded-pill ${l.status === 'published' ? 'bg-success' : l.status === 'draft' ? 'bg-secondary' : 'bg-dark'}`}>{l.status}</span></td>
+                      <td>{views30.get(l.id) ?? 0}</td>
+                      <td class="text-sm">{fmtDate(l.created_at)}</td>
+                      <td class="text-end pe-4">
+                        <div class="d-inline-flex gap-1 flex-wrap justify-content-end">
+                          <a href={`/admin/listings/${l.id}/`} class="btn btn-sm btn-light border rounded-pill" title="Edit"><i class="bi bi-pencil"></i></a>
+                          <form method="post" action="/api/admin/listings">
+                            <input type="hidden" name="listing_id" value={l.id} />
+                            <input type="hidden" name="_action" value={l.status === 'published' ? 'unpublish' : 'publish'} />
+                            <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={l.status === 'published' ? 'Unpublish' : 'Publish'}>
+                              <i class={`bi ${l.status === 'published' ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                            </button>
+                          </form>
+                          <form method="post" action="/api/admin/listings">
+                            <input type="hidden" name="listing_id" value={l.id} />
+                            <input type="hidden" name="_action" value={l.is_featured ? 'unfeature' : 'feature'} />
+                            <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={l.is_featured ? 'Remove featured' : 'Make featured'}><i class="bi bi-star"></i></button>
+                          </form>
+                          <form method="post" action="/api/admin/listings">
+                            <input type="hidden" name="listing_id" value={l.id} />
+                            <input type="hidden" name="_action" value={l.is_verified ? 'unverify' : 'verify'} />
+                            <button type="submit" class="btn btn-sm btn-light border rounded-pill" title={l.is_verified ? 'Remove verified' : 'Verify'}><i class="bi bi-patch-check"></i></button>
+                          </form>
+                          <form method="post" action="/api/admin/listings" onsubmit={`return confirm('Delete "${l.title}"? This also removes its bookings and reviews.');`}>
+                            <input type="hidden" name="listing_id" value={l.id} />
+                            <input type="hidden" name="_action" value="delete" />
+                            <button type="submit" class="btn btn-sm btn-light border rounded-pill text-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>

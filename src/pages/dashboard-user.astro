@@ -178,9 +178,9 @@ function verbFor(kind: Activity['kind']): string {
                 ))}
               </div>
 
-              <!-- Recent activity + quick actions -->
+              <!-- Recent activity -->
               <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-8 col-lg-7 col-md-12">
+                <div class="col-12">
                   <div class="card rounded-3 shadow-sm">
                     <div class="card-header py-3 px-4">
                       <h4 class="m-0">Recent Activity</h4>
@@ -219,22 +219,6 @@ function verbFor(kind: Activity['kind']): string {
                   </div>
                 </div>
 
-                <div class="col-xl-4 col-lg-5 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-3 px-4">
-                      <h4 class="m-0">Quick Actions</h4>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column gap-2">
-                      <a href="/dashboard-add-listing/" class="btn btn-primary rounded-pill fw-medium"><i class="bi bi-plus-circle me-2"></i>Add a new listing</a>
-                      <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-ui-radios-grid me-2"></i>Manage my listings</a>
-                      <a href="/listings/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-search me-2"></i>Browse listings</a>
-                      <a href="/dashboard-my-profile/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-person-lines-fill me-2"></i>Edit profile</a>
-                      <form action="/api/auth/signout" method="post" class="m-0">
-                        <button type="submit" class="btn btn-light-danger rounded-pill fw-medium w-100"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div class="row align-items-start g-4">

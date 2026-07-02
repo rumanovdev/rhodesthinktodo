@@ -3,7 +3,7 @@ import { getSupabaseServer } from './lib/supabase/server';
 import { parsePath, isLocale, DEFAULT_LOCALE } from './lib/i18n';
 
 const AUTH_REDIRECT_PREFIXES = ['/dashboard-'];
-const PUBLIC_API_PREFIXES = ['/api/auth/'];
+const PUBLIC_API_PREFIXES = ['/api/auth/', '/api/track'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // Canonical host: 301 www → apex so the two hosts don't compete in the index.
@@ -64,6 +64,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
         .eq('id', data.user.id)
         .maybeSingle();
       context.locals.isAdmin = Boolean(profile?.is_admin);
+    }
+  }
+
+  // Admin area: /admin* pages and /api/admin/* endpoints require is_admin.
+  const isAdminPage = path === '/admin' || path.startsWith('/admin/');
+  const isAdminApi = path.startsWith('/api/admin/');
+  if (isAdminPage || isAdminApi) {
+    if (!context.locals.user) {
+      if (isAdminApi) {
+        return new Response(JSON.stringify({ error: 'unauthenticated' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return context.redirect(`/login/?next=${encodeURIComponent(path)}`);
+    }
+    if (!context.locals.isAdmin) {
+      if (isAdminApi) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return context.redirect('/');
     }
   }
 

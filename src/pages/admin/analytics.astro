@@ -1,0 +1,141 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import Footer from '../../components/nav/Footer.astro';
+import AdminSidebar from '../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const daysRaw = Number(Astro.url.searchParams.get('days') ?? '30');
+const days = [7, 30, 90].includes(daysRaw) ? daysRaw : 30;
+const since = new Date(Date.now() - days * 86400000).toISOString();
+
+let views: any[] = [];
+let catNames = new Map<number, string>();
+let areaNames = new Map<number, string>();
+let listingTitles = new Map<string, string>();
+
+if (admin) {
+  const [pv, cats, areas] = await Promise.all([
+    admin.from('page_views').select('page_type, category_id, subcategory_id, area_id, listing_id, visitor_id, referrer, created_at, path').gte('created_at', since).limit(50000),
+    admin.from('categories').select('id, name'),
+    admin.from('areas').select('id, name'),
+  ]);
+  views = pv.data ?? [];
+  catNames = new Map((cats.data ?? []).map((c: any) => [c.id, c.name]));
+  areaNames = new Map((areas.data ?? []).map((a: any) => [a.id, a.name]));
+}
+
+const total = views.length;
+const uniques = new Set(views.map((v) => v.visitor_id).filter(Boolean)).size;
+
+// Per-day series
+const dayBuckets: { label: string; n: number }[] = [];
+const daySpan = Math.min(days, 30); // cap bars at 30
+for (let d = daySpan - 1; d >= 0; d--) {
+  const start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - d);
+  const end = new Date(start); end.setDate(end.getDate() + 1);
+  const n = views.filter((v) => { const t = new Date(v.created_at); return t >= start && t < end; }).length;
+  dayBuckets.push({ label: `${start.getDate()}/${start.getMonth() + 1}`, n });
+}
+const dayMax = Math.max(1, ...dayBuckets.map((b) => b.n));
+
+const agg = (key: (v: any) => string | null) => {
+  const m: Record<string, number> = {};
+  for (const v of views) { const k = key(v); if (k) m[k] = (m[k] ?? 0) + 1; }
+  return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 10);
+};
+const byCat = agg((v) => (v.category_id ? catNames.get(v.category_id) ?? null : null));
+const bySub = agg((v) => (v.subcategory_id ? catNames.get(v.subcategory_id) ?? null : null));
+const byArea = agg((v) => (v.area_id ? areaNames.get(v.area_id) ?? null : null));
+const byType = agg((v) => v.page_type);
+const byRef = agg((v) => v.referrer || null);
+const byListing = agg((v) => v.listing_id);
+if (admin && byListing.length) {
+  const { data } = await admin.from('listings').select('id, title').in('id', byListing.map(([id]) => id));
+  listingTitles = new Map((data ?? []).map((l: any) => [l.id, l.title]));
+}
+const maxOf = (rows: [string, number][]) => Math.max(1, ...rows.map(([, n]) => n));
+---
+<Base noindex title="Admin — Analytics | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="analytics" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <h1 class="fs-3 fw-semibold mb-0">Analytics</h1>
+            <div class="btn-group">
+              {[7, 30, 90].map((d) => (
+                <a href={`/admin/analytics/?days=${d}`} class={`btn btn-sm ${days === d ? 'btn-primary' : 'btn-light border'}`}>{d}d</a>
+              ))}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            {[
+              { label: `Page views (${days}d)`, value: total, icon: 'bi-eye' },
+              { label: `Unique visitors (${days}d)`, value: uniques, icon: 'bi-person-check' },
+              { label: 'Avg views / visitor', value: uniques ? (total / uniques).toFixed(1) : '—', icon: 'bi-activity' },
+            ].map((s) => (
+              <div class="col-6 col-md-4">
+                <div class="card rounded-4 shadow-sm p-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="square--50 rounded-3 bg-light-primary d-inline-flex align-items-center justify-content-center"><i class={`bi ${s.icon} text-primary fs-5`}></i></span>
+                    <div><div class="fs-4 fw-bold">{s.value}</div><div class="text-sm text-muted">{s.label}</div></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="card rounded-4 shadow-sm p-4 mb-4">
+            <h5 class="fw-semibold mb-3">Views per day</h5>
+            <div class="d-flex align-items-end gap-1" style="height:150px">
+              {dayBuckets.map((b) => (
+                <div class="d-flex flex-column align-items-center flex-grow-1 h-100 justify-content-end" title={`${b.label}: ${b.n}`}>
+                  <div class="bg-primary rounded-1 w-100" style={`height:${Math.round((b.n / dayMax) * 100)}%;min-height:2px;max-width:26px`}></div>
+                  <span class="text-muted mt-1" style="font-size:9px">{b.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="row g-4">
+            {[
+              { title: 'By category', rows: byCat, fmt: (k: string) => k },
+              { title: 'By subcategory', rows: bySub, fmt: (k: string) => k },
+              { title: 'By area', rows: byArea, fmt: (k: string) => k },
+              { title: 'By page type', rows: byType, fmt: (k: string) => k },
+              { title: 'Top listings', rows: byListing, fmt: (k: string) => listingTitles.get(k) ?? k.slice(0, 8) },
+              { title: 'Referrers (external)', rows: byRef, fmt: (k: string) => k.replace(/^https?:\/\//, '').slice(0, 40) },
+            ].map((sec) => (
+              <div class="col-lg-6">
+                <div class="card rounded-4 shadow-sm p-4 h-100">
+                  <h5 class="fw-semibold mb-3">{sec.title}</h5>
+                  {sec.rows.length === 0 ? <p class="text-muted mb-0">No data yet.</p> : (
+                    <div class="d-flex flex-column gap-2">
+                      {sec.rows.map(([k, n]) => (
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="text-sm text-truncate" style="width:170px">{sec.fmt(k)}</span>
+                          <div class="flex-grow-1 bg-light rounded-pill" style="height:9px"><div class="bg-primary rounded-pill" style={`height:9px;width:${Math.round((n / maxOf(sec.rows)) * 100)}%`}></div></div>
+                          <span class="text-sm fw-semibold" style="width:44px;text-align:right">{n}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Base>
