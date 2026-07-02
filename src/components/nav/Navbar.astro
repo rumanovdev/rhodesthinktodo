@@ -183,6 +183,20 @@ if (user) {
     }
   }
 
+  /* Mobile drawer fix: the Explore mega-menu's submenu items inherit float:left
+     from the desktop nav, which collapses the submenu <ul> to height 0 so the
+     categories overlap the rest of the menu. Un-float them so they stack as a
+     normal accordion inside the drawer. */
+  .navigation-portrait .nav-menu .nav-dropdown,
+  .navigation-portrait .nav-menu .nav-submenu {
+    width: 100% !important;
+  }
+  .navigation-portrait .nav-menu .nav-dropdown > li,
+  .navigation-portrait .nav-menu .nav-submenu > li {
+    float: none !important;
+    width: 100% !important;
+  }
+
   /* On the transparent (homepage) header the theme renders nav links at 50%
      white (grey). Force full white for the menu links and the Sign In link.
      Inner pages use the light header, so this selector never affects them;
