@@ -14,7 +14,7 @@ export type ListingCard = {
   title: string;
   desc: string;
   img: string;
-  /** Owner avatar (or a deterministic team-N.jpg fallback when the owner has no uploaded avatar). */
+  /** Owner avatar URL, or '' when the owner has no uploaded avatar (render initials instead). */
   img1: string;
   number: string;
   name: string; // category display name
@@ -50,11 +50,8 @@ export function row2card(r: any): ListingCard {
   const cityVal = r.city || areaName || '';
   const tier = Math.min(Math.max(Number(r.price_tier) || 1, 1), 4);
   const verified = !!r.is_verified;
-  // Owner avatar: use uploaded one if present, else a stable fallback per slug
-  // so each listing keeps the same placeholder face across renders.
-  const ownerAvatar = r.profiles?.avatar_url as string | null | undefined;
-  const fallbackIdx = ((r.slug || r.id || '').split('').reduce((a: number, c: string) => a + c.charCodeAt(0), 0) % 13) + 1;
-  const img1 = ownerAvatar || `/assets/img/team-${fallbackIdx}.jpg`;
+  // Owner avatar: only a real uploaded photo — no stock-face placeholders.
+  const img1 = (r.profiles?.avatar_url as string | null | undefined) || '';
 
   return {
     id: r.id,

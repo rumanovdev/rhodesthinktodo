@@ -42,11 +42,11 @@ const { data: reviewRows } = Astro.locals.supabase
 // Owner of this listing — used in the sidebar "Added By" card.
 const owner = (detail as any).profiles ?? null;
 const ownerName = owner?.full_name || 'Listing Owner';
-const ownerAvatar = owner?.avatar_url || event.img1 || '/assets/img/team-1.jpg';
+const ownerAvatar = owner?.avatar_url || event.img1 || '';
 const reviewsList = (reviewRows ?? []).map((r: any) => ({
   id: r.id,
   name: r.profiles?.full_name || 'Anonymous',
-  avatar: r.profiles?.avatar_url || '/assets/img/team-6.jpg',
+  avatar: r.profiles?.avatar_url || '',
   rating: r.rating,
   body: r.body,
   date: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
@@ -369,7 +369,11 @@ const breadcrumbSchema = {
 										{reviewsList.map((r) => (
 											<div class="singlereviews d-flex align-items-start justify-content-between flex-sm-wrap flex-wrap gap-3 mb-3">
 												<div class="reviewerThumb">
-													<div class="square--60 circle overflow-hidden"><img src={r.avatar} class="img-fluid circle" alt={r.name} /></div>
+													<div class="square--60 circle overflow-hidden">
+													{r.avatar
+														? <img src={r.avatar} class="img-fluid circle" alt={r.name} />
+														: <span class="d-inline-flex align-items-center justify-content-center circle" style="width:60px;height:60px;background:var(--bs-primary);color:#fff;font-size:22px;font-weight:700;">{(r.name || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()}</span>}
+												</div>
 												</div>
 												<div class="reviewerMessage">
 													<div class="d-flex align-items-start justify-content-between gap-3 mb-3">
@@ -522,7 +526,11 @@ const breadcrumbSchema = {
 							<div class="bg-cover card-header ht-150" style="background:url(/assets/img/avatar-bg.jpg)no-repeat;"></div>
 							<div class="card-body mt-n3 p-0">
 								<div class="avatarBox position-relative mb-4">
-									<div class="square--100 circle bg-transparents mx-auto p-2 z-2"><img src={ownerAvatar} class="img-fluid circle" alt={ownerName} style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+									<div class="square--100 circle bg-transparents mx-auto p-2 z-2">
+										{ownerAvatar
+											? <img src={ownerAvatar} class="img-fluid circle" alt={ownerName} style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+											: <span class="d-inline-flex align-items-center justify-content-center circle" style="width:100%;height:100%;background:var(--bs-primary);color:#fff;font-size:34px;font-weight:700;">{(ownerName || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()}</span>}
+									</div>
 									<div class="listingInfo text-center">
 										<p class="text-md text-muted mb-0">Added By</p>
 										<h6 class="mb-0">{ownerName}</h6>

@@ -10,12 +10,12 @@ const { current } = Astro.props;
 const user = Astro.locals.user;
 const supabase = Astro.locals.supabase;
 let fullName = 'Welcome';
-let avatarUrl = '/assets/img/team-2.jpg';
+let avatarUrl = '';
 let unseenRequests = 0;
 if (user && supabase) {
   const profile = await getMyProfile(supabase, user.id);
   fullName = profile?.full_name || user.email?.split('@')[0] || 'Account';
-  avatarUrl = profile?.avatar_url || avatarUrl;
+  avatarUrl = profile?.avatar_url || '';
   unseenRequests = await countUnseenRequests(supabase, user.id);
 }
 ---
@@ -33,7 +33,11 @@ if (user && supabase) {
 
 <div class="user-dashboard-inner h-100 border-end border-2 py-4 p-3">
 	<div class="dashboard_users mb-4">
-		<div class="square--80 circle mx-auto mb-1" style="overflow:hidden;"><img src={avatarUrl} class="img-fluid circle" style="width:80px;height:80px;object-fit:cover;" alt={fullName}></div>
+		<div class="square--80 circle mx-auto mb-1" style="overflow:hidden;">
+			{avatarUrl
+				? <img src={avatarUrl} class="img-fluid circle" style="width:80px;height:80px;object-fit:cover;" alt={fullName} />
+				: <span class="d-inline-flex align-items-center justify-content-center circle" style="width:80px;height:80px;background:rgba(255,255,255,.18);color:#fff;font-size:30px;font-weight:700;">{(fullName || '?').trim().split(/\s+/).map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}</span>}
+		</div>
 		<div class="user-nameTitle text-center">
 			<h4 class="lh-base fw-semibold text-light mb-0">Welcome Back</h4>
 			<h6 class="text-light fw-medium opacity-75 mb-0">{fullName}</h6>

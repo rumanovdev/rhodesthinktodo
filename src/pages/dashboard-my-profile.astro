@@ -115,7 +115,9 @@ const delError = p.get('delerror');
                   <div class="card rounded-3 shadow-sm">
                     <div class="card-header py-3 px-4"><h4 class="m-0">Avatar</h4></div>
                     <div class="card-body text-center">
-                      <img src={profile?.avatar_url ?? '/assets/img/team-2.jpg'} class="img-fluid rounded-circle mb-3" style="width: 140px; height: 140px; object-fit: cover;" alt="Avatar" />
+                      {profile?.avatar_url
+                        ? <img src={profile.avatar_url} class="img-fluid rounded-circle mb-3" style="width: 140px; height: 140px; object-fit: cover;" alt="Avatar" />
+                        : <span class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:140px;height:140px;background:var(--bs-primary);color:#fff;font-size:52px;font-weight:700;">{(profile?.full_name || user?.email || '?').trim().split(/\s+/).map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}</span>}
                       <label class="form-label d-block text-start">Replace avatar</label>
                       <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" class="form-control form-control-sm" />
                       <p class="text-muted text-md mt-2 mb-0">JPG / PNG / WebP / GIF, ≤ 1 MB.</p>
