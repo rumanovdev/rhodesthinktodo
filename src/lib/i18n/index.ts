@@ -2,7 +2,7 @@
 // segment (/el/, /de/ …); the default locale (en) has no prefix.
 import { translations, type TranslationKey } from './translations';
 
-export const LOCALES = ['en', 'el', 'de', 'fr', 'es', 'it', 'nl'] as const;
+export const LOCALES = ['en', 'el', 'de', 'fr', 'es', 'it', 'nl', 'ru', 'he'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -14,7 +14,13 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   es: 'Español',
   it: 'Italiano',
   nl: 'Ολλανδικά',
+  ru: 'Русский',
+  he: 'עברית',
 };
+
+/** Locales that render right-to-left. */
+export const RTL_LOCALES: readonly Locale[] = ['he'];
+export const isRtl = (locale: Locale): boolean => RTL_LOCALES.includes(locale);
 
 export const LOCALE_FLAGS: Record<Locale, string> = {
   en: 'gb',
@@ -24,6 +30,8 @@ export const LOCALE_FLAGS: Record<Locale, string> = {
   es: 'es',
   it: 'it',
   nl: 'nl',
+  ru: 'ru',
+  he: 'il',
 };
 
 export function isLocale(x: string): x is Locale {

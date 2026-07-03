@@ -1,6 +1,6 @@
 ---
 import { SITE, absUrl } from '../lib/data/site';
-import { LOCALES, DEFAULT_LOCALE, localizePath, type Locale } from '../lib/i18n';
+import { LOCALES, DEFAULT_LOCALE, localizePath, isRtl, type Locale } from '../lib/i18n';
 import Analytics from '../components/shared/Analytics.astro';
 import CookieConsent from '../components/shared/CookieConsent.astro';
 
@@ -78,7 +78,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 const jsonLd = [...baseSchema, ...pageSchema];
 ---
 <!doctype html>
-<html lang={locale} data-bs-theme="" class={htmlClass}>
+<html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'} data-bs-theme="" class={htmlClass}>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />

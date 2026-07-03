@@ -178,4 +178,54 @@ const nl: Dict = {
   'cookie.learn': 'Meer informatie',
 };
 
-export const translations: Record<string, Dict> = { en, el, de, fr, es, it, nl };
+const ru: Dict = {
+  'nav.home': 'Главная',
+  'nav.explore': 'Обзор',
+  'nav.about': 'О нас',
+  'nav.addListing': 'Добавить объект',
+  'nav.signIn': 'Войти',
+  'hero.subtitle':
+    'Найдите лучшие рестораны, отели, экскурсии, пляжи и развлечения по всему Родосу, Греция — всё в одном месте.',
+  'hero.searchWhat': 'Что вы ищете?',
+  'hero.location': 'Местоположение',
+  'hero.allCategories': 'Все категории',
+  'hero.search': 'Поиск',
+  'footer.community': 'Сообщество',
+  'footer.gettingStarted': 'Начало работы',
+  'footer.business': 'Rhodes Things To Do для бизнеса',
+  'footer.getInTouch': 'Связаться с нами',
+  'footer.rights': 'Все права защищены.',
+  'cookie.title': 'Мы ценим вашу конфиденциальность',
+  'cookie.text':
+    'Мы используем файлы cookie для анализа трафика и улучшения вашего опыта на Rhodes Things To Do.',
+  'cookie.accept': 'Принять',
+  'cookie.decline': 'Отклонить',
+  'cookie.learn': 'Подробнее',
+};
+
+const he: Dict = {
+  'nav.home': 'בית',
+  'nav.explore': 'גלה',
+  'nav.about': 'אודות',
+  'nav.addListing': 'הוסף עסק',
+  'nav.signIn': 'התחברות',
+  'hero.subtitle':
+    'גלו את המסעדות, המלונות, הסיורים, החופים והפעילויות המדורגים ביותר ברחבי רודוס, יוון — הכול במקום אחד.',
+  'hero.searchWhat': 'מה אתם מחפשים?',
+  'hero.location': 'מיקום',
+  'hero.allCategories': 'כל הקטגוריות',
+  'hero.search': 'חיפוש',
+  'footer.community': 'קהילה',
+  'footer.gettingStarted': 'איך מתחילים',
+  'footer.business': 'Rhodes Things To Do לעסקים',
+  'footer.getInTouch': 'צור קשר',
+  'footer.rights': 'כל הזכויות שמורות.',
+  'cookie.title': 'הפרטיות שלכם חשובה לנו',
+  'cookie.text':
+    'אנו משתמשים בעוגיות כדי לנתח תנועה ולשפר את חוויית השימוש שלכם ב-Rhodes Things To Do.',
+  'cookie.accept': 'אישור',
+  'cookie.decline': 'דחייה',
+  'cookie.learn': 'מידע נוסף',
+};
+
+export const translations: Record<string, Dict> = { en, el, de, fr, es, it, nl, ru, he };
