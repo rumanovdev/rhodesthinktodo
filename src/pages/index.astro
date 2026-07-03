@@ -453,6 +453,8 @@ const motherCount = (m: any) =>
       z-index: 0;
       pointer-events: none;
     }
+    /* Lighten the dark overlay on the hero (scoped — global data-overlay="3" is 0.3) */
+    .hero-header[data-overlay]:before { opacity: 0.15; }
     /* Keep the hero content above the overlay */
     .hero-header > .container { z-index: 2; }
     @media (prefers-reduced-motion: reduce) {
