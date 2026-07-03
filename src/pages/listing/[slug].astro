@@ -6,7 +6,6 @@ import Subscribe from '../../components/shared/Subscribe.astro';
 import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
-import { gallerys3 } from '../../lib/data/context';
 import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
 import { getListingTaxonomy } from '../../lib/supabase/taxonomy';
 import { absUrl } from '../../lib/data/site';
@@ -20,6 +19,12 @@ if (!result) {
 const event = result.card;
 const detail = result.raw;
 const heroImg = event.img || '/assets/img/single-4.jpg';
+
+// Gallery = the listing's own uploaded photos (sorted), not template stock.
+const galleryImages = (((detail as any).listing_images ?? []) as any[])
+  .slice()
+  .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+  .map((i) => i.url as string);
 
 // Similar listings — pull 4 most recent published ones excluding this one.
 const similar = (await getPublishedListings(Astro.locals.supabase, { limit: 4 })).filter((l) => l.id !== event.id);
@@ -300,6 +305,7 @@ const breadcrumbSchema = {
 					</div>
 
 					<!-- Gallery -->
+					{galleryImages.length > 0 && (
 					<div class="listingSingleblock mb-4" id="Galleries">
 						<div class="SingleblockHeader">
 							<a data-bs-toggle="collapse" data-parent="#gallery" data-bs-target="#gallery" aria-controls="gallery" href="#" aria-expanded="false" class="collapsed"><h4 class="listingcollapseTitle">Gallery</h4></a>
@@ -310,9 +316,9 @@ const breadcrumbSchema = {
 								<ul class="row align-items-center justify-content-center g-3 p-0">
 
 									<!-- Components/Listings/Single-Listings/single-listing-03/gallery6.html -->
-									{gallerys3.map((item) => (
+									{galleryImages.map((img) => (
 									<li class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6">
-									    <a href={item.img} class="mfp-gallery d-block"><img src={item.img} class="img-fluid rounded" alt="Gallery Img"></a>
+									    <a href={img} class="mfp-gallery d-block"><img src={img} class="img-fluid rounded" alt={`${event.title} photo`} loading="lazy" style="width:100%;height:200px;object-fit:cover;"></a>
 									</li>
 									))}
 
@@ -320,6 +326,7 @@ const breadcrumbSchema = {
 							</div>
 						</div>
 					</div>
+					)}
 
 					{event.lat !== null && event.lng !== null && (
 						<div class="listingSingleblock mb-4" id="maps">
