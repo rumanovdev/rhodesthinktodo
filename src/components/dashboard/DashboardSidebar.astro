@@ -16,6 +16,18 @@ if (user && supabase) {
   avatarUrl = profile?.avatar_url || avatarUrl;
 }
 ---
+<style is:global>
+  /* With the site footer removed from the dashboard, stretch the layout to the
+     bottom of the viewport so no white strip shows under short pages. */
+  .user-dashboard {
+    min-height: calc(100vh - 75px); /* 75px = header height */
+    align-items: stretch;
+  }
+  .user-dashboard .user-dashboard-box {
+    min-height: 100%;
+  }
+</style>
+
 <div class="user-dashboard-inner h-100 border-end border-2 py-4 p-3">
 	<div class="dashboard_users mb-4">
 		<div class="square--80 circle mx-auto mb-1" style="overflow:hidden;"><img src={avatarUrl} class="img-fluid circle" style="width:80px;height:80px;object-fit:cover;" alt={fullName}></div>

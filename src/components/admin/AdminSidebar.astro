@@ -11,6 +11,13 @@ const items = [
   { key: 'areas',     href: '/admin/areas/',     icon: 'bi-geo-alt',       label: 'Areas' },
 ];
 ---
+<style is:global>
+  /* No footer in the admin — fill the viewport so no white strip shows below. */
+  section.admin-viewport {
+    min-height: calc(100vh - 75px - 3rem); /* header + mt-5 */
+  }
+</style>
+
 <div class="card rounded-3 shadow-sm p-3 mb-4">
   <div class="d-flex align-items-center gap-2 px-2 pb-3 border-bottom mb-2">
     <i class="bi bi-shield-lock text-primary fs-4"></i>
