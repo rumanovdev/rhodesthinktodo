@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { absUrl } from '../lib/data/site';
+import { LOCALES, DEFAULT_LOCALE, localizePath } from '../lib/i18n';
 import { getSupabaseServer } from '../lib/supabase/server';
 import { getPublishedListings } from '../lib/supabase/listings';
 import { getCategoryTree, getTopAreas, THIN_CONTENT_THRESHOLD } from '../lib/supabase/taxonomy';
@@ -32,8 +33,10 @@ const xmlEscape = (s: string) =>
 export const GET: APIRoute = async ({ cookies }) => {
   const supabase = getSupabaseServer(cookies);
 
-  const locs: string[] = [];
-  for (const p of STATIC_PATHS) locs.push(absUrl(p));
+  // Store un-prefixed paths; the default (English) URL and every locale
+  // alternate are derived from these when the XML is built.
+  const paths: string[] = [];
+  for (const p of STATIC_PATHS) paths.push(p);
 
   // Listing detail pages.
   let listings: { slug: string }[] = [];
@@ -43,7 +46,7 @@ export const GET: APIRoute = async ({ cookies }) => {
     listings = [];
   }
   for (const l of listings) {
-    if (l?.slug) locs.push(absUrl(`/listing/${l.slug}/`));
+    if (l?.slug) paths.push(`/listing/${l.slug}/`);
   }
 
   // Taxonomy pages — only those above the thin-content threshold get indexed,
@@ -74,18 +77,18 @@ export const GET: APIRoute = async ({ cookies }) => {
     const T = THIN_CONTENT_THRESHOLD;
     for (const m of tree) {
       const motherCount = (mainByCat[m.id] ?? 0) + m.subcategories.reduce((s, sc) => s + (mainByCat[sc.id] ?? 0), 0);
-      if (motherCount >= T) locs.push(absUrl(`/${m.slug}/`));
+      if (motherCount >= T) paths.push(`/${m.slug}/`);
 
       for (const sc of m.subcategories) {
         const scCount = (mainByCat[sc.id] ?? 0) + (subByCat[sc.id] ?? 0);
-        if (scCount >= T) locs.push(absUrl(`/${m.slug}/${sc.slug}/`));
+        if (scCount >= T) paths.push(`/${m.slug}/${sc.slug}/`);
       }
 
       for (const a of topAreas) {
         const inArea =
           (catAreaCount[`${m.id}:${a.id}`] ?? 0) +
           m.subcategories.reduce((s, sc) => s + (catAreaCount[`${sc.id}:${a.id}`] ?? 0), 0);
-        if (inArea >= T) locs.push(absUrl(`/${m.slug}/${a.slug}/`));
+        if (inArea >= T) paths.push(`/${m.slug}/${a.slug}/`);
       }
     }
   } catch {
@@ -95,13 +98,30 @@ export const GET: APIRoute = async ({ cookies }) => {
   // Blog posts.
   for (const b of blogs as unknown as any[]) {
     const s = b.slug || slugifyBlog(b.title);
-    locs.push(absUrl(`/blog-detail/${s}/`));
+    paths.push(`/blog-detail/${s}/`);
   }
+
+  // Each URL lists every language variant via xhtml:link alternates, plus an
+  // x-default pointing at the un-prefixed (English) URL — matching the on-page
+  // hreflang tags so Google sees a consistent set.
+  const alternates = (path: string) =>
+    [
+      ...LOCALES.map(
+        (l) =>
+          `    <xhtml:link rel="alternate" hreflang="${l}" href="${xmlEscape(absUrl(localizePath(path, l)))}"/>`
+      ),
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(absUrl(localizePath(path, DEFAULT_LOCALE)))}"/>`,
+    ].join('\n');
 
   const body =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    locs.map((loc) => `  <url><loc>${xmlEscape(loc)}</loc></url>`).join('\n') +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    paths
+      .map(
+        (path) =>
+          `  <url>\n    <loc>${xmlEscape(absUrl(localizePath(path, DEFAULT_LOCALE)))}</loc>\n${alternates(path)}\n  </url>`
+      )
+      .join('\n') +
     `\n</urlset>\n`;
 
   return new Response(body, {
