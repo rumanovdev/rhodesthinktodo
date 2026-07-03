@@ -19,16 +19,26 @@ const cats = catRows ?? [];
 const motherCats = cats.filter((c: any) => c.parent_id == null);
 const subsByMother: Record<number, any[]> = {};
 for (const s of cats.filter((c: any) => c.parent_id != null)) (subsByMother[(s as any).parent_id] ??= []).push(s);
-const { data: areaRows } = (await supabase?.from('areas').select('id, name, slug, parent_id').eq('is_active', true).order('sort_order')) ?? { data: [] };
+const { data: areaRows } = (await supabase?.from('areas').select('id, name, slug, parent_id, lat, lng').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const areas = areaRows ?? [];
-const { data: tagRows } = (await supabase?.from('tags').select('id, name').eq('is_active', true).order('sort_order')) ?? { data: [] };
+const { data: tagRows } = (await supabase?.from('tags').select('id, name, icon').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const tags = tagRows ?? [];
 const { data: amenityRows } = (await supabase?.from('amenities').select('id, key, name, icon').order('name')) ?? { data: [] };
+const amenities = amenityRows ?? [];
+
+const STEPS = [
+  { label: 'Basics', icon: 'bi-info-circle' },
+  { label: 'Location', icon: 'bi-geo-alt' },
+  { label: 'Details', icon: 'bi-tags' },
+  { label: 'Photos & Publish', icon: 'bi-images' },
+];
 ---
 <Base noindex title="Add Listing - Rhodes Things To Do">
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <section class="p-0">
     <div class="container-fluid p-0">
@@ -42,8 +52,8 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
           <div class="user-dashboard-box bg-light">
 
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
-              <h2 class="fw-medium mb-0">Add a Listing</h2>
-              <p class="text-muted mt-2 mb-0">Fill in the details below. Your listing starts as a draft — publish it from the My Listings page when ready. Fields marked <span class="text-danger">*</span> are required.</p>
+              <h2 class="fw-medium mb-0">Add your business</h2>
+              <p class="text-muted mt-2 mb-0">Four quick steps — it takes about 3 minutes. You can save as a draft and finish later.</p>
             </div>
 
             <div class="dashCaption p-xl-5 p-3 p-md-4">
@@ -55,269 +65,229 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
                 <div class="alert alert-success" role="alert">{notice}</div>
               )}
 
-              <form action="/api/listings" method="post" enctype="multipart/form-data" id="addListingForm">
+              <!-- Stepper -->
+              <div class="wizHead card rounded-4 shadow-sm p-3 mb-4">
+                <div class="d-flex align-items-center justify-content-between">
+                  {STEPS.map((s, i) => (
+                    <>
+                      <button type="button" class="wstep" data-step-btn={i} aria-label={`Step ${i + 1}: ${s.label}`}>
+                        <span class="wnum"><i class={`bi ${s.icon}`}></i></span>
+                        <span class="wlabel">{s.label}</span>
+                      </button>
+                      {i < STEPS.length - 1 && <span class="wline" data-step-line={i}></span>}
+                    </>
+                  ))}
+                </div>
+              </div>
 
-                <!-- Basic info -->
-                <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                  <div class="col-12">
-                    <div class="card rounded-3 shadow-sm">
-                      <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="bi bi-info-circle text-primary me-2"></i>Basic Information</h4>
+              <form action="/api/listings" method="post" enctype="multipart/form-data" id="addListingForm" novalidate>
+                <input type="hidden" name="country" value="Greece" />
+
+                <!-- ========================= STEP 1 · BASICS ========================= -->
+                <div class="step-panel" data-step-panel="0">
+                  <div class="card rounded-4 shadow-sm p-4">
+                    <h4 class="fs-5 fw-medium mb-1">Tell us about the business</h4>
+                    <p class="text-muted text-md mb-4">Just the essentials to get started.</p>
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label for="title" class="form-label fw-medium">Business name <span class="text-danger">*</span></label>
+                        <input type="text" id="title" name="title" required maxlength="140" class="form-control form-control-lg rounded-3" placeholder="e.g. Meltemi Beach Taverna" />
                       </div>
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-12">
-                            <div class="form-group">
-                              <label for="title" class="lableTitle">Title <span class="text-danger">*</span></label>
-                              <input type="text" id="title" name="title" required maxlength="140" class="form-control rounded" placeholder="e.g. Meltemi Beach Taverna" />
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="category_slug" class="lableTitle">Category <span class="text-danger">*</span></label>
-                              <select id="category_slug" name="category_slug" required class="form-control">
-                                <option value="">Choose a category…</option>
-                                {motherCats.map((c: any) => (
-                                  <option value={c.slug}>{c.name}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="phone" class="lableTitle">Phone</label>
-                              <input type="tel" id="phone" name="phone" class="form-control rounded" placeholder="698 000 0000" inputmode="tel" autocomplete="tel" />
-                              <div class="invalid-feedback">Please enter a Greek phone number, e.g. 698 000 0000 or +30 22410 12345.</div>
-                              <small class="text-muted">Greek number — mobile (69…) or landline (2…), with or without +30.</small>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="website" class="lableTitle">Website</label>
-                              <input type="text" id="website" name="website" class="form-control rounded" placeholder="www.example.com" inputmode="url" autocomplete="url" />
-                              <small class="text-muted">The business website or social page (optional).</small>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="price_tier" class="lableTitle">Price tier</label>
-                              <select id="price_tier" name="price_tier" class="form-control">
-                                <option value="1">$ — Inexpensive</option>
-                                <option value="2" selected>$$ — Moderate</option>
-                                <option value="3">$$$ — Pricey</option>
-                                <option value="4">$$$$ — Premium</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="status" class="lableTitle">Status</label>
-                              <select id="status" name="status" class="form-control">
-                                <option value="draft" selected>Draft (only visible to you)</option>
-                                <option value="published">Published</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-12">
-                            <div class="form-group">
-                              <label for="description" class="lableTitle">Description</label>
-                              <textarea id="description" name="description" rows="5" class="form-control rounded" placeholder="What makes this place special?"></textarea>
-                            </div>
-                          </div>
+                      <div class="col-12">
+                        <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+                        <input type="hidden" id="category_slug" name="category_slug" required />
+                        <div class="d-flex flex-wrap gap-2" id="catChips">
+                          {motherCats.map((c: any) => (
+                            <button type="button" class="cat-chip" data-cat-slug={c.slug}>{c.name}</button>
+                          ))}
                         </div>
+                        <div class="invalid-hint text-danger text-sm mt-1 d-none" data-hint="category">Please pick a category.</div>
+                      </div>
+                      <div class="col-12">
+                        <label for="description" class="form-label fw-medium">Description</label>
+                        <textarea id="description" name="description" rows="4" class="form-control rounded-3" placeholder="What makes this place special? Mention what you offer, opening season, anything visitors should know."></textarea>
+                        <small class="text-muted">A couple of sentences is perfect — you can edit it any time.</small>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Classification -->
-                <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                  <div class="col-12">
-                    <div class="card rounded-3 shadow-sm">
-                      <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="bi bi-tags text-primary me-2"></i>Subcategories &amp; Tags</h4>
-                        <p class="text-muted text-md mb-0 mt-1">Tick the specific types this place fits (e.g. Meat Restaurant) and any tags (e.g. Sea View). These drive the "Best … in …" pages.</p>
+                <!-- ========================= STEP 2 · LOCATION ========================= -->
+                <div class="step-panel" data-step-panel="1" hidden>
+                  <div class="card rounded-4 shadow-sm p-4">
+                    <h4 class="fs-5 fw-medium mb-1">Where is it?</h4>
+                    <p class="text-muted text-md mb-4">Pick the area, then click the map to drop the pin on your exact spot — that’s it.</p>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="area_id" class="form-label fw-medium">Area <span class="text-danger">*</span></label>
+                        <select id="area_id" name="area_id" required class="form-select form-select-lg rounded-3">
+                          <option value="">Choose an area…</option>
+                          {areas.map((a: any) => (
+                            <option value={a.id} data-lat={a.lat} data-lng={a.lng} data-name={a.name}>{a.name}</option>
+                          ))}
+                        </select>
                       </div>
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label class="lableTitle">Subcategories</label>
-                              <div id="subcatGroups">
-                                {motherCats.map((m: any) => (
-                                  (subsByMother[m.id] ?? []).length > 0 && (
-                                    <div class="mb-3" data-subcat-group={m.slug}>
-                                      <h6 class="text-muted text-uppercase small fw-semibold mb-2">{m.name}</h6>
-                                      <ul class="p-0 row g-2 list-unstyled mb-0">
-                                        {(subsByMother[m.id] ?? []).map((s: any) => (
-                                          <li class="col-6">
-                                            <div class="form-check">
-                                              <input id={`sub-${s.id}`} class="form-check-input" name="subcategory_ids" value={s.id} type="checkbox" />
-                                              <label for={`sub-${s.id}`} class="form-check-label">{s.name}</label>
-                                            </div>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </div>
-                                  )
-                                ))}
-                              </div>
-                              <small class="text-muted">Choose a category above to narrow this list to the relevant types.</small>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label class="lableTitle">Tags</label>
-                              <ul class="p-0 row g-2 list-unstyled mb-0">
-                                {tags.map((t: any) => (
-                                  <li class="col-6">
-                                    <div class="form-check">
-                                      <input id={`tag-${t.id}`} class="form-check-input" name="tag_ids" value={t.id} type="checkbox" />
-                                      <label for={`tag-${t.id}`} class="form-check-label">{t.name}</label>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
+                      <div class="col-md-6">
+                        <label for="address" class="form-label fw-medium">Street address</label>
+                        <input type="text" id="address" name="address" class="form-control form-control-lg rounded-3" placeholder="e.g. Sokratous 45" />
                       </div>
-                    </div>
-                  </div>
-                </div>
+                      <input type="hidden" id="city" name="city" />
 
-                <!-- Location -->
-                <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                  <div class="col-12">
-                    <div class="card rounded-3 shadow-sm">
-                      <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="bi bi-geo-alt text-primary me-2"></i>Location</h4>
+                      <div class="col-12">
+                        <label class="form-label fw-medium mb-1">Pin the exact spot <span class="text-danger">*</span></label>
+                        <p class="text-muted text-sm mb-2"><i class="bi bi-hand-index me-1"></i>Click (or drag the pin) on the map — coordinates fill in automatically.</p>
+                        <div id="pickMap" class="rounded-4 border shadow-sm" style="height:340px; position:relative; z-index:0;"></div>
                       </div>
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-12">
-                            <div class="form-group">
-                              <label for="address" class="lableTitle">Street address</label>
-                              <input type="text" id="address" name="address" class="form-control rounded" placeholder="e.g. Sokratous 45, Rhodes Old Town" />
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="area_id" class="lableTitle">Main area</label>
-                              <select id="area_id" name="area_id" class="form-control">
-                                <option value="">Choose an area…</option>
-                                {areas.map((a: any) => (
-                                  <option value={a.id}>{a.name}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label class="lableTitle">Service areas</label>
-                              <ul class="p-0 row g-2 list-unstyled mb-1">
-                                {areas.map((a: any) => (
-                                  <li class="col-6">
-                                    <div class="form-check">
-                                      <input id={`sa-${a.id}`} class="form-check-input" name="service_area_ids" value={a.id} type="checkbox" />
-                                      <label for={`sa-${a.id}`} class="form-check-label">{a.name}</label>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                              <small class="text-muted">Extra areas this business serves (optional).</small>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="city" class="lableTitle">City</label>
-                              <input type="text" id="city" name="city" class="form-control rounded" placeholder="e.g. Lindos" />
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="country" class="lableTitle">Country</label>
-                              <input type="text" id="country" name="country" value="Greece" class="form-control rounded" placeholder="Greece" />
-                            </div>
-                          </div>
-                          <div class="col-12">
-                            <p class="text-muted text-sm mb-2"><i class="bi bi-info-circle me-1"></i>Tip: open Google Maps, right-click the exact spot, and click the coordinates to copy them (e.g. <code>36.0917, 28.0867</code>) — paste latitude and longitude below.</p>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="lat" class="lableTitle">Latitude <span class="text-danger">*</span></label>
-                              <input type="number" step="0.0000001" min="-90" max="90" id="lat" name="lat" required class="form-control rounded" placeholder="36.0917" />
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label for="lng" class="lableTitle">Longitude <span class="text-danger">*</span></label>
-                              <input type="number" step="0.0000001" min="-180" max="180" id="lng" name="lng" required class="form-control rounded" placeholder="28.0867" />
-                            </div>
-                          </div>
-                        </div>
+                      <div class="col-md-6">
+                        <label for="lat" class="form-label text-sm text-muted">Latitude <span class="text-danger">*</span></label>
+                        <input type="number" step="0.0000001" min="-90" max="90" id="lat" name="lat" required class="form-control rounded-3" placeholder="Set by the map pin" />
                       </div>
-                    </div>
-                  </div>
-                </div>
+                      <div class="col-md-6">
+                        <label for="lng" class="form-label text-sm text-muted">Longitude <span class="text-danger">*</span></label>
+                        <input type="number" step="0.0000001" min="-180" max="180" id="lng" name="lng" required class="form-control rounded-3" placeholder="Set by the map pin" />
+                      </div>
 
-                <!-- Images -->
-                <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                  <div class="col-12">
-                    <div class="card rounded-3 shadow-sm">
-                      <div class="card-header py-4 px-4">
-                        <h4 class="fs-5 fw-medium"><i class="bi bi-images text-primary me-2"></i>Photos</h4>
-                        <p class="text-muted text-md mb-0 mt-1">The first image becomes the hero. Up to 5 JPEG/PNG/WebP, 5 MB each.</p>
-                      </div>
-                      <div class="card-body">
-                        <div class="form-group">
-                          <label for="images" class="lableTitle visually-hidden">Photos</label>
-                          <input type="file" id="images" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Amenities -->
-                {(amenityRows ?? []).length > 0 && (
-                  <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                    <div class="col-12">
-                      <div class="card rounded-3 shadow-sm">
-                        <div class="card-header py-4 px-4">
-                          <h4 class="fs-5 fw-medium"><i class="bi bi-feather text-primary me-2"></i>Amenities</h4>
-                        </div>
-                        <div class="card-body">
-                          <ul class="p-0 row align-items-start justify-content-start g-4 list-unstyled mb-0">
-                            {(amenityRows ?? []).map((a: any) => (
-                              <li class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
-                                <div class="form-check">
-                                  <input id={`amn-${a.id}`} class="form-check-input" name="amenities" value={a.id} type="checkbox" />
-                                  <label for={`amn-${a.id}`} class="form-check-label">{a.icon && <i class={`fa-solid ${a.icon} me-2 text-primary`}></i>}{a.name}</label>
-                                </div>
-                              </li>
+                      <div class="col-12">
+                        <details class="mt-1">
+                          <summary class="text-primary fw-medium" style="cursor:pointer">Also serves other areas? (optional)</summary>
+                          <div class="d-flex flex-wrap gap-2 mt-3" id="svcChips">
+                            {areas.map((a: any) => (
+                              <span class="chip-check">
+                                <input id={`sa-${a.id}`} name="service_area_ids" value={a.id} type="checkbox" />
+                                <label for={`sa-${a.id}`}>{a.name}</label>
+                              </span>
                             ))}
-                          </ul>
-                        </div>
+                          </div>
+                        </details>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
 
-                <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                  <div class="col-12 d-flex gap-3">
-                    <button type="submit" id="saveListingBtn" class="btn btn-primary rounded-pill fw-medium">Save Listing<i class="bi bi-arrow-right-circle ms-2"></i></button>
-                    <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill fw-medium">Cancel</a>
+                <!-- ========================= STEP 3 · DETAILS ========================= -->
+                <div class="step-panel" data-step-panel="2" hidden>
+                  <div class="card rounded-4 shadow-sm p-4">
+                    <h4 class="fs-5 fw-medium mb-1">The details visitors care about</h4>
+                    <p class="text-muted text-md mb-4">Everything here is optional — but the more you add, the better your listing ranks on the “Best … in …” pages.</p>
+                    <div class="row g-4">
+
+                      <div class="col-12" id="subcatSection">
+                        <label class="form-label fw-medium mb-1">What type of place is it?</label>
+                        <p class="text-muted text-sm mb-2" id="subcatHint">Pick all that fit.</p>
+                        {motherCats.map((m: any) => (
+                          (subsByMother[m.id] ?? []).length > 0 && (
+                            <div class="d-flex flex-wrap gap-2" data-subcat-group={m.slug} hidden>
+                              {(subsByMother[m.id] ?? []).map((s: any) => (
+                                <span class="chip-check">
+                                  <input id={`sub-${s.id}`} name="subcategory_ids" value={s.id} type="checkbox" />
+                                  <label for={`sub-${s.id}`}>{s.name}</label>
+                                </span>
+                              ))}
+                            </div>
+                          )
+                        ))}
+                      </div>
+
+                      <div class="col-12">
+                        <label class="form-label fw-medium mb-2">Tags</label>
+                        <div class="d-flex flex-wrap gap-2">
+                          {tags.map((t: any) => (
+                            <span class="chip-check">
+                              <input id={`tag-${t.id}`} name="tag_ids" value={t.id} type="checkbox" />
+                              <label for={`tag-${t.id}`}>{t.name}</label>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {amenities.length > 0 && (
+                        <div class="col-12">
+                          <label class="form-label fw-medium mb-2">Amenities</label>
+                          <div class="d-flex flex-wrap gap-2">
+                            {amenities.map((a: any) => (
+                              <span class="chip-check">
+                                <input id={`amn-${a.id}`} name="amenities" value={a.id} type="checkbox" />
+                                <label for={`amn-${a.id}`}>{a.icon && <i class={`fa-solid ${a.icon} me-1`}></i>}{a.name}</label>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-medium mb-2">Price range</label>
+                        <div class="d-flex gap-2" id="priceChips">
+                          {[1, 2, 3, 4].map((t) => (
+                            <span class="chip-check">
+                              <input id={`pt-${t}`} name="price_tier" value={t} type="radio" checked={t === 2} />
+                              <label for={`pt-${t}`}>{'€'.repeat(t)}</label>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="phone" class="form-label fw-medium">Phone</label>
+                        <input type="tel" id="phone" name="phone" class="form-control rounded-3" placeholder="698 000 0000" inputmode="tel" autocomplete="tel" />
+                        <div class="invalid-feedback">Greek number, e.g. 698 000 0000 or +30 22410 12345.</div>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="website" class="form-label fw-medium">Website</label>
+                        <input type="text" id="website" name="website" class="form-control rounded-3" placeholder="www.example.com" inputmode="url" autocomplete="url" />
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ========================= STEP 4 · PHOTOS & PUBLISH ========================= -->
+                <div class="step-panel" data-step-panel="3" hidden>
+                  <div class="card rounded-4 shadow-sm p-4">
+                    <h4 class="fs-5 fw-medium mb-1">Photos &amp; publish</h4>
+                    <p class="text-muted text-md mb-4">Listings with photos get far more clicks. The first photo becomes your cover image.</p>
+
+                    <label for="images" class="dropzone-like d-block rounded-4 text-center p-4 mb-2" style="cursor:pointer">
+                      <i class="bi bi-cloud-arrow-up fs-1 text-primary d-block mb-1"></i>
+                      <span class="fw-medium">Click to add photos</span>
+                      <span class="d-block text-muted text-sm">Up to 5 · JPEG/PNG/WebP · 5 MB each</span>
+                    </label>
+                    <input type="file" id="images" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" />
+                    <div id="photoPreviews" class="d-flex flex-wrap gap-3 mb-1"></div>
+                    <div class="text-danger text-sm d-none" id="photoError"></div>
+
+                    <hr class="my-4" />
+
+                    <label class="form-label fw-medium mb-2">How do you want to save it?</label>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="status-card d-block rounded-4 p-3 h-100" for="st-pub">
+                          <input type="radio" id="st-pub" name="status" value="published" checked class="form-check-input me-2" />
+                          <span class="fw-semibold">Publish now</span>
+                          <span class="d-block text-muted text-sm mt-1">Goes live immediately on the site, maps and category pages.</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="status-card d-block rounded-4 p-3 h-100" for="st-draft">
+                          <input type="radio" id="st-draft" name="status" value="draft" class="form-check-input me-2" />
+                          <span class="fw-semibold">Save as draft</span>
+                          <span class="d-block text-muted text-sm mt-1">Only you can see it — publish from My Listings when ready.</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Wizard nav -->
+                <div class="d-flex align-items-center justify-content-between mt-4">
+                  <button type="button" id="backBtn" class="btn btn-light rounded-pill fw-medium px-4" hidden><i class="bi bi-arrow-left me-2"></i>Back</button>
+                  <span></span>
+                  <div class="d-flex gap-2">
+                    <a href="/dashboard-my-listings/" class="btn btn-link text-muted">Cancel</a>
+                    <button type="button" id="nextBtn" class="btn btn-primary rounded-pill fw-medium px-4">Next<i class="bi bi-arrow-right ms-2"></i></button>
+                    <button type="submit" id="saveListingBtn" class="btn btn-primary rounded-pill fw-medium px-4" hidden><i class="bi bi-check2-circle me-2"></i>Submit listing</button>
                   </div>
                 </div>
 
               </form>
-
-              <div class="row align-items-start g-4">
-                <div class="col-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do.</p>
-                </div>
-              </div>
 
             </div>
           </div>
@@ -331,9 +301,178 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
   <LoginModal />
   <SearchOffcanvas />
 
+  <style is:global>
+    /* Stepper */
+    .wstep { display:flex; align-items:center; gap:10px; background:none; border:0; padding:6px 8px; border-radius:12px; color:#8a8f98; cursor:default; }
+    .wstep .wnum { width:38px; height:38px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:#f1f2f4; font-size:1rem; flex:0 0 auto; transition:all .15s ease; }
+    .wstep .wlabel { font-weight:600; font-size:.92rem; white-space:nowrap; }
+    .wstep.is-active { color:#1a1a1a; }
+    .wstep.is-active .wnum { background:var(--bs-primary); color:#fff; }
+    .wstep.is-done { color:#1a1a1a; cursor:pointer; }
+    .wstep.is-done .wnum { background:#d1f5e0; color:#0f8a4d; }
+    .wline { flex:1 1 auto; height:3px; background:#eceef0; border-radius:99px; margin:0 6px; }
+    .wline.is-done { background:#0f8a4d55; }
+    @media (max-width: 767px) { .wstep .wlabel { display:none; } }
+
+    /* Category chips (single-select buttons) */
+    .cat-chip { border:1.5px solid #e3e3e3; background:#fff; border-radius:999px; padding:10px 16px; font-weight:600; font-size:.92rem; color:#333; transition:all .12s ease; }
+    .cat-chip:hover { border-color:var(--bs-primary); color:var(--bs-primary); }
+    .cat-chip.is-selected { background:var(--bs-primary); border-color:var(--bs-primary); color:#fff; }
+
+    /* Checkbox / radio chips */
+    .chip-check { position:relative; display:inline-block; }
+    .chip-check input { position:absolute; opacity:0; width:1px; height:1px; }
+    .chip-check label { display:inline-flex; align-items:center; padding:8px 14px; border:1.5px solid #e3e3e3; border-radius:999px; background:#fff; cursor:pointer; font-size:.88rem; font-weight:500; color:#333; transition:all .12s ease; margin:0; }
+    .chip-check label:hover { border-color:var(--bs-primary); color:var(--bs-primary); }
+    .chip-check input:checked + label { background:var(--bs-primary); border-color:var(--bs-primary); color:#fff; }
+    .chip-check input:focus-visible + label { box-shadow:0 0 0 3px rgba(225,29,72,.25); }
+
+    /* Photos */
+    .dropzone-like { border:2px dashed #d9dbe0; background:#fafbfc; transition:all .12s ease; }
+    .dropzone-like:hover { border-color:var(--bs-primary); background:#fff5f7; }
+    .photo-thumb { position:relative; }
+    .photo-thumb img { width:120px; height:88px; object-fit:cover; border-radius:12px; border:1px solid #e3e3e3; }
+    .photo-thumb .rm { position:absolute; top:-8px; right:-8px; width:24px; height:24px; border-radius:50%; background:#1a1a1a; color:#fff; border:0; font-size:12px; line-height:1; display:flex; align-items:center; justify-content:center; }
+    .photo-thumb .cover-badge { position:absolute; left:6px; bottom:6px; }
+
+    /* Status cards */
+    .status-card { border:1.5px solid #e3e3e3; cursor:pointer; transition:all .12s ease; }
+    .status-card:hover { border-color:var(--bs-primary); }
+    .status-card:has(input:checked) { border-color:var(--bs-primary); background:#fff5f7; box-shadow:0 0 0 1px var(--bs-primary); }
+  </style>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" is:inline></script>
+
   <script>
-    // Greek phone validation: mobile (69XXXXXXXX) or landline (2XXXXXXXXX),
-    // optionally prefixed with +30 / 0030; spaces, dashes and dots tolerated.
+    // ============================== Wizard nav ==============================
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-step-panel]'));
+    const stepBtns = Array.from(document.querySelectorAll<HTMLElement>('[data-step-btn]'));
+    const stepLines = Array.from(document.querySelectorAll<HTMLElement>('[data-step-line]'));
+    const backBtn = document.getElementById('backBtn') as HTMLButtonElement;
+    const nextBtn = document.getElementById('nextBtn') as HTMLButtonElement;
+    const submitBtn = document.getElementById('saveListingBtn') as HTMLButtonElement;
+    let current = 0;
+    let maxVisited = 0;
+
+    function renderStep() {
+      panels.forEach((p, i) => (p.hidden = i !== current));
+      stepBtns.forEach((b, i) => {
+        b.classList.toggle('is-active', i === current);
+        b.classList.toggle('is-done', i < current || (i <= maxVisited && i !== current));
+      });
+      stepLines.forEach((l, i) => l.classList.toggle('is-done', i < current));
+      backBtn.hidden = current === 0;
+      nextBtn.hidden = current === panels.length - 1;
+      submitBtn.hidden = current !== panels.length - 1;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (current === 1) setTimeout(() => map?.invalidateSize(), 150);
+    }
+
+    function validatePanel(idx: number): boolean {
+      const panel = panels[idx];
+      // Custom: category chips (step 0)
+      if (idx === 0) {
+        const catInput = document.getElementById('category_slug') as HTMLInputElement;
+        const hint = document.querySelector('[data-hint="category"]') as HTMLElement;
+        if (!catInput.value) { hint.classList.remove('d-none'); return false; }
+        hint.classList.add('d-none');
+      }
+      if (idx === 2 && !checkPhone()) return false;
+      // Native validation for visible fields in this panel
+      const fields = Array.from(panel.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
+      for (const f of fields) {
+        if (!f.checkValidity()) { f.reportValidity(); return false; }
+      }
+      return true;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (!validatePanel(current)) return;
+      current = Math.min(current + 1, panels.length - 1);
+      maxVisited = Math.max(maxVisited, current);
+      renderStep();
+    });
+    backBtn.addEventListener('click', () => { current = Math.max(current - 1, 0); renderStep(); });
+    stepBtns.forEach((b, i) => b.addEventListener('click', () => {
+      if (i <= maxVisited && i !== current) { current = i; renderStep(); }
+    }));
+
+    // ============================== Step 1: category chips ==============================
+    const catInput = document.getElementById('category_slug') as HTMLInputElement;
+    const catChips = Array.from(document.querySelectorAll<HTMLButtonElement>('.cat-chip'));
+    const subGroups = Array.from(document.querySelectorAll<HTMLElement>('[data-subcat-group]'));
+    const subcatHint = document.getElementById('subcatHint') as HTMLElement;
+
+    function syncSubcatGroups() {
+      const slug = catInput.value;
+      let any = false;
+      for (const g of subGroups) {
+        const hasChecked = !!g.querySelector('input:checked');
+        const show = (!!slug && g.dataset.subcatGroup === slug) || hasChecked;
+        g.hidden = !show;
+        if (show) any = true;
+      }
+      subcatHint.textContent = any ? 'Pick all that fit.' : 'No specific types for this category — skip ahead.';
+    }
+    catChips.forEach((chip) => chip.addEventListener('click', () => {
+      catChips.forEach((c) => c.classList.toggle('is-selected', c === chip));
+      catInput.value = chip.dataset.catSlug || '';
+      (document.querySelector('[data-hint="category"]') as HTMLElement).classList.add('d-none');
+      syncSubcatGroups();
+    }));
+    subGroups.forEach((g) => g.addEventListener('change', syncSubcatGroups));
+    syncSubcatGroups();
+
+    // ============================== Step 2: map picker ==============================
+    declare const L: any;
+    let map: any = null;
+    let marker: any = null;
+    const latInput = document.getElementById('lat') as HTMLInputElement;
+    const lngInput = document.getElementById('lng') as HTMLInputElement;
+    const areaSelect = document.getElementById('area_id') as HTMLSelectElement;
+    const cityInput = document.getElementById('city') as HTMLInputElement;
+
+    function setPoint(lat: number, lng: number, pan = false) {
+      latInput.value = lat.toFixed(7);
+      lngInput.value = lng.toFixed(7);
+      if (!map) return;
+      if (!marker) {
+        marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+        marker.on('dragend', () => { const p = marker.getLatLng(); setPoint(p.lat, p.lng); });
+      } else marker.setLatLng([lat, lng]);
+      if (pan) map.setView([lat, lng], Math.max(map.getZoom(), 15));
+    }
+
+    const mapEl = document.getElementById('pickMap');
+    if (mapEl && typeof L !== 'undefined') {
+      map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      }).addTo(map);
+      map.setView([36.3, 28.1], 9); // Rhodes island
+      map.on('click', (e: any) => setPoint(e.latlng.lat, e.latlng.lng));
+    }
+
+    areaSelect?.addEventListener('change', () => {
+      const opt = areaSelect.selectedOptions[0];
+      if (!opt) return;
+      cityInput.value = opt.dataset.name || '';
+      const alat = parseFloat(opt.dataset.lat || '');
+      const alng = parseFloat(opt.dataset.lng || '');
+      if (map && Number.isFinite(alat) && Number.isFinite(alng)) {
+        map.setView([alat, alng], 14);
+      }
+    });
+    // Typing coordinates manually moves the pin too.
+    function manualPoint() {
+      const la = parseFloat(latInput.value), ln = parseFloat(lngInput.value);
+      if (Number.isFinite(la) && Number.isFinite(ln)) setPoint(la, ln, true);
+    }
+    latInput?.addEventListener('change', manualPoint);
+    lngInput?.addEventListener('change', manualPoint);
+
+    // ============================== Step 3: phone ==============================
     const phone = document.getElementById('phone') as HTMLInputElement | null;
     function checkPhone() {
       if (!phone) return true;
@@ -344,40 +483,70 @@ const { data: amenityRows } = (await supabase?.from('amenities').select('id, key
       return ok;
     }
     phone?.addEventListener('blur', checkPhone);
-    phone?.addEventListener('input', () => {
-      if (phone.classList.contains('is-invalid')) checkPhone();
+    phone?.addEventListener('input', () => { if (phone.classList.contains('is-invalid')) checkPhone(); });
+
+    // ============================== Step 4: photo previews ==============================
+    const fileInput = document.getElementById('images') as HTMLInputElement;
+    const previews = document.getElementById('photoPreviews') as HTMLElement;
+    const photoError = document.getElementById('photoError') as HTMLElement;
+    const store = new DataTransfer();
+    const MAX_FILES = 5, MAX_BYTES = 5 * 1024 * 1024;
+
+    function renderPreviews() {
+      previews.innerHTML = '';
+      Array.from(store.files).forEach((file, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'photo-thumb';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        const rm = document.createElement('button');
+        rm.type = 'button'; rm.className = 'rm'; rm.innerHTML = '&times;'; rm.title = 'Remove';
+        rm.addEventListener('click', () => {
+          const dt = new DataTransfer();
+          Array.from(store.files).forEach((f, j) => { if (j !== i) dt.items.add(f); });
+          store.items.clear();
+          Array.from(dt.files).forEach((f) => store.items.add(f));
+          fileInput.files = store.files;
+          renderPreviews();
+        });
+        wrap.appendChild(img); wrap.appendChild(rm);
+        if (i === 0) {
+          const b = document.createElement('span');
+          b.className = 'badge bg-primary rounded-pill cover-badge'; b.textContent = 'Cover';
+          wrap.appendChild(b);
+        }
+        previews.appendChild(wrap);
+      });
+    }
+    fileInput?.addEventListener('change', () => {
+      photoError.classList.add('d-none');
+      const msgs: string[] = [];
+      for (const f of Array.from(fileInput.files ?? [])) {
+        if (store.files.length >= MAX_FILES) { msgs.push('Maximum 5 photos — extra files were skipped.'); break; }
+        if (f.size > MAX_BYTES) { msgs.push(`"${f.name}" is over 5 MB and was skipped.`); continue; }
+        store.items.add(f);
+      }
+      fileInput.files = store.files;
+      if (msgs.length) { photoError.textContent = msgs.join(' '); photoError.classList.remove('d-none'); }
+      renderPreviews();
     });
 
-    // Show only the subcategory group matching the chosen category
-    // (groups that already have ticked boxes stay visible so nothing is lost).
-    const catSelect = document.getElementById('category_slug') as HTMLSelectElement | null;
-    const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-subcat-group]'));
-    function syncSubcatGroups() {
-      const slug = catSelect?.value ?? '';
-      for (const g of groups) {
-        const hasChecked = !!g.querySelector('input:checked');
-        g.hidden = !!slug && g.dataset.subcatGroup !== slug && !hasChecked;
+    // ============================== Submit ==============================
+    const form = document.getElementById('addListingForm') as HTMLFormElement;
+    form.addEventListener('submit', (e) => {
+      // Validate every step; jump to the first invalid one.
+      for (let i = 0; i < panels.length; i++) {
+        if (!validatePanel(i)) {
+          e.preventDefault();
+          current = i; maxVisited = Math.max(maxVisited, i); renderStep();
+          return;
+        }
       }
-    }
-    catSelect?.addEventListener('change', syncSubcatGroups);
-    for (const g of groups) {
-      g.addEventListener('change', syncSubcatGroups);
-    }
-    syncSubcatGroups();
-
-    // Disable the submit button while the form is posting so it can't be double-submitted.
-    const form = document.getElementById('addListingForm') as HTMLFormElement | null;
-    form?.addEventListener('submit', (e) => {
-      if (!checkPhone()) {
-        e.preventDefault();
-        phone?.focus();
-        return;
-      }
-      const btn = document.getElementById('saveListingBtn') as HTMLButtonElement | null;
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving…';
-      }
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting…';
     });
+
+    renderStep();
   </script>
 </Base>
