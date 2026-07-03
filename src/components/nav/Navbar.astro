@@ -40,6 +40,7 @@ const exploreCats = categoryTree.filter((m) => !PROMOTED_SLUGS.includes(m.slug))
 
 let userLabel: string | null = null;
 let userAvatar: string | null = null;
+let unseenRequests = 0;
 if (user) {
   userLabel = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Account';
   if (supabase) {
@@ -48,6 +49,8 @@ if (user) {
     const profile = await getMyProfile(supabase, user.id);
     if (profile?.full_name) userLabel = profile.full_name;
     if (profile?.avatar_url) userAvatar = profile.avatar_url;
+    const { countUnseenRequests } = await import('../../lib/supabase/requests');
+    unseenRequests = await countUnseenRequests(supabase, user.id);
   }
 }
 ---
@@ -65,10 +68,11 @@ if (user) {
           <ul>
             <li>
               {user ? (
-                <a href="/dashboard-user/" class="d-flex align-items-center" aria-label="Go to dashboard">
+                <a href="/dashboard-user/" class="d-flex align-items-center position-relative" aria-label="Go to dashboard">
                   {userAvatar
                     ? <img src={userAvatar} alt={userLabel ?? 'Account'} style="width:24px;height:24px;object-fit:cover;border-radius:50%;" />
                     : <i class="bi bi-person-circle"></i>}
+                  {unseenRequests > 0 && <span class="notif-dot" aria-label={`${unseenRequests} new booking requests`}>{unseenRequests > 9 ? '9+' : unseenRequests}</span>}
                 </a>
               ) : (
                 <a href="#" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#login" aria-label="Sign in"><i class="bi bi-person-circle"></i></a>
@@ -154,9 +158,12 @@ if (user) {
             <>
               <li class="parent-parent-menu-item">
                 <a href="JavaScript:Void(0);" class="home-link d-flex align-items-center">
-                  {userAvatar
-                    ? <img src={userAvatar} class="me-2" style="width:28px;height:28px;object-fit:cover;border-radius:50%;" alt={userLabel ?? 'Account'} />
-                    : <i class="bi bi-person-circle fs-5 me-2"></i>}
+                  <span class="position-relative me-2 d-inline-flex">
+                    {userAvatar
+                      ? <img src={userAvatar} style="width:28px;height:28px;object-fit:cover;border-radius:50%;" alt={userLabel ?? 'Account'} />
+                      : <i class="bi bi-person-circle fs-5"></i>}
+                    {unseenRequests > 0 && <span class="notif-dot" aria-label={`${unseenRequests} new booking requests`}>{unseenRequests > 9 ? '9+' : unseenRequests}</span>}
+                  </span>
                   <span class="navCl">{userLabel}</span><span class="submenu-indicator"></span>
                 </a>
                 <ul class="nav-dropdown nav-submenu">
@@ -164,6 +171,7 @@ if (user) {
                   <li><a href="/admin/" class="sub-menu-item"><i class="bi bi-shield-lock me-1"></i>Admin Panel</a></li>
                   )}
                   <li><a href="/dashboard-user/" class="sub-menu-item"><i class="bi bi-speedometer me-1"></i>Dashboard</a></li>
+                  <li><a href="/dashboard-requests/" class="sub-menu-item"><i class="bi bi-bell me-1"></i>Requests{unseenRequests > 0 && <span class="badge bg-danger rounded-pill ms-2">{unseenRequests}</span>}</a></li>
                   <li><a href="/dashboard-my-profile/" class="sub-menu-item"><i class="bi bi-person-lines-fill me-1"></i>My Profile</a></li>
                   <li><a href="/dashboard-my-listings/" class="sub-menu-item"><i class="bi bi-ui-radios-grid me-1"></i>My Listings</a></li>
                   <li><a href="/dashboard-my-bookings/" class="sub-menu-item"><i class="bi bi-journal-check me-1"></i>My Bookings</a></li>
@@ -274,6 +282,25 @@ if (user) {
     .header .nav-brand img.logo {
       width: 170px;
     }
+  }
+
+  /* Booking-request notification bubble on the profile icon */
+  .notif-dot {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #e11d48;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #fff;
+    z-index: 5;
   }
 
   /* Language switcher (CheckYeti-style circular flag + dropdown) */

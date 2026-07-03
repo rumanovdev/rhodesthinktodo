@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+
+export const prerender = false;
+
+const supabase = Astro.locals.supabase;
+const user = Astro.locals.user;
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+
+// Booking requests received on MY listings (RLS: listing owners can read them).
+let rows: any[] = [];
+let newIds = new Set<string>();
+if (supabase && user) {
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, start_date, end_date, guests, status, notes, contact_name, contact_email, contact_phone, created_at, owner_seen, listings!inner(title, slug, owner_id)')
+    .eq('listings.owner_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(200);
+  rows = data ?? [];
+
+  // Highlight the ones that are new, then mark them seen (clears the badges).
+  newIds = new Set(rows.filter((r) => !r.owner_seen).map((r) => r.id));
+  if (newIds.size > 0) {
+    await supabase.from('bookings').update({ owner_seen: true }).in('id', [...newIds]);
+  }
+}
+const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+const badge = (s: string) =>
+  s === 'confirmed' ? 'bg-success' : s === 'pending' ? 'bg-warning text-dark' : s === 'completed' ? 'bg-primary' : 'bg-secondary';
+---
+<Base noindex title="Booking Requests - Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="requests" />
+        </div>
+
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+              <h2 class="fw-medium mb-0">Booking Requests</h2>
+              <p class="text-muted mt-2 mb-0">Requests visitors sent for your listings. Confirm or decline — the guest sees the status on their My Bookings page.</p>
+            </div>
+
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              {notice && <div class="alert alert-success">{notice}</div>}
+              {error && <div class="alert alert-danger">{error}</div>}
+
+              {rows.length === 0 ? (
+                <div class="card rounded-4 shadow-sm p-5 text-center">
+                  <i class="bi bi-bell fs-1 text-muted d-block mb-2"></i>
+                  <h5 class="fw-medium mb-1">No booking requests yet</h5>
+                  <p class="text-muted mb-0">When a visitor requests a booking on one of your listings, it appears here — and you get a notification on your profile icon.</p>
+                </div>
+              ) : (
+                <div class="d-flex flex-column gap-3">
+                  {rows.map((b: any) => (
+                    <div class={`card rounded-4 shadow-sm p-4 ${newIds.has(b.id) ? 'border-start border-4 border-primary' : ''}`}>
+                      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                        <div>
+                          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            {newIds.has(b.id) && <span class="badge bg-primary rounded-pill">NEW</span>}
+                            <span class={`badge rounded-pill ${badge(b.status)}`}>{b.status}</span>
+                            <a href={`/listing/${b.listings.slug}/`} target="_blank" class="fw-semibold text-dark text-decoration-none">{b.listings.title}</a>
+                          </div>
+                          <div class="text-md">
+                            <i class="bi bi-person me-1 text-muted"></i>{b.contact_name || 'Guest'}
+                            {b.contact_email && <> · <a href={`mailto:${b.contact_email}`} class="text-reset">{b.contact_email}</a></>}
+                            {b.contact_phone && <> · <a href={`tel:${b.contact_phone}`} class="text-reset">{b.contact_phone}</a></>}
+                          </div>
+                          <div class="text-md text-muted mt-1">
+                            <i class="bi bi-calendar2 me-1"></i>{fmtDate(b.start_date)}{b.end_date ? ` → ${fmtDate(b.end_date)}` : ''}
+                            <span class="ms-3"><i class="bi bi-people me-1"></i>{b.guests ?? 1} {b.guests === 1 ? 'guest' : 'guests'}</span>
+                            <span class="ms-3 text-muted">requested {fmtDate(b.created_at)}</span>
+                          </div>
+                          {b.notes && <p class="text-md mb-0 mt-2 p-2 bg-light rounded-3"><i class="bi bi-chat-left-text me-1 text-muted"></i>{b.notes}</p>}
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                          {b.status === 'pending' && (
+                            <form method="post" action={`/api/bookings/${b.id}`}>
+                              <input type="hidden" name="_action" value="confirm" />
+                              <button type="submit" class="btn btn-success rounded-pill fw-medium"><i class="bi bi-check2 me-1"></i>Confirm</button>
+                            </form>
+                          )}
+                          {b.status !== 'cancelled' && b.status !== 'completed' && (
+                            <form method="post" action={`/api/bookings/${b.id}`}>
+                              <input type="hidden" name="_action" value="cancel" />
+                              <button type="submit" class="btn btn-light border rounded-pill fw-medium text-danger">Decline</button>
+                            </form>
+                          )}
+                          {b.status === 'confirmed' && (
+                            <form method="post" action={`/api/bookings/${b.id}`}>
+                              <input type="hidden" name="_action" value="complete" />
+                              <button type="submit" class="btn btn-light border rounded-pill fw-medium">Mark completed</button>
+                            </form>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <LoginModal />
+  <SearchOffcanvas />
+</Base>

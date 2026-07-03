@@ -12,14 +12,24 @@ const supabase = Astro.locals.supabase!;
 const fullName = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'there';
 
 // Counts — run in parallel.
-const [listingCountRes, bookingCountRes, bookmarkCountRes, reviewCountRes] = await Promise.all([
+const [listingCountRes, bookingCountRes, bookmarkCountRes, reviewCountRes, requestsRes, newRequestsRes] = await Promise.all([
   supabase.from('listings').select('id', { count: 'exact', head: true }).eq('owner_id', user.id),
   supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
   supabase.from('bookmarks').select('listing_id', { count: 'exact', head: true }).eq('user_id', user.id),
   supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+  supabase.from('bookings').select('id, listings!inner(owner_id)', { count: 'exact', head: true }).eq('listings.owner_id', user.id),
+  supabase.from('bookings').select('id, listings!inner(owner_id)', { count: 'exact', head: true }).eq('listings.owner_id', user.id).eq('owner_seen', false),
 ]);
+const newRequests = newRequestsRes.count ?? 0;
 
 const stats = [
+  {
+    title: newRequests > 0 ? `Requests · ${newRequests} new` : 'Booking Requests',
+    number: requestsRes.count ?? 0,
+    icon: 'bi bi-bell',
+    style: newRequests > 0 ? 'bg-light-danger text-danger' : 'bg-light-info text-info',
+    href: '/dashboard-requests/',
+  },
   {
     title: 'My Listings',
     number: listingCountRes.count ?? 0,

@@ -1,8 +1,9 @@
 ---
 import { getMyProfile } from '../../lib/supabase/profiles';
+import { countUnseenRequests } from '../../lib/supabase/requests';
 
 interface Props {
-  current: 'user' | 'my-profile' | 'my-bookings' | 'my-listings' | 'bookmarks' | 'messages' | 'reviews' | 'wallet' | 'add-listing';
+  current: 'user' | 'my-profile' | 'requests' | 'my-bookings' | 'my-listings' | 'bookmarks' | 'messages' | 'reviews' | 'wallet' | 'add-listing';
 }
 const { current } = Astro.props;
 
@@ -10,10 +11,12 @@ const user = Astro.locals.user;
 const supabase = Astro.locals.supabase;
 let fullName = 'Welcome';
 let avatarUrl = '/assets/img/team-2.jpg';
+let unseenRequests = 0;
 if (user && supabase) {
   const profile = await getMyProfile(supabase, user.id);
   fullName = profile?.full_name || user.email?.split('@')[0] || 'Account';
   avatarUrl = profile?.avatar_url || avatarUrl;
+  unseenRequests = await countUnseenRequests(supabase, user.id);
 }
 ---
 <style is:global>
@@ -40,6 +43,7 @@ if (user && supabase) {
 		<ul>
 			<li><a href="/dashboard-user/" class={current === 'user' ? 'active' : ''}><i class="bi bi-speedometer me-2"></i>Dashboard Area</a></li>
 			<li><a href="/dashboard-my-profile/" class={current === 'my-profile' ? 'active' : ''}><i class="bi bi-person-lines-fill me-2"></i>My Profile</a></li>
+			<li><a href="/dashboard-requests/" class={current === 'requests' ? 'active' : ''}><i class="bi bi-bell me-2"></i>Requests{unseenRequests > 0 && <span class="badge bg-danger rounded-pill ms-2">{unseenRequests}</span>}</a></li>
 			<li><a href="/dashboard-my-bookings/" class={current === 'my-bookings' ? 'active' : ''}><i class="bi bi-journal-check me-2"></i>My Bookings</a></li>
 			<li><a href="/dashboard-my-listings/" class={current === 'my-listings' ? 'active' : ''}><i class="bi bi-ui-radios-grid me-2"></i>My Listings</a></li>
 			<li><a href="/dashboard-bookmarks/" class={current === 'bookmarks' ? 'active' : ''}><i class="bi bi-bookmark-star me-2"></i>Bookmarks</a></li>
