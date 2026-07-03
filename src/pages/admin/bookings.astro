@@ -16,7 +16,7 @@ let rows: any[] = [];
 if (admin) {
   let q = admin
     .from('bookings')
-    .select('id, start_date, end_date, guests, status, notes, contact_name, contact_email, contact_phone, created_at, listings(title, slug)')
+    .select('id, start_date, end_date, guests, status, source, notes, contact_name, contact_email, contact_phone, created_at, listings(title, slug)')
     .order('created_at', { ascending: false })
     .limit(300);
   if (status) q = q.eq('status', status as any);
@@ -73,7 +73,7 @@ const badge = (s: string) =>
                       <td class="text-sm">{fmtDate(b.start_date)}{b.end_date ? ` → ${fmtDate(b.end_date)}` : ''}</td>
                       <td>{b.guests ?? 1}</td>
                       <td class="text-sm" style="max-width:220px"><span class="d-inline-block text-truncate" style="max-width:220px" title={b.notes ?? ''}>{b.notes || '—'}</span></td>
-                      <td><span class={`badge rounded-pill ${badge(b.status)}`}>{b.status}</span></td>
+                      <td><span class={`badge rounded-pill ${badge(b.status)}`}>{b.status}</span>{b.source === 'manual' && <span class="badge rounded-pill ms-1" style="background:#7c3aed">manual</span>}</td>
                       <td class="text-sm">{fmtDate(b.created_at)}</td>
                       <td class="text-end pe-4">
                         <div class="d-inline-flex gap-1">

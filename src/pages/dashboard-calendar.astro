@@ -1,0 +1,308 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+
+export const prerender = false;
+
+const supabase = Astro.locals.supabase;
+const user = Astro.locals.user!;
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+
+// ---- Month being viewed (?m=YYYY-MM), defaults to the current month --------
+const now = new Date();
+const mParam = Astro.url.searchParams.get('m') ?? '';
+const [year, month] = /^\d{4}-\d{2}$/.test(mParam)
+  ? [Number(mParam.slice(0, 4)), Number(mParam.slice(5, 7))]
+  : [now.getFullYear(), now.getMonth() + 1];
+const pad = (n: number) => String(n).padStart(2, '0');
+const monthKey = `${year}-${pad(month)}`;
+const daysInMonth = new Date(year, month, 0).getDate();
+const monthStart = `${monthKey}-01`;
+const monthEnd = `${monthKey}-${pad(daysInMonth)}`;
+const prevM = month === 1 ? `${year - 1}-12` : `${year}-${pad(month - 1)}`;
+const nextM = month === 12 ? `${year + 1}-01` : `${year}-${pad(month + 1)}`;
+const monthLabel = new Date(year, month - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+const todayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
+// ---- Owner's listings + bookings overlapping this month --------------------
+const listingFilter = Astro.url.searchParams.get('listing') ?? '';
+const { data: myListings } = supabase
+  ? await supabase.from('listings').select('id, title').eq('owner_id', user.id).order('title')
+  : { data: [] };
+const listings = myListings ?? [];
+
+let bookings: any[] = [];
+if (supabase && listings.length > 0) {
+  let q = supabase
+    .from('bookings')
+    .select('id, start_date, end_date, guests, status, source, notes, contact_name, contact_email, contact_phone, created_at, listings!inner(id, title, owner_id)')
+    .eq('listings.owner_id', user.id)
+    .not('start_date', 'is', null)
+    .lte('start_date', monthEnd)
+    .or(`end_date.gte.${monthStart},and(end_date.is.null,start_date.gte.${monthStart})`)
+    .order('start_date');
+  if (listingFilter) q = q.eq('listing_id', listingFilter);
+  const { data } = await q;
+  bookings = data ?? [];
+}
+
+// Group bookings by day (a stay covers start..end inclusive).
+const byDay = new Map<string, any[]>();
+for (const b of bookings) {
+  const start = b.start_date as string;
+  const end = (b.end_date as string | null) ?? start;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${monthKey}-${pad(d)}`;
+    if (key >= start && key <= end) (byDay.get(key) ?? byDay.set(key, []).get(key)!).push(b);
+  }
+}
+
+// Calendar grid, weeks starting Monday.
+const firstDow = (new Date(year, month - 1, 1).getDay() + 6) % 7; // 0 = Monday
+const cells: (number | null)[] = [
+  ...Array(firstDow).fill(null),
+  ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+];
+while (cells.length % 7 !== 0) cells.push(null);
+
+const chipClass = (b: any) =>
+  b.source === 'manual' ? 'chip-manual'
+  : b.status === 'confirmed' ? 'chip-confirmed'
+  : b.status === 'pending' ? 'chip-pending'
+  : b.status === 'completed' ? 'chip-completed'
+  : 'chip-cancelled';
+const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+const returnTo = `/dashboard-calendar/?m=${monthKey}${listingFilter ? `&listing=${listingFilter}` : ''}`;
+---
+<Base noindex title="Booking Calendar - Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="calendar" />
+        </div>
+
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0 d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <h2 class="fw-medium mb-0">Booking Calendar</h2>
+                <p class="text-muted mt-2 mb-0">All bookings for your listings in one view — site requests and your own entries.</p>
+              </div>
+              <button class="btn btn-primary rounded-pill fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#addManual"><i class="bi bi-plus-circle me-2"></i>Add booking</button>
+            </div>
+
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              {notice && <div class="alert alert-success">{notice}</div>}
+              {error && <div class="alert alert-danger">{error}</div>}
+
+              {listings.length === 0 ? (
+                <div class="card rounded-4 shadow-sm p-5 text-center">
+                  <i class="bi bi-calendar3 fs-1 text-muted d-block mb-2"></i>
+                  <h5 class="fw-medium mb-1">No listings yet</h5>
+                  <p class="text-muted mb-3">The calendar shows bookings for your listings — create one first.</p>
+                  <a href="/dashboard-add-listing/" class="btn btn-primary rounded-pill mx-auto">Add your listing</a>
+                </div>
+              ) : (
+                <>
+                  <!-- Add manual booking -->
+                  <div class="collapse mb-4" id="addManual">
+                    <div class="card rounded-4 shadow-sm p-4 border-primary border">
+                      <h5 class="fw-semibold mb-1">Add a booking (your own entry)</h5>
+                      <p class="text-muted text-md mb-3">For bookings you take by phone or in person — visible only to you, marked purple on the calendar.</p>
+                      <form method="post" action="/api/bookings/manual" class="row g-3">
+                        <input type="hidden" name="return_to" value={returnTo} />
+                        <div class="col-md-4">
+                          <label class="form-label text-sm fw-medium">Listing *</label>
+                          <select name="listing_id" required class="form-select">
+                            {listings.map((l: any) => <option value={l.id} selected={l.id === listingFilter}>{l.title}</option>)}
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label text-sm fw-medium">Name / label *</label>
+                          <input type="text" name="contact_name" required maxlength="120" class="form-control" placeholder="e.g. Phone booking — Maria" />
+                        </div>
+                        <div class="col-md-2">
+                          <label class="form-label text-sm fw-medium">Guests</label>
+                          <input type="number" name="guests" min="1" value="2" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label text-sm fw-medium">From *</label>
+                          <input type="date" name="start_date" required class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label text-sm fw-medium">Until</label>
+                          <input type="date" name="end_date" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label text-sm fw-medium">Note</label>
+                          <input type="text" name="notes" maxlength="300" class="form-control" placeholder="Optional note" />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                          <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <!-- Month header -->
+                  <div class="card rounded-4 shadow-sm p-3 mb-3">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                      <div class="d-flex align-items-center gap-2">
+                        <a href={`/dashboard-calendar/?m=${prevM}${listingFilter ? `&listing=${listingFilter}` : ''}`} class="btn btn-light border rounded-pill btn-sm" aria-label="Previous month"><i class="bi bi-chevron-left"></i></a>
+                        <h4 class="fw-semibold mb-0 px-2">{monthLabel}</h4>
+                        <a href={`/dashboard-calendar/?m=${nextM}${listingFilter ? `&listing=${listingFilter}` : ''}`} class="btn btn-light border rounded-pill btn-sm" aria-label="Next month"><i class="bi bi-chevron-right"></i></a>
+                        <a href="/dashboard-calendar/" class="btn btn-light rounded-pill btn-sm ms-1">Today</a>
+                      </div>
+                      {listings.length > 1 && (
+                        <form method="get" class="d-flex align-items-center gap-2">
+                          <input type="hidden" name="m" value={monthKey} />
+                          <select name="listing" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All listings</option>
+                            {listings.map((l: any) => <option value={l.id} selected={l.id === listingFilter}>{l.title}</option>)}
+                          </select>
+                        </form>
+                      )}
+                      <div class="d-flex align-items-center gap-3 text-sm flex-wrap">
+                        <span><i class="dot chip-pending"></i> pending</span>
+                        <span><i class="dot chip-confirmed"></i> confirmed</span>
+                        <span><i class="dot chip-completed"></i> completed</span>
+                        <span><i class="dot chip-manual"></i> your entry</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Calendar grid -->
+                  <div class="card rounded-4 shadow-sm overflow-hidden mb-4">
+                    <div class="cal-grid cal-head">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => <div class="cal-dow">{d}</div>)}
+                    </div>
+                    <div class="cal-grid">
+                      {cells.map((day) => {
+                        const key = day ? `${monthKey}-${pad(day)}` : '';
+                        const list = day ? (byDay.get(key) ?? []) : [];
+                        return (
+                          <div class={`cal-cell ${!day ? 'cal-empty' : ''} ${key === todayKey ? 'cal-today' : ''}`}>
+                            {day && <div class="cal-date">{day}</div>}
+                            {list.slice(0, 3).map((b) => (
+                              <a href={`#bk-${b.id}`} class={`cal-chip ${chipClass(b)}`} title={`${b.contact_name ?? 'Booking'} · ${b.listings.title} (${b.status}${b.source === 'manual' ? ', your entry' : ''})`}>
+                                {b.contact_name ?? b.listings.title}
+                              </a>
+                            ))}
+                            {list.length > 3 && <span class="text-sm text-muted ps-1">+{list.length - 3} more</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <!-- Bookings this month -->
+                  <h5 class="fw-semibold mb-3">Bookings in {monthLabel} <span class="text-muted fs-6 fw-normal">({bookings.length})</span></h5>
+                  {bookings.length === 0 ? (
+                    <div class="card rounded-4 shadow-sm p-4 text-center text-muted">No bookings this month.</div>
+                  ) : (
+                    <div class="d-flex flex-column gap-3">
+                      {bookings.map((b: any) => (
+                        <div class="card rounded-4 shadow-sm p-4" id={`bk-${b.id}`}>
+                          <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                            <div>
+                              <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                {b.source === 'manual'
+                                  ? <span class="badge rounded-pill" style="background:#7c3aed">your entry</span>
+                                  : <span class={`badge rounded-pill ${b.status === 'confirmed' ? 'bg-success' : b.status === 'pending' ? 'bg-warning text-dark' : b.status === 'completed' ? 'bg-primary' : 'bg-secondary'}`}>{b.status}</span>}
+                                <span class="fw-semibold">{b.contact_name || 'Booking'}</span>
+                                <span class="text-muted text-sm">· {b.listings.title}</span>
+                              </div>
+                              <div class="text-md text-muted">
+                                <i class="bi bi-calendar2 me-1"></i>{fmtDate(b.start_date)}{b.end_date ? ` → ${fmtDate(b.end_date)}` : ''}
+                                <span class="ms-3"><i class="bi bi-people me-1"></i>{b.guests ?? 1}</span>
+                                {b.contact_email && <span class="ms-3"><i class="bi bi-envelope me-1"></i>{b.contact_email}</span>}
+                                {b.contact_phone && <span class="ms-3"><i class="bi bi-telephone me-1"></i>{b.contact_phone}</span>}
+                              </div>
+                              {b.notes && <p class="text-md mb-0 mt-2 p-2 bg-light rounded-3">{b.notes}</p>}
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap">
+                              {b.source !== 'manual' && b.status === 'pending' && (
+                                <form method="post" action={`/api/bookings/${b.id}`}>
+                                  <input type="hidden" name="_action" value="confirm" />
+                                  <input type="hidden" name="return_to" value={returnTo} />
+                                  <button type="submit" class="btn btn-sm btn-success rounded-pill fw-medium"><i class="bi bi-check2 me-1"></i>Confirm</button>
+                                </form>
+                              )}
+                              {b.source !== 'manual' && b.status !== 'cancelled' && b.status !== 'completed' && (
+                                <form method="post" action={`/api/bookings/${b.id}`}>
+                                  <input type="hidden" name="_action" value="cancel" />
+                                  <input type="hidden" name="return_to" value={returnTo} />
+                                  <button type="submit" class="btn btn-sm btn-light border rounded-pill text-danger">Decline</button>
+                                </form>
+                              )}
+                              {b.source !== 'manual' && b.status === 'confirmed' && (
+                                <form method="post" action={`/api/bookings/${b.id}`}>
+                                  <input type="hidden" name="_action" value="complete" />
+                                  <input type="hidden" name="return_to" value={returnTo} />
+                                  <button type="submit" class="btn btn-sm btn-light border rounded-pill">Mark completed</button>
+                                </form>
+                              )}
+                              {b.source === 'manual' && (
+                                <form method="post" action={`/api/bookings/${b.id}`} onsubmit="return confirm('Remove this entry?');">
+                                  <input type="hidden" name="_action" value="delete" />
+                                  <input type="hidden" name="return_to" value={returnTo} />
+                                  <button type="submit" class="btn btn-sm btn-light border rounded-pill text-danger"><i class="bi bi-trash me-1"></i>Remove</button>
+                                </form>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <LoginModal />
+  <SearchOffcanvas />
+
+  <style is:global>
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .cal-head { background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+    .cal-dow { padding: 10px 8px; font-size: .8rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .5px; text-align: center; }
+    .cal-cell { min-height: 96px; border-right: 1px solid #f0f1f3; border-bottom: 1px solid #f0f1f3; padding: 6px; overflow: hidden; }
+    .cal-cell:nth-child(7n) { border-right: 0; }
+    .cal-empty { background: #fafbfc; }
+    .cal-date { font-size: .8rem; font-weight: 600; color: #6b7280; margin-bottom: 4px; }
+    .cal-today { background: #fff5f7; }
+    .cal-today .cal-date { color: var(--bs-primary); }
+    .cal-chip { display: block; font-size: .72rem; font-weight: 600; color: #fff; padding: 2px 7px; border-radius: 6px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
+    .cal-chip:hover { opacity: .85; color: #fff; }
+    .chip-pending { background: #f59e0b; }
+    .chip-confirmed { background: #16a34a; }
+    .chip-completed { background: #2563eb; }
+    .chip-cancelled { background: #9ca3af; }
+    .chip-manual { background: #7c3aed; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    @media (max-width: 767px) {
+      .cal-cell { min-height: 64px; padding: 3px; }
+      .cal-chip { font-size: .6rem; padding: 1px 4px; }
+    }
+  </style>
+</Base>

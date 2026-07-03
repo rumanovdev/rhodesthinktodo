@@ -47,6 +47,7 @@ export type Database = {
           listing_id: string
           notes: string | null
           owner_seen: boolean
+          source: string
           start_date: string | null
           status: Database["public"]["Enums"]["booking_status"] | null
           total: number | null
@@ -64,6 +65,7 @@ export type Database = {
           listing_id: string
           notes?: string | null
           owner_seen?: boolean
+          source?: string
           start_date?: string | null
           status?: Database["public"]["Enums"]["booking_status"] | null
           total?: number | null
@@ -81,6 +83,7 @@ export type Database = {
           listing_id?: string
           notes?: string | null
           owner_seen?: boolean
+          source?: string
           start_date?: string | null
           status?: Database["public"]["Enums"]["booking_status"] | null
           total?: number | null
