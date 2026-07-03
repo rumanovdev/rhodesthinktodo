@@ -271,10 +271,39 @@ if (user) {
       display: none;
     }
   }
-  /* Mobile always shows the dark logo (white header bar). */
+  /* Mobile: the transparent header sits OVER the hero video at the top (the
+     video covers the full screen, header area included). The white background,
+     dark logo and dark icons appear only once the user scrolls (header-fixed) —
+     mirroring the desktop behaviour. */
   @media (max-width: 992px) {
-    .header.header-transparent .nav-brand img.logo-light {
-      display: none;
+    .header.header-transparent {
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 4;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .header.header-transparent.header-fixed {
+      background: var(--bs-body-bg);
+      position: fixed;
+      top: 0;
+      border-bottom: 1px solid var(--bs-border-color);
+      box-shadow: 0 0.5rem 2rem -0.25rem hsla(224.29, 100%, 16.47%, 0.1);
+    }
+    /* Logo swap: light over the video, dark once scrolled */
+    .header.header-transparent:not(.header-fixed) .nav-brand img.logo-dark { display: none; }
+    .header.header-transparent.header-fixed .nav-brand img.logo-light { display: none; }
+    /* Hamburger bars + top-right icons stay white over the video */
+    .header.header-transparent:not(.header-fixed) .nav-toggle:before {
+      background-color: #fff;
+      box-shadow: 0 0.5em 0 0 #fff, 0 1em 0 0 #fff;
+    }
+    .header.header-transparent:not(.header-fixed) .mobile_nav ul li a,
+    .header.header-transparent:not(.header-fixed) .mobile_nav ul li a i {
+      color: #fff !important;
     }
   }
 
