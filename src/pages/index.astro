@@ -81,13 +81,24 @@ const motherCount = (m: any) =>
 <div class="clearfix"></div>
 
 <!-- Hero Start -->
-<div class="image-cover hero-header full-height position-relative" style="background:url(/assets/img/Rhodes_Hero_Image.jpg)no-repeat;">
-	<div class="container">
+<div class="image-cover hero-header full-height position-relative" style="background:url(/assets/img/Rhodes_Hero_Image.jpg)no-repeat;" data-overlay="3">
+	<video
+		class="hero-bg-video"
+		autoplay
+		muted
+		loop
+		playsinline
+		preload="auto"
+		poster="/assets/video/hero-rhodes-poster.jpg"
+	>
+		<source src="/assets/video/hero-rhodes.mp4" type="video/mp4" />
+	</video>
+	<div class="container position-relative">
 
 		<!-- Heading Rwo -->
 		<div class="row justify-content-center align-items-center mb-5 pt-lg-0 pt-5">
 			<div class="col-12">
-				<div class="position-relative text-center">
+				<div class="position-relative text-start">
 					<h1 class="hero-title">Rhodes Things To Do</h1>
 					<p class="fs-5 fw-bold hero-sub">{t('hero.subtitle')}</p>
 				</div>
@@ -429,6 +440,23 @@ const motherCount = (m: any) =>
   <Footer />
 
   <style is:global>
+    /* Hero background video — sits behind the dark overlay ([data-overlay]:before, z-index 1) */
+    .hero-header .hero-bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+      pointer-events: none;
+    }
+    /* Keep the hero content above the overlay */
+    .hero-header > .container { z-index: 2; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-header .hero-bg-video { display: none; }
+    }
     /* Hero title — keyword-led, smaller on desktop, no dash */
     .hero-title {
       font-size: clamp(2rem, 4.2vw, 3rem);

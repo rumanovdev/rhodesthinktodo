@@ -13,7 +13,7 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   fr: 'Français',
   es: 'Español',
   it: 'Italiano',
-  nl: 'Nederlands',
+  nl: 'Ολλανδικά',
 };
 
 export const LOCALE_FLAGS: Record<Locale, string> = {
