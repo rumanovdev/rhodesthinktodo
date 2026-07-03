@@ -18,7 +18,7 @@ let views30 = new Map<string, number>();
 if (admin) {
   let query = admin
     .from('listings')
-    .select('id, slug, title, status, is_featured, is_verified, city, created_at, categories!listings_category_id_fkey(name), areas!listings_area_id_fkey(name), profiles!listings_owner_id_fkey(full_name)')
+    .select('id, slug, title, status, is_featured, is_verified, city, created_at, website, backlink_status, backlink_checked_at, categories!listings_category_id_fkey(name), areas!listings_area_id_fkey(name), profiles!listings_owner_id_fkey(full_name)')
     .order('created_at', { ascending: false })
     .limit(500);
   if (status) query = query.eq('status', status as any);
@@ -39,7 +39,13 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
       <div class="row g-4">
         <div class="col-xl-2 col-lg-3"><AdminSidebar current="listings" /></div>
         <div class="col-xl-10 col-lg-9">
-          <h1 class="fs-3 fw-semibold mb-4">Listings <span class="text-muted fs-6 fw-normal">({rows.length})</span></h1>
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <h1 class="fs-3 fw-semibold mb-0">Listings <span class="text-muted fs-6 fw-normal">({rows.length})</span></h1>
+            <form method="post" action="/api/admin/backlink-check">
+              <input type="hidden" name="_action" value="check_all" />
+              <button type="submit" class="btn btn-light border rounded-pill"><i class="bi bi-link-45deg me-2"></i>Check all backlinks</button>
+            </form>
+          </div>
 
           {notice && <div class="alert alert-success">{notice}</div>}
           {error && <div class="alert alert-danger">{error}</div>}
@@ -70,11 +76,11 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                 <thead class="bg-light">
                   <tr>
                     <th class="ps-4">Listing</th><th>Owner</th><th>Category</th><th>Area</th>
-                    <th>Status</th><th>Views 30d</th><th>Created</th><th class="text-end pe-4">Actions</th>
+                    <th>Status</th><th>Backlink</th><th>Views 30d</th><th>Created</th><th class="text-end pe-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.length === 0 && <tr><td colspan="8" class="text-center text-muted py-5">No listings.</td></tr>}
+                  {rows.length === 0 && <tr><td colspan="9" class="text-center text-muted py-5">No listings.</td></tr>}
                   {rows.map((l: any) => (
                     <tr>
                       <td class="ps-4">
@@ -88,6 +94,27 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                       <td class="text-sm">{l.categories?.name || '—'}</td>
                       <td class="text-sm">{l.areas?.name || l.city || '—'}</td>
                       <td><span class={`badge rounded-pill ${l.status === 'published' ? 'bg-success' : l.status === 'draft' ? 'bg-secondary' : 'bg-dark'}`}>{l.status}</span></td>
+                      <td>
+                        <div class="d-flex align-items-center gap-1">
+                          {!l.website ? (
+                            <span class="badge rounded-pill bg-light text-muted border">no site</span>
+                          ) : l.backlink_status === 'verified' ? (
+                            <span class="badge rounded-pill bg-success" title={l.backlink_checked_at ? `Checked ${fmtDate(l.backlink_checked_at)}` : ''}><i class="bi bi-link-45deg me-1"></i>verified</span>
+                          ) : l.backlink_status === 'missing' ? (
+                            <span class="badge rounded-pill bg-danger" title={l.backlink_checked_at ? `Checked ${fmtDate(l.backlink_checked_at)}` : ''}>missing</span>
+                          ) : l.backlink_status === 'error' ? (
+                            <span class="badge rounded-pill bg-warning text-dark">unreachable</span>
+                          ) : (
+                            <span class="badge rounded-pill bg-secondary">unchecked</span>
+                          )}
+                          {l.website && (
+                            <form method="post" action="/api/admin/backlink-check">
+                              <input type="hidden" name="listing_id" value={l.id} />
+                              <button type="submit" class="btn btn-sm btn-light border rounded-pill py-0 px-2" title="Re-check backlink"><i class="bi bi-arrow-repeat"></i></button>
+                            </form>
+                          )}
+                        </div>
+                      </td>
                       <td>{views30.get(l.id) ?? 0}</td>
                       <td class="text-sm">{fmtDate(l.created_at)}</td>
                       <td class="text-end pe-4">

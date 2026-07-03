@@ -124,5 +124,11 @@ export const POST: APIRoute = async ({ request, params, locals, redirect }) => {
     }
   }
 
+  // Re-run the backlink check (website may have changed). Best-effort.
+  try {
+    const { runBacklinkCheck } = await import('../../../../lib/backlink');
+    await runBacklinkCheck(admin, id);
+  } catch { /* noop */ }
+
   return redirect('/admin/listings/?notice=' + encodeURIComponent('Listing saved.'));
 };

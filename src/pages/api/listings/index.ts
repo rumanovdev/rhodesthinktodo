@@ -178,5 +178,12 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     }
   }
 
+  // Backlink policy: verify the owner's website links back to us (soft check —
+  // never blocks the listing; result shows as a badge in My Listings + admin).
+  try {
+    const { runBacklinkCheck } = await import('../../../lib/backlink');
+    await runBacklinkCheck(supabase, inserted.id);
+  } catch { /* check is best-effort */ }
+
   return redirect('/dashboard-my-listings/?notice=' + encodeURIComponent('Listing created.'));
 };

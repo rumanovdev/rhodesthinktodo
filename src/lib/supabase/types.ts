@@ -423,6 +423,9 @@ export type Database = {
         Row: {
           address: string | null
           area_id: number | null
+          backlink_checked_at: string | null
+          backlink_found_on: string | null
+          backlink_status: string
           category_id: number | null
           city: string | null
           country: string | null
@@ -449,6 +452,9 @@ export type Database = {
         Insert: {
           address?: string | null
           area_id?: number | null
+          backlink_checked_at?: string | null
+          backlink_found_on?: string | null
+          backlink_status?: string
           category_id?: number | null
           city?: string | null
           country?: string | null
@@ -475,6 +481,9 @@ export type Database = {
         Update: {
           address?: string | null
           area_id?: number | null
+          backlink_checked_at?: string | null
+          backlink_found_on?: string | null
+          backlink_status?: string
           category_id?: number | null
           city?: string | null
           country?: string | null
