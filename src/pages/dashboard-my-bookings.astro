@@ -13,7 +13,7 @@ const supabase = Astro.locals.supabase;
 const { data: bookingRows } = supabase
   ? await supabase
       .from('bookings')
-      .select('id, start_date, end_date, guests, status, total, contact_name, contact_phone, created_at, listings(id, title, slug, city, hero_image, listing_images(url))')
+      .select('id, start_date, end_date, guests, status, contact_name, contact_phone, created_at, listings(id, title, slug, city, hero_image, listing_images(url))')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
   : { data: [] };
@@ -28,7 +28,6 @@ const bookings = (bookingRows ?? []).map((b: any) => ({
   info: `${b.guests} guest${b.guests === 1 ? '' : 's'}${b.end_date ? ` · until ${b.end_date}` : ''}`,
   client: b.contact_name ?? '',
   contact: b.contact_phone ?? '',
-  price: b.total ? `$${b.total}` : '—',
   status: b.status ?? 'pending',
 }));
 ---
@@ -99,7 +98,7 @@ const bookings = (bookingRows ?? []).map((b: any) => ({
                                       <div class="singledetailInfo"><span class="listTitle">Info</span>{item.info}</div>
                                       <div class="singledetailInfo"><span class="listTitle">Name</span>{item.client || '—'}</div>
                                       <div class="singledetailInfo"><span class="listTitle">Contact</span>{item.contact || '—'}</div>
-                                      <div class="singledetailInfo"><span class="listTitle">Total</span>{item.price}</div>
+                                      <div class="singledetailInfo"><span class="listTitle">Status</span><span class={`badge rounded-pill ${item.status === 'confirmed' ? 'bg-success' : item.status === 'pending' ? 'bg-warning text-dark' : item.status === 'completed' ? 'bg-primary' : 'bg-secondary'}`}>{item.status}</span></div>
                                     </div>
                                   </div>
                                 </div>

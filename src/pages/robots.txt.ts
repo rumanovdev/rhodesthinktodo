@@ -16,10 +16,9 @@ Disallow: /register/
 Disallow: /forgot-password/
 Disallow: /reset-password/
 Disallow: /two-factor-auth/
-Disallow: /checkout-page/
 Disallow: /booking-page/
-Disallow: /invoice-page/
 Disallow: /success-payment/
+Disallow: /booking-received/
 Disallow: /author-profile/
 Disallow: /search
 

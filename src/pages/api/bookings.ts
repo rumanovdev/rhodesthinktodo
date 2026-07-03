@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     console.error('[bookings] email notification failed:', e);
   }
 
-  return redirect(`/success-payment/?booking=${inserted.id}`);
+  return redirect(`/booking-received/?booking=${inserted.id}`);
 };
 
 // ---------------------------------------------------------------------------
