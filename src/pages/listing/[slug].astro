@@ -715,6 +715,7 @@ const breadcrumbSchema = {
 										<a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--facebook flex-fill"><i class="bi bi-facebook me-1"></i>Facebook</a>
 										<a href={`https://x.com/intent/tweet?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(event.title)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--x flex-fill"><i class="bi bi-twitter-x me-1"></i>X</a>
 										<a href={`https://wa.me/?text=${encodeURIComponent(`${event.title} ${listingUrl}`)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--whatsapp flex-fill"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a>
+											<a href={listingUrl} data-ig-copy target="_blank" rel="noopener" title="Copy link to share on Instagram" class="btn btn-md btn-whites border rounded-pill color--instagram flex-fill"><i class="bi bi-instagram me-1"></i><span class="ig-label">Instagram</span></a>
 									</div>
 								</div>
 							</div>
@@ -764,6 +765,28 @@ const breadcrumbSchema = {
 	    </div>
 	</div>
 
+
+  <script is:inline>
+    // Instagram has no share-a-link URL — the IG button copies the page link
+    // so the user can paste it into a story, bio or DM.
+    document.querySelectorAll('a[data-ig-copy]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        var url = el.getAttribute('href');
+        if (navigator.clipboard && url) { navigator.clipboard.writeText(url).catch(function () {}); }
+        var label = el.querySelector('.ig-label');
+        if (label) {
+          var prev = label.textContent;
+          label.textContent = 'Link copied!';
+          setTimeout(function () { label.textContent = prev; }, 2000);
+        } else {
+          var t = el.getAttribute('title');
+          el.setAttribute('title', 'Link copied!');
+          setTimeout(function () { el.setAttribute('title', t); }, 2000);
+        }
+      });
+    });
+  </script>
 
   <Footer />
 </Base>

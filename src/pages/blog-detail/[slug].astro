@@ -178,6 +178,7 @@ const blogSchema = {
                       <li><a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`} target="_blank" rel="noopener"><i class="bi bi-facebook"></i></a></li>
                       <li><a href={`https://x.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(heroTitle)}`} target="_blank" rel="noopener"><i class="bi bi-twitter-x"></i></a></li>
                       <li><a href={`https://wa.me/?text=${encodeURIComponent(`${heroTitle} ${postUrl}`)}`} target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i></a></li>
+                      <li><a href={postUrl} data-ig-copy title="Copy link to share on Instagram"><i class="bi bi-instagram"></i></a></li>
                     </ul>
                   </div>
                 </div>
@@ -205,6 +206,20 @@ const blogSchema = {
 
 
   </div>
+
+  <script is:inline>
+    // Instagram has no share-a-link URL — copy the post link to paste into IG.
+    document.querySelectorAll('a[data-ig-copy]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        var url = el.getAttribute('href');
+        if (navigator.clipboard && url) { navigator.clipboard.writeText(url).catch(function () {}); }
+        var t = el.getAttribute('title');
+        el.setAttribute('title', 'Link copied!');
+        setTimeout(function () { el.setAttribute('title', t); }, 2000);
+      });
+    });
+  </script>
 
   <Footer />
 
