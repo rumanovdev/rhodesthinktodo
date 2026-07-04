@@ -122,7 +122,7 @@ const isVerified = !!(detail as any).is_verified || (detail as any).backlink_sta
 const ownerSocials = ((owner?.social_links) as Record<string, string | null> | null) ?? {};
 const ownerSocialLinks = [
   { key: 'facebook', icon: 'bi-facebook', cls: 'color--facebook' },
-  { key: 'twitter', icon: 'bi-twitter', cls: 'color--twitter' },
+  { key: 'twitter', icon: 'bi-twitter-x', cls: 'color--x' },
   { key: 'instagram', icon: 'bi-instagram', cls: 'color--instagram' },
   { key: 'youtube', icon: 'bi-youtube', cls: 'color--pinterest' },
   { key: 'linkedin', icon: 'bi-linkedin', cls: 'color--linkedin' },
@@ -713,7 +713,7 @@ const breadcrumbSchema = {
 								<div class="form-group m-0">
 									<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
 										<a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--facebook flex-fill"><i class="bi bi-facebook me-1"></i>Facebook</a>
-										<a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(event.title)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--twitter flex-fill"><i class="bi bi-twitter me-1"></i>Twitter</a>
+										<a href={`https://x.com/intent/tweet?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(event.title)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--x flex-fill"><i class="bi bi-twitter-x me-1"></i>X</a>
 										<a href={`https://wa.me/?text=${encodeURIComponent(`${event.title} ${listingUrl}`)}`} target="_blank" rel="noopener" class="btn btn-md btn-whites border rounded-pill color--whatsapp flex-fill"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a>
 									</div>
 								</div>
