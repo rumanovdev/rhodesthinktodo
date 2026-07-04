@@ -55,26 +55,20 @@
 .lm-pin {
   position: absolute;
   transform: translate(-50%, -50%);
-  background: #fff;
-  color: #222;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 1;
-  padding: 7px 10px;
-  border-radius: 999px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  white-space: nowrap;
+  width: 16px;
+  height: 16px;
+  background: var(--bs-primary, #f15650);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
   cursor: pointer;
   user-select: none;
-  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 .lm-pin:hover,
 .lm-pin.is-active {
-  background: #222;
-  color: #fff;
-  transform: translate(-50%, -50%) scale(1.06);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
+  transform: translate(-50%, -50%) scale(1.45);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
   z-index: 650 !important;
 }
 

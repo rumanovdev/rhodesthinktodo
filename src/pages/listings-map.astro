@@ -239,12 +239,11 @@ const markersPayload = mappable.map((l) => ({
       listings.forEach(function (l) {
         if (l.lat == null || l.lng == null) return;
         const reviewsCount = parseInt(l.reviews, 10) || 0;
-        const pinLabel = l.price || (reviewsCount > 0 ? '★ ' + l.rating : '•');
         const pinIcon = L.divIcon({
           className: 'lm-pin-wrap',
           iconSize: [0, 0],
           iconAnchor: [0, 0],
-          html: '<div class="lm-pin">' + escapeHtml(pinLabel) + '</div>',
+          html: '<div class="lm-pin"></div>',
         });
         const marker = L.marker([l.lat, l.lng], { icon: pinIcon, riseOnHover: true }).addTo(map);
         const popupHtml = [
