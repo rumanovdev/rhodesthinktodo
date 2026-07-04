@@ -54,8 +54,11 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     const title = String(form.get('title') ?? '').trim();
     if (!title) return redirect(back + '?error=' + encodeURIComponent('Business name is required'));
 
-    const lat = Number(String(form.get('lat') ?? '').trim());
-    const lng = Number(String(form.get('lng') ?? '').trim());
+    // Treat blank as missing (Number('') is 0, which would silently save 0,0).
+    const latRaw = String(form.get('lat') ?? '').trim();
+    const lngRaw = String(form.get('lng') ?? '').trim();
+    const lat = latRaw ? Number(latRaw) : NaN;
+    const lng = lngRaw ? Number(lngRaw) : NaN;
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
       return redirect(back + '?error=' + encodeURIComponent('Valid latitude and longitude are required.'));
     }
@@ -93,7 +96,7 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
       category_id: categoryId,
       area_id: areaId,
       status,
-      price_tier: Number(String(form.get('price_tier') ?? '2')) || 2,
+      price_tier: Math.min(4, Math.max(1, Number(String(form.get('price_tier') ?? '2')) || 2)),
       phone: String(form.get('phone') ?? '').trim() || null,
       website,
       address: String(form.get('address') ?? '').trim() || null,
