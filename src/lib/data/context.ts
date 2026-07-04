@@ -411,12 +411,12 @@ export const cities = [
     tags: ['Boutiques', 'Souvenirs', 'Crafts'],
   },
   {
-    img: '/assets/img/category/realestate.jpg',
-    title: 'Accommodations',
+    img: '/assets/img/category/tours.jpg',
+    title: 'Tours',
     lists: 'Browse',
     style: 'col-xl-6 col-lg-6 col-md-4 col-sm-6',
-    href: '/accommodation/',
-    tags: ['Villas', 'Apartments', 'Sea View'],
+    href: '/tours/',
+    tags: ['Boat Trips', 'Day Trips', 'Jeep Safari'],
   },
 ] as const;
 
