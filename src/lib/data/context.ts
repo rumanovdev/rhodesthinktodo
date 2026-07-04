@@ -403,12 +403,12 @@ export const cities = [
     tags: ['Beach Bars', 'Live Music', 'Cocktails'],
   },
   {
-    img: '/assets/img/category/shopping.jpg',
-    title: 'Shopping',
+    img: '/assets/img/category/transfers.jpg',
+    title: 'Transfers',
     lists: 'Browse',
     style: 'col-xl-3 col-lg-3 col-md-4 col-sm-6',
-    href: '/shopping/',
-    tags: ['Boutiques', 'Souvenirs', 'Crafts'],
+    href: '/transport/',
+    tags: ['Airport Taxi', 'Car Hire', 'Boat Rental'],
   },
   {
     img: '/assets/img/category/tours.jpg',
