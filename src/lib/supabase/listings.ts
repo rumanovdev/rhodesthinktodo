@@ -48,7 +48,9 @@ export function row2card(r: any): ListingCard {
   // so listings created with only a "Main area" still show a location.
   const areaName = (r.areas?.name as string | null | undefined) || null;
   const cityVal = r.city || areaName || '';
-  const tier = Math.min(Math.max(Number(r.price_tier) || 1, 1), 4);
+  // Price tier is only shown when the owner actually set one (1–4). A null/0
+  // tier means "no price given" → empty, so we never fake a default "€".
+  const tier = Number(r.price_tier) >= 1 ? Math.min(Math.round(Number(r.price_tier)), 4) : 0;
   const verified = !!r.is_verified;
   // Owner avatar: only a real uploaded photo — no stock-face placeholders.
   const img1 = (r.profiles?.avatar_url as string | null | undefined) || '';
@@ -67,7 +69,7 @@ export function row2card(r: any): ListingCard {
     rating: r.rating != null ? String(r.rating) : '',
     reviews: `${r.review_count ?? 0} Reviews`,
     btn: verified ? 'Verified' : 'Open',
-    dollar: '€'.repeat(tier),
+    dollar: tier > 0 ? '€'.repeat(tier) : '',
     tag: !!r.is_featured,
     miles: cityVal ? `${cityVal}` : '',
     color: verified ? 'success' : 'primary',
