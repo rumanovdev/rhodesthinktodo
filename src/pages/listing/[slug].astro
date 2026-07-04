@@ -131,8 +131,18 @@ const ownerSocialLinks = [
   .filter((s) => s.url);
 
 const listingUrl = absUrl(`/listing/${event.slug}/`);
-// Business website (optional column) — shown in the sidebar + schema sameAs.
-const websiteUrl: string | null = (detail as any).website ?? null;
+// Business website (optional column) — shown in the hero + sidebar + schema sameAs.
+// Defense-in-depth: only render http(s). `website` is owner-editable, so a stored
+// `javascript:`/`data:` URL (e.g. set via direct PostgREST) must never reach an href.
+const rawWebsite = (detail as any).website ? String((detail as any).website).trim() : '';
+let websiteUrl: string | null = null;
+if (rawWebsite) {
+  const candidate = /^https?:\/\//i.test(rawWebsite) ? rawWebsite : `https://${rawWebsite}`;
+  try {
+    const u = new URL(candidate);
+    if ((u.protocol === 'http:' || u.protocol === 'https:') && u.hostname.includes('.')) websiteUrl = u.href;
+  } catch { /* unparseable → drop */ }
+}
 const websiteLabel = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '').replace(/\/$/, '') : '';
 const businessSchema: Record<string, any> = {
   '@context': 'https://schema.org',
