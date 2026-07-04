@@ -105,21 +105,18 @@ export const POST: APIRoute = async ({ params, request, locals, redirect }) => {
     }).eq('id', id).eq('owner_id', user.id);
     if (upErr) return redirect(back + '?error=' + encodeURIComponent(upErr.message));
 
-    // Replace join rows (subcategories / service areas / tags / amenities).
+    // Replace the taxonomy join rows atomically (one RPC, all-or-nothing): a
+    // failed edit keeps the previous categories / areas / tags / amenities intact
+    // instead of wiping them, and the error is surfaced rather than swallowed.
     const nums = (k: string) => form.getAll(k).map((v) => Number(v)).filter((n) => Number.isFinite(n));
-    const subcatIds = nums('subcategory_ids');
-    const svcAreas = nums('service_area_ids').filter((n) => n !== areaId);
-    const tagIds = nums('tag_ids');
-    const amenityIds = nums('amenities');
-
-    await supabase.from('listing_categories').delete().eq('listing_id', id);
-    if (subcatIds.length) await supabase.from('listing_categories').insert(subcatIds.map((category_id) => ({ listing_id: id, category_id })));
-    await supabase.from('listing_areas').delete().eq('listing_id', id);
-    if (svcAreas.length) await supabase.from('listing_areas').insert(svcAreas.map((area_id) => ({ listing_id: id, area_id })));
-    await supabase.from('listing_tags').delete().eq('listing_id', id);
-    if (tagIds.length) await supabase.from('listing_tags').insert(tagIds.map((tag_id) => ({ listing_id: id, tag_id })));
-    await supabase.from('listing_amenities').delete().eq('listing_id', id);
-    if (amenityIds.length) await supabase.from('listing_amenities').insert(amenityIds.map((amenity_id) => ({ listing_id: id, amenity_id })));
+    const { error: taxErr } = await supabase.rpc('set_listing_taxonomy', {
+      p_listing_id: id,
+      p_subcategory_ids: nums('subcategory_ids'),
+      p_area_ids: nums('service_area_ids').filter((n) => n !== areaId),
+      p_tag_ids: nums('tag_ids'),
+      p_amenity_ids: nums('amenities'),
+    });
+    if (taxErr) return redirect(back + '?error=' + encodeURIComponent('Your details were saved, but the categories / areas / tags couldn’t be updated — please try again.'));
 
     // Images — remove/add via the service-role client (storage RLS). Ownership
     // was verified above; silently skipped when the key isn't configured.

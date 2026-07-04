@@ -735,7 +735,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_listing_taxonomy: {
+        Args: {
+          p_listing_id: string
+          p_subcategory_ids?: number[]
+          p_area_ids?: number[]
+          p_tag_ids?: number[]
+          p_amenity_ids?: number[]
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"

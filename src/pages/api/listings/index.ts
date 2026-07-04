@@ -117,39 +117,18 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     return redirect('/dashboard-add-listing/?error=' + encodeURIComponent(insErr?.message || 'Could not create listing'));
   }
 
-  // Amenities (many-to-many).
-  const amenityValues = form.getAll('amenities').map((v) => Number(v)).filter((n) => Number.isFinite(n));
-  if (amenityValues.length > 0) {
-    await supabase.from('listing_amenities').insert(
-      amenityValues.map((amenity_id) => ({ listing_id: inserted.id, amenity_id }))
-    );
-  }
-
-  // Subcategories (many-to-many) — the main category lives on listings.category_id.
-  const subcatIds = form.getAll('subcategory_ids').map((v) => Number(v)).filter((n) => Number.isFinite(n));
-  if (subcatIds.length > 0) {
-    await supabase.from('listing_categories').insert(
-      subcatIds.map((category_id) => ({ listing_id: inserted.id, category_id }))
-    );
-  }
-
-  // Extra service areas — the main area lives on listings.area_id.
-  const serviceAreaIds = form.getAll('service_area_ids')
-    .map((v) => Number(v))
-    .filter((n) => Number.isFinite(n) && n !== areaId);
-  if (serviceAreaIds.length > 0) {
-    await supabase.from('listing_areas').insert(
-      serviceAreaIds.map((area_id) => ({ listing_id: inserted.id, area_id }))
-    );
-  }
-
-  // Tags (many-to-many).
-  const tagIds = form.getAll('tag_ids').map((v) => Number(v)).filter((n) => Number.isFinite(n));
-  if (tagIds.length > 0) {
-    await supabase.from('listing_tags').insert(
-      tagIds.map((tag_id) => ({ listing_id: inserted.id, tag_id }))
-    );
-  }
+  // Taxonomy join rows (subcategories / service areas / tags / amenities) in one
+  // atomic RPC, so a partial failure can't leave the listing half-linked. The
+  // main category/area already live on the listing row; a taxonomy failure is
+  // surfaced in the final redirect (owner finishes from Edit) not silently dropped.
+  const nums = (k: string) => form.getAll(k).map((v) => Number(v)).filter((n) => Number.isFinite(n));
+  const { error: taxErr } = await supabase.rpc('set_listing_taxonomy', {
+    p_listing_id: inserted.id,
+    p_subcategory_ids: nums('subcategory_ids'),
+    p_area_ids: nums('service_area_ids').filter((n) => n !== areaId),
+    p_tag_ids: nums('tag_ids'),
+    p_amenity_ids: nums('amenities'),
+  });
 
   // Image uploads. Use service-role client so writes aren't blocked by storage RLS
   // (we validate ownership above).
@@ -188,5 +167,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     await runBacklinkCheck(supabase, inserted.id);
   } catch { /* check is best-effort */ }
 
-  return redirect('/dashboard-my-listings/?notice=' + encodeURIComponent('Listing created.'));
+  return redirect('/dashboard-my-listings/?notice=' + encodeURIComponent(
+    taxErr
+      ? 'Listing created — but its categories, areas or tags didn’t all save. Open it in Edit to finish.'
+      : 'Listing created.'
+  ));
 };

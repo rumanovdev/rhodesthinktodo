@@ -63,21 +63,18 @@ export const POST: APIRoute = async ({ request, params, locals, redirect }) => {
   }).eq('id', id);
   if (upErr) return redirect(back + '?error=' + encodeURIComponent(upErr.message));
 
-  // Replace join rows (subcategories / service areas / tags / amenities).
+  // Replace the taxonomy join rows atomically (one RPC, all-or-nothing) instead
+  // of 8 unchecked delete/insert calls. Admin uses the service-role client, so
+  // the RPC's RLS is bypassed; a failure is surfaced instead of swallowed.
   const nums = (k: string) => form.getAll(k).map((v) => Number(v)).filter((n) => Number.isFinite(n));
-  const subcatIds = nums('subcategory_ids');
-  const svcAreas = nums('service_area_ids').filter((n) => n !== areaId);
-  const tagIds = nums('tag_ids');
-  const amenityIds = nums('amenities');
-
-  await admin.from('listing_categories').delete().eq('listing_id', id);
-  if (subcatIds.length) await admin.from('listing_categories').insert(subcatIds.map((category_id) => ({ listing_id: id, category_id })));
-  await admin.from('listing_areas').delete().eq('listing_id', id);
-  if (svcAreas.length) await admin.from('listing_areas').insert(svcAreas.map((area_id) => ({ listing_id: id, area_id })));
-  await admin.from('listing_tags').delete().eq('listing_id', id);
-  if (tagIds.length) await admin.from('listing_tags').insert(tagIds.map((tag_id) => ({ listing_id: id, tag_id })));
-  await admin.from('listing_amenities').delete().eq('listing_id', id);
-  if (amenityIds.length) await admin.from('listing_amenities').insert(amenityIds.map((amenity_id) => ({ listing_id: id, amenity_id })));
+  const { error: taxErr } = await admin.rpc('set_listing_taxonomy', {
+    p_listing_id: id,
+    p_subcategory_ids: nums('subcategory_ids'),
+    p_area_ids: nums('service_area_ids').filter((n) => n !== areaId),
+    p_tag_ids: nums('tag_ids'),
+    p_amenity_ids: nums('amenities'),
+  });
+  if (taxErr) return redirect(back + '?error=' + encodeURIComponent('Saved, but taxonomy could not be updated: ' + taxErr.message));
 
   // ---- Images -------------------------------------------------------------
   const BUCKET = 'listing-images';
