@@ -365,14 +365,32 @@ const breadcrumbSchema = {
 							<div id="map" class="panel-collapse collapse show">
 								<div class="card-body p-4 pt-2">
 									<div class="map-container rounded-3 overflow-hidden">
-										<iframe
-											src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(event.lng) - 0.01}%2C${Number(event.lat) - 0.01}%2C${Number(event.lng) + 0.01}%2C${Number(event.lat) + 0.01}&layer=mapnik&marker=${event.lat}%2C${event.lng}`}
-											class="full-width"
-											height="360"
-											style="border:0;"
-											loading="lazy"
-											title={`Map for ${event.title}`}
-										></iframe>
+										<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+										<div id="listing-map" class="rounded-3 overflow-hidden" style="height:380px;width:100%;z-index:0;" data-lat={event.lat} data-lng={event.lng} data-title={event.title}></div>
+										<style is:inline>
+											.lst-pin-wrap{background:transparent;border:0}
+											.lst-pin{width:16px;height:16px;background:var(--bs-primary,#f15650);border:3px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.45)}
+										</style>
+										<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" is:inline></script>
+										<script is:inline>
+											(function () {
+												var el = document.getElementById('listing-map');
+												if (!el || typeof L === 'undefined') return;
+												var lat = parseFloat(el.getAttribute('data-lat'));
+												var lng = parseFloat(el.getAttribute('data-lng'));
+												if (!isFinite(lat) || !isFinite(lng)) return;
+												var map = L.map(el, { zoomControl: true, scrollWheelZoom: false });
+												L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+													maxZoom: 20,
+													attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+												}).addTo(map);
+												map.setView([lat, lng], 15);
+												var icon = L.divIcon({ className: 'lst-pin-wrap', iconSize: [16, 16], iconAnchor: [8, 8], html: '<div class="lst-pin"></div>' });
+												var m = L.marker([lat, lng], { icon: icon }).addTo(map);
+												var t = el.getAttribute('data-title'); if (t) m.bindPopup(t);
+												setTimeout(function () { map.invalidateSize(); }, 200);
+											})();
+										</script>
 										<div class="text-md mt-2">
 											<a href={`https://www.openstreetmap.org/?mlat=${event.lat}&mlon=${event.lng}&zoom=16`} target="_blank" rel="noopener" class="text-primary fw-medium">Open in OpenStreetMap</a>
 											<span class="text-muted"> · {event.address || ''} {event.city ? `, ${event.city}` : ''}</span>
