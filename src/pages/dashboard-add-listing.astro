@@ -103,10 +103,25 @@ const STEPS = [
                         <div class="invalid-hint text-danger text-sm mt-1 d-none" data-hint="category">Please pick a category.</div>
                       </div>
                       <div class="col-12">
+                        <label for="short_description" class="form-label fw-medium">Short description <span class="text-muted fw-normal">— the card blurb</span></label>
+                        <textarea id="short_description" name="short_description" rows="2" maxlength="240" class="form-control rounded-3" placeholder="One or two punchy lines shown on the listing cards. Leave blank and we'll use the start of your full description."></textarea>
+                        <small class="text-muted"><span id="shortDescCount">0</span>/240 characters</small>
+                      </div>
+                      <div class="col-12">
                         <label for="description" class="form-label fw-medium">Description</label>
                         <textarea id="description" name="description" rows="4" class="form-control rounded-3" placeholder="What makes this place special? Mention what you offer, opening season, anything visitors should know."></textarea>
-                        <small class="text-muted">A couple of sentences is perfect — you can edit it any time.</small>
+                        <small class="text-muted">The full write-up shown on the listing page. You can edit it any time.</small>
                       </div>
+                      <script is:inline>
+                        (() => {
+                          const ta = document.getElementById('short_description');
+                          const out = document.getElementById('shortDescCount');
+                          if (!ta || !out) return;
+                          const sync = () => { out.textContent = String(ta.value.length); };
+                          ta.addEventListener('input', sync);
+                          sync();
+                        })();
+                      </script>
                     </div>
                   </div>
                 </div>

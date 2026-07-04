@@ -1,0 +1,219 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import LoginModal from '../../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
+import Preloader from '../../components/shared/Preloader.astro';
+import DashboardSidebar from '../../components/dashboard/DashboardSidebar.astro';
+
+export const prerender = false;
+
+const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase;
+const { id } = Astro.params as { id: string };
+const error = Astro.url.searchParams.get('error');
+
+if (!supabase) return Astro.redirect('/dashboard-my-listings/?error=' + encodeURIComponent('Not available right now'));
+
+// Load the listing with the user's RLS client, then hard-check ownership.
+const { data: listing } = await supabase.from('listings').select('*').eq('id', id).maybeSingle();
+if (!listing) return Astro.redirect('/dashboard-my-listings/?error=' + encodeURIComponent('Listing not found'));
+if ((listing as any).owner_id !== user.id) return Astro.redirect('/dashboard-my-listings/?error=' + encodeURIComponent('That listing is not yours to edit'));
+
+const [{ data: catRows }, { data: areaRows }, { data: tagRows }, { data: amenityRows },
+       { data: subLinks }, { data: areaLinks }, { data: tagLinks }, { data: amenityLinks }, { data: imageRows }] = await Promise.all([
+  supabase.from('categories').select('id, slug, name, parent_id').eq('is_active', true).order('sort_order'),
+  supabase.from('areas').select('id, name').eq('is_active', true).order('sort_order'),
+  supabase.from('tags').select('id, name').eq('is_active', true).order('sort_order'),
+  supabase.from('amenities').select('id, name').order('name'),
+  supabase.from('listing_categories').select('category_id').eq('listing_id', id),
+  supabase.from('listing_areas').select('area_id').eq('listing_id', id),
+  supabase.from('listing_tags').select('tag_id').eq('listing_id', id),
+  supabase.from('listing_amenities').select('amenity_id').eq('listing_id', id),
+  supabase.from('listing_images').select('id, url, sort_order').eq('listing_id', id).order('sort_order'),
+]);
+const images = imageRows ?? [];
+
+const cats = catRows ?? [];
+const motherCats = cats.filter((c: any) => c.parent_id == null);
+const subsByMother: Record<number, any[]> = {};
+for (const s of cats.filter((c: any) => c.parent_id != null)) (subsByMother[(s as any).parent_id] ??= []).push(s);
+
+const subIds = new Set((subLinks ?? []).map((r: any) => r.category_id));
+const svcAreaIds = new Set((areaLinks ?? []).map((r: any) => r.area_id));
+const tagIds = new Set((tagLinks ?? []).map((r: any) => r.tag_id));
+const amenityIds = new Set((amenityLinks ?? []).map((r: any) => r.amenity_id));
+
+// The main category can be a mother or (legacy) a sub — map to its mother for the select.
+const catById = new Map(cats.map((c: any) => [c.id, c]));
+const mainCat: any = listing.category_id ? catById.get(listing.category_id) : null;
+const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
+const shortDesc = (listing as any).short_description ?? '';
+---
+<Base noindex title={`Edit: ${listing.title} — Rhodes Things To Do`}>
+  <Navbar headerClass="header header-light head-shadow" />
+  <Preloader />
+
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="my-listings" />
+        </div>
+
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0 d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <h2 class="fw-medium mb-0">Edit listing</h2>
+                <p class="text-muted mt-2 mb-0">Update your business details. Changes go live as soon as you save.</p>
+              </div>
+              <div class="d-flex gap-2">
+                <a href={`/listing/${listing.slug}/`} target="_blank" class="btn btn-light border rounded-pill"><i class="bi bi-box-arrow-up-right me-1"></i>View live</a>
+                <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill">Back</a>
+              </div>
+            </div>
+
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              {error && <div class="alert alert-danger">{error}</div>}
+
+              <form method="post" action={`/api/listings/${listing.id}`} enctype="multipart/form-data" class="card rounded-4 shadow-sm p-4">
+                <input type="hidden" name="_action" value="update" />
+                <div class="row g-3">
+                  <div class="col-12"><label class="form-label fw-medium">Business name *</label>
+                    <input type="text" name="title" required maxlength="140" class="form-control" value={listing.title} /></div>
+
+                  <div class="col-12"><label class="form-label fw-medium">Short description <span class="text-muted fw-normal">— the card blurb</span></label>
+                    <textarea id="short_description" name="short_description" rows="2" maxlength="240" class="form-control" placeholder="One or two punchy lines shown on the listing cards. Leave blank and we'll use the start of your full description.">{shortDesc}</textarea>
+                    <small class="text-muted"><span id="shortDescCount">0</span>/240 characters</small></div>
+
+                  <div class="col-12"><label class="form-label fw-medium">Description</label>
+                    <textarea name="description" rows="5" class="form-control" placeholder="The full write-up shown on your listing page.">{listing.description ?? ''}</textarea></div>
+
+                  <div class="col-md-6"><label class="form-label fw-medium">Category *</label>
+                    <select name="category_slug" required class="form-select">
+                      {motherCats.map((c: any) => <option value={c.slug} selected={c.id === mainMotherId}>{c.name}</option>)}
+                    </select></div>
+                  <div class="col-md-3"><label class="form-label fw-medium">Status</label>
+                    <select name="status" class="form-select">
+                      {['draft', 'published', 'archived'].map((s) => <option value={s} selected={s === listing.status}>{s}</option>)}
+                    </select></div>
+                  <div class="col-md-3"><label class="form-label fw-medium">Price</label>
+                    <select name="price_tier" class="form-select">
+                      {[1, 2, 3, 4].map((t) => <option value={t} selected={t === listing.price_tier}>{'€'.repeat(t)}</option>)}
+                    </select></div>
+
+                  <div class="col-md-6"><label class="form-label fw-medium">Subcategories</label>
+                    <select name="subcategory_ids" multiple size="8" class="form-select">
+                      {motherCats.map((m: any) => (subsByMother[m.id] ?? []).length > 0 && (
+                        <optgroup label={m.name}>
+                          {(subsByMother[m.id] ?? []).map((s: any) => <option value={s.id} selected={subIds.has(s.id)}>{s.name}</option>)}
+                        </optgroup>
+                      ))}
+                    </select>
+                    <small class="text-muted">Ctrl / ⌘ + click to pick several.</small></div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-medium">Tags</label>
+                    <div class="row g-1">
+                      {(tagRows ?? []).map((t: any) => (
+                        <div class="col-6"><div class="form-check">
+                          <input id={`t-${t.id}`} class="form-check-input" name="tag_ids" value={t.id} type="checkbox" checked={tagIds.has(t.id)} />
+                          <label for={`t-${t.id}`} class="form-check-label text-sm">{t.name}</label>
+                        </div></div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4"><label class="form-label fw-medium">Main area</label>
+                    <select name="area_id" class="form-select">
+                      <option value="">—</option>
+                      {(areaRows ?? []).map((a: any) => <option value={a.id} selected={a.id === listing.area_id}>{a.name}</option>)}
+                    </select></div>
+                  <div class="col-md-8"><label class="form-label fw-medium">Service areas</label>
+                    <select name="service_area_ids" multiple size="4" class="form-select">
+                      {(areaRows ?? []).map((a: any) => <option value={a.id} selected={svcAreaIds.has(a.id)}>{a.name}</option>)}
+                    </select></div>
+
+                  <div class="col-md-6"><label class="form-label fw-medium">Phone</label>
+                    <input type="tel" name="phone" class="form-control" value={listing.phone ?? ''} /></div>
+                  <div class="col-md-6"><label class="form-label fw-medium">Website</label>
+                    <input type="text" name="website" class="form-control" value={(listing as any).website ?? ''} placeholder="www.example.com" /></div>
+                  <div class="col-md-6"><label class="form-label fw-medium">Street address</label>
+                    <input type="text" name="address" class="form-control" value={listing.address ?? ''} /></div>
+                  <div class="col-md-2"><label class="form-label fw-medium">City</label>
+                    <input type="text" name="city" class="form-control" value={listing.city ?? ''} /></div>
+                  <div class="col-md-2"><label class="form-label fw-medium">Latitude *</label>
+                    <input type="number" step="0.0000001" min="-90" max="90" name="lat" required class="form-control" value={listing.lat ?? ''} /></div>
+                  <div class="col-md-2"><label class="form-label fw-medium">Longitude *</label>
+                    <input type="number" step="0.0000001" min="-180" max="180" name="lng" required class="form-control" value={listing.lng ?? ''} /></div>
+
+                  <div class="col-12">
+                    <label class="form-label fw-medium">Amenities</label>
+                    <div class="row g-1">
+                      {(amenityRows ?? []).map((a: any) => (
+                        <div class="col-md-3 col-6"><div class="form-check">
+                          <input id={`am-${a.id}`} class="form-check-input" name="amenities" value={a.id} type="checkbox" checked={amenityIds.has(a.id)} />
+                          <label for={`am-${a.id}`} class="form-check-label text-sm">{a.name}</label>
+                        </div></div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label fw-medium">Photos</label>
+                    {images.length > 0 && (
+                      <div class="d-flex flex-wrap gap-3 mb-2">
+                        {images.map((img: any) => (
+                          <div class="text-center">
+                            <img src={img.url} alt="" style="width:110px;height:80px;object-fit:cover" class={`rounded-3 border ${listing.hero_image === img.url ? 'border-primary border-2' : ''}`} />
+                            <div class="form-check d-flex justify-content-center gap-1 mt-1">
+                              <input id={`rm-${img.id}`} class="form-check-input" type="checkbox" name="remove_images" value={img.id} />
+                              <label for={`rm-${img.id}`} class="form-check-label text-sm text-danger">remove</label>
+                            </div>
+                            {listing.hero_image === img.url && <span class="badge bg-primary rounded-pill">hero</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
+                    <small class="text-muted">Add up to 5 new photos (JPEG/PNG/WebP, 5 MB each). The first photo becomes the main image when none is set.</small>
+                  </div>
+
+                  <div class="col-12 d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-check2 me-1"></i>Save changes</button>
+                    <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill">Cancel</a>
+                  </div>
+                </div>
+              </form>
+
+              <div class="row align-items-start g-4 mt-1">
+                <div class="col-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> Rhodes Things To Do.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <SearchOffcanvas />
+  <LoginModal />
+
+  <script is:inline>
+    (() => {
+      const ta = document.getElementById('short_description');
+      const out = document.getElementById('shortDescCount');
+      if (!ta || !out) return;
+      const sync = () => { out.textContent = String(ta.value.length); };
+      ta.addEventListener('input', sync);
+      sync();
+    })();
+  </script>
+</Base>

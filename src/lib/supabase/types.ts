@@ -434,6 +434,7 @@ export type Database = {
           country: string | null
           created_at: string | null
           description: string | null
+          short_description: string | null
           hero_image: string | null
           id: string
           is_featured: boolean | null
@@ -463,6 +464,7 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           description?: string | null
+          short_description?: string | null
           hero_image?: string | null
           id?: string
           is_featured?: boolean | null
@@ -492,6 +494,7 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           description?: string | null
+          short_description?: string | null
           hero_image?: string | null
           id?: string
           is_featured?: boolean | null

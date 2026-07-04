@@ -13,6 +13,8 @@ export type ListingCard = {
   slug: string;
   title: string;
   desc: string;
+  /** Card blurb (<=240 chars): owner's short_description, else an auto-truncation of desc. */
+  short: string;
   img: string;
   /** Owner avatar URL, or '' when the owner has no uploaded avatar (render initials instead). */
   img1: string;
@@ -38,6 +40,15 @@ export type ListingCard = {
   lng: number | null;
 };
 
+/** Card blurb: collapse whitespace, trim to the last word boundary before `max`, add an ellipsis. */
+export function smartTruncate(text: string | null | undefined, max = 240): string {
+  const s = String(text ?? '').replace(/\s+/g, ' ').trim();
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[\s.,;:!-]+$/, '') + '…';
+}
+
 export function row2card(r: any): ListingCard {
   const firstImage = Array.isArray(r.listing_images) && r.listing_images.length > 0
     ? r.listing_images[0].url
@@ -60,6 +71,7 @@ export function row2card(r: any): ListingCard {
     slug: r.slug,
     title: r.title,
     desc: r.description || '',
+    short: (r.short_description && String(r.short_description).trim()) || smartTruncate(r.description, 240),
     img,
     img1,
     number: r.phone || '',

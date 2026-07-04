@@ -123,6 +123,9 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
               <div class="col-md-4"><label class="form-label fw-medium">Longitude *</label>
                 <input type="number" step="0.0000001" min="-180" max="180" name="lng" required class="form-control" value={listing.lng ?? ''} /></div>
 
+              <div class="col-12"><label class="form-label fw-medium">Short description <span class="text-muted fw-normal">— card blurb (≤240)</span></label>
+                <textarea name="short_description" rows="2" maxlength="240" class="form-control" placeholder="Shown on listing cards. Blank = auto-summary of the description.">{(listing as any).short_description ?? ''}</textarea></div>
+
               <div class="col-12"><label class="form-label fw-medium">Description</label>
                 <textarea name="description" rows="5" class="form-control">{listing.description ?? ''}</textarea></div>
 

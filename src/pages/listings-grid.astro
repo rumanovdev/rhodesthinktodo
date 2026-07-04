@@ -78,7 +78,7 @@ const listings = await getPublishedListings(Astro.locals.supabase);
 					                )}
 					                <div class="listing-details">
 					                    <h4 class="listingTitle"><a href={`/listing/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
-					                    <p>{item.desc}</p>
+					                    <p>{item.short}</p>
 					                </div>
 					                <div class="listing-info-details">
 					                    <div class="d-flex align-items-center justify-content-start gap-4">

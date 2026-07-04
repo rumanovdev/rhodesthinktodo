@@ -45,6 +45,8 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   }
 
   const description = String(form.get('description') ?? '').trim() || null;
+  // Card blurb, hard-capped at 240 chars (the DB has a matching check constraint).
+  const shortDescription = String(form.get('short_description') ?? '').trim().slice(0, 240) || null;
   const phone = String(form.get('phone') ?? '').trim() || null;
   // Website: accept bare domains, store with a scheme; reject anything that
   // still doesn't parse as http(s).
@@ -95,6 +97,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       slug,
       title,
       description,
+      short_description: shortDescription,
       category_id: categoryId,
       area_id: areaId,
       phone,

@@ -57,6 +57,7 @@ export const POST: APIRoute = async ({ request, params, locals, redirect }) => {
     city: String(form.get('city') ?? '').trim() || null,
     lat, lng,
     description: String(form.get('description') ?? '').trim() || null,
+    short_description: String(form.get('short_description') ?? '').trim().slice(0, 240) || null,
     is_featured: form.get('is_featured') != null,
     is_verified: form.get('is_verified') != null,
   }).eq('id', id);
