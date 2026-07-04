@@ -74,7 +74,7 @@ const title = q ? `Search results for "${q}"` : category ? `Listings in ${catego
                 <div class="fr-list-thumbs rounded-top-4">
                   <a href={`/listing/${item.slug}/`}><img src={item.img} class="img-fluid rounded-top-4" alt={item.title} /></a>
                   {item.tag && (
-                    <div class="lis-wishlist"><a href="#" class="badge badge-xs bg-warning">Featured</a></div>
+                    <div class="lis-wishlist"><span class="badge badge-xs bg-warning">Featured</span></div>
                   )}
                 </div>
                 <div class="fr-listing-content p-3">
@@ -82,7 +82,7 @@ const title = q ? `Search results for "${q}"` : category ? `Listings in ${catego
                   <h4 class="listingTitle"><a href={`/listing/${item.slug}/`} class="titleLink">{item.title}</a></h4>
                   <div class="text-md text-muted mt-1">{item.location || '—'}</div>
                   <div class="d-flex align-items-center justify-content-between mt-3">
-                    <div class="text-sm"><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</div>
+                    <div class="text-sm">{(parseInt(item.reviews) || 0) > 0 ? (<><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</>) : (<span class="badge badge-xs bg-light-primary text-primary">New</span>)}</div>
                     <div class="text-sm text-muted">{item.dollar}</div>
                   </div>
                 </div>

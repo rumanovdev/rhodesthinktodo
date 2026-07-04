@@ -6,10 +6,11 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
+import { SITE } from '../lib/data/site';
 ---
 <Base
   title="Contact Us | Rhodes Things To Do"
-  description="Get in touch with Rhodes Things To Do. Call +30 690 791 7676 or email info.com for listings, partnerships and support."
+  description={`Get in touch with Rhodes Things To Do. Call ${SITE.phone} or email ${SITE.email} for listings, partnerships and support.`}
   canonical="/contact-us/"
 >
   <Navbar headerClass="header header-light head-shadow" />
@@ -27,7 +28,7 @@ import Preloader from '../components/shared/Preloader.astro';
 				<div class="fpc-capstion text-center my-4">
 					<div class="fpc-captions">
 						<h1 class="xl-heading text-light">Contact Us</h1>
-						<p class="text-lg text-light">Cicero famously orated against his political opponent Lucius Sergius Catilina.</p>
+						<p class="text-lg text-light">Questions about a listing, a booking, or getting your business featured? Send us a message and we'll get back to you within a day.</p>
 					</div>
 				</div>
 
@@ -43,7 +44,7 @@ import Preloader from '../components/shared/Preloader.astro';
 			        </div>
 			        <div class="crds-desc">
 			            <h5 class="text-light">Drop a Mail</h5>
-			            <p class="fs-6 text-md lh-2 text-light opacity-75 mb-0">Shreethemes@gmail.com<br>PayShreethemes@gmail.com</p>
+			            <p class="fs-6 text-md lh-2 text-light opacity-75 mb-0">{SITE.email}<br>{SITE.email}</p>
 			        </div>
 			    </div>
 			</div>
@@ -53,7 +54,7 @@ import Preloader from '../components/shared/Preloader.astro';
 			        </div>
 			        <div class="crds-desc">
 			            <h5 class="text-light">Call Us</h5>
-			            <p class="fs-6 text-md lh-2 text-light opacity-75 mb-0">(0522) 2563568<br>+91 256 6548 457</p>
+			            <p class="fs-6 text-md lh-2 text-light opacity-75 mb-0">{SITE.phone}</p>
 			        </div>
 			    </div>
 			</div>
@@ -65,9 +66,6 @@ import Preloader from '../components/shared/Preloader.astro';
 			            <h5 class="text-light">Connect with Social</h5>
 			            <p class="text-md text-light opacity-75 lh-2">Let's Connect with Us via social media</p>
 			            <ul class="list-inline mb-0">
-			                <li class="list-inline-item"> <a class="square--40 circle bg-transparents text-light" href="#"><i class="fa-brands fa-facebook-f"></i></a> </li>
-			                <li class="list-inline-item"> <a class="square--40 circle bg-transparents text-light" href="#"><i class="fa-brands fa-instagram"></i></a> </li>
-			                <li class="list-inline-item"> <a class="square--40 circle bg-transparents text-light" href="#"><i class="fa-brands fa-twitter"></i></a> </li>
 			            </ul>
 			        </div>
 			    </div>
@@ -88,7 +86,7 @@ import Preloader from '../components/shared/Preloader.astro';
 
 			<div class="col-xl-7 col-lg-7 col-md-12">
 				<div class="contactForm pe-xl-5 pe-lg-4">
-					<form>
+					<div>
 
 						<div class="row align-items-center">
 
@@ -139,17 +137,17 @@ import Preloader from '../components/shared/Preloader.astro';
 
 							<div class="col-xl-12 col-lg-12 col-md-12">
 								<div class="form-group">
-									<button type="submit" id="submit" name="send" class="btn fw-medium btn-primary">Send Message<i class="fa-solid fa-paper-plane ms-2"></i></button>
+									<a href={`mailto:${SITE.email}`} class="btn fw-medium btn-primary">Send Message<i class="fa-solid fa-paper-plane ms-2"></i></a>
 								</div>
 							</div>
 
 						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 
 			<div class="col-xl-5 col-lg-5 col-md-12">
-				<iframe class="full-width ht-100 grayscale rounded" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9663095343008!2d-74.00425878428698!3d40.74076684379132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259bf5c1654f3%3A0xc80f9cfce5383d5d!2sGoogle!5e0!3m2!1sen!2sin!4v1586000412513!5m2!1sen!2sin" height="500" style="border:0;" aria-hidden="false" tabindex="0"></iframe>
+				<iframe class="full-width ht-100 grayscale rounded" src="https://www.openstreetmap.org/export/embed.html?bbox=28.15%2C36.40%2C28.28%2C36.47&layer=mapnik&marker=36.4349%2C28.2176" height="500" style="border:0;" loading="lazy" title="Map of Rhodes, Greece"></iframe>
 			</div>
 
 		</div>

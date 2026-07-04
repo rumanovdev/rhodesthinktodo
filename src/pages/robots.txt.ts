@@ -15,11 +15,9 @@ Disallow: /login/
 Disallow: /register/
 Disallow: /forgot-password/
 Disallow: /reset-password/
-Disallow: /two-factor-auth/
 Disallow: /booking-page/
 Disallow: /success-payment/
 Disallow: /booking-received/
-Disallow: /author-profile/
 Disallow: /search
 
 Sitemap: ${SITE.url}/sitemap.xml

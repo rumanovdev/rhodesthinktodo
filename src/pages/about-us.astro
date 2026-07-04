@@ -6,7 +6,6 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { process2 } from '../lib/data/context';
 ---
 <Base
   title="About Us — Your Local Guide to Rhodes | Rhodes Things To Do"
@@ -128,23 +127,51 @@ import { process2 } from '../lib/data/context';
 		<div class="row justify-content-center g-md-5 g-4">
 
 			<!-- Components/Pages/about-us/process2.html -->
-			{process2.map((item) => (
 			<div class="col-xl-4 col-lg-4 col-md-6">
 			    <div class="processWrap px-xl-4">
 			        <div class="text-center">
 			            <div class="processIcons d-block">
 			                <div class="Icons">
-			                    <i class={item.icon}></i>
+			                    <i class="bi bi-pin-map-fill"></i>
 			                </div>
 			            </div>
 			            <div class="processCaps">
-			                <h4 class="fw-medium">{item.title}</h4>
-			                <p class="m-0">{item.desc}</p>
+			                <h4 class="fw-medium">Explore Rhodes</h4>
+			                <p class="m-0">Browse beaches, tavernas, tours and hidden gems across the island, organised by area and category.</p>
 			            </div>
 			        </div>
 			    </div>
 			</div>
-			))}
+			<div class="col-xl-4 col-lg-4 col-md-6">
+			    <div class="processWrap px-xl-4">
+			        <div class="text-center">
+			            <div class="processIcons d-block">
+			                <div class="Icons">
+			                    <i class="bi bi-send-check"></i>
+			                </div>
+			            </div>
+			            <div class="processCaps">
+			                <h4 class="fw-medium">Contact the owner directly</h4>
+			                <p class="m-0">Found somewhere you like? Reach the business straight from its listing — phone, website or a booking request.</p>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			<div class="col-xl-4 col-lg-4 col-md-6">
+			    <div class="processWrap px-xl-4">
+			        <div class="text-center">
+			            <div class="processIcons d-block">
+			                <div class="Icons">
+			                    <i class="bi bi-person-check"></i>
+			                </div>
+			            </div>
+			            <div class="processCaps">
+			                <h4 class="fw-medium">Book with no fees</h4>
+			                <p class="m-0">Send a booking request and the owner confirms. No commission, no payment taken on the site.</p>
+			            </div>
+			        </div>
+			    </div>
+			</div>
 
 		</div>
 

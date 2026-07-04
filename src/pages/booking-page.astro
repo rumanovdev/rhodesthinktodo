@@ -36,7 +36,7 @@ if (!listing && supabase && listingId) {
       city: data.city,
       address: data.address,
       phone: data.phone,
-      rating: data.rating ?? 4.5,
+      rating: data.rating ?? null,
       reviews: `${data.review_count ?? 0} Reviews`,
       img: data.hero_image || data.listing_images?.[0]?.url || '/assets/img/list-1.jpg',
     };
@@ -170,11 +170,15 @@ const defaultEmail = user?.email ?? '';
                       <h5>{listing.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></h5>
                       <div class="list-ratings">
                         <div class="d-flex align-items-center justify-content-start gap-2">
+                          {(parseInt(listing.reviews) || 0) > 0 ? (
+                          <>
                           <span class="d-flex align-items-center justify-content-start gap-1 text-sm">
                             <i class="bi bi-star-fill mb-0 text-warning"></i>
                             <span>{listing.rating}</span>
                           </span>
                           <span class="text-md">({listing.reviews})</span>
+                          </>
+                          ) : (<span class="badge bg-light-primary text-primary">New</span>)}
                         </div>
                       </div>
                       {listing.city && <p class="text-md text-muted mb-0 mt-1"><i class="bi bi-geo-alt me-1"></i>{listing.city}</p>}

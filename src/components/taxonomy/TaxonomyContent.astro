@@ -217,7 +217,7 @@ const markers = mappable.map((l) => ({
           l.img ? '<img src="' + esc(l.img) + '" class="lm-popup-img" alt="">' : '',
           '<a class="lm-popup-title" href="/listing/' + esc(l.slug) + '/">' + esc(l.title) + '</a>',
           '<div class="lm-popup-meta">' + esc(l.category || '') + ' \u00b7 ' + esc(l.price || '') + '</div>',
-          '<div class="lm-popup-meta">\u2605 ' + esc(l.rating || '') + ' \u00b7 ' + esc(l.reviews || '') + ' Reviews</div>'
+          ((parseInt(l.reviews) || 0) > 0 ? '<div class="lm-popup-meta">\u2605 ' + esc(l.rating || '') + ' \u00b7 ' + esc(l.reviews || '') + '</div>' : '')
         ].join('');
         m.bindPopup(html, { autoPan: true });
         m.on('click', function () { activateCard(l.id, true); });

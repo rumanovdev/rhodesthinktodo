@@ -128,7 +128,7 @@ if (user) {
 
           {/* User Dashboard submenu removed from the primary nav — the logged-in user reaches dashboard pages via the avatar dropdown (right-aligned) instead. */}
 
-          <li><a class="mob-addlisting light" href="JavaScript:Void(0);"><i class="bi bi-geo-alt-fill me-1"></i>{t('nav.addListing')}</a></li>
+          <li><a class="mob-addlisting light" href={user ? localizePath('/dashboard-add-listing/', locale) : localizePath('/register/', locale)}><i class="bi bi-geo-alt-fill me-1"></i>{t('nav.addListing')}</a></li>
         </ul>
 
         <!-- Mobile-only language switcher inside the drawer (collapsed by default) -->

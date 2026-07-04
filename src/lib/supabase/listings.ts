@@ -64,7 +64,7 @@ export function row2card(r: any): ListingCard {
     name: categoryName,
     city: cityVal,
     address: r.address || '',
-    rating: r.rating != null ? String(r.rating) : '4.5',
+    rating: r.rating != null ? String(r.rating) : '',
     reviews: `${r.review_count ?? 0} Reviews`,
     btn: verified ? 'Verified' : 'Open',
     dollar: '€'.repeat(tier),
@@ -75,7 +75,7 @@ export function row2card(r: any): ListingCard {
     check: 'text-success',
     class: 'bg-light-success text-success',
     span: verified ? 'Verified' : 'New',
-    avarage: r.rating != null ? String(r.rating) : '4.5',
+    avarage: r.rating != null ? String(r.rating) : '',
     plus: '',
     location: [cityVal, r.country].filter(Boolean).join(', '),
     lat: r.lat ?? null,
@@ -86,7 +86,7 @@ export function row2card(r: any): ListingCard {
 // `categories` is embedded via the explicit FK hint because listing_categories
 // (subcategories join) introduced a second listings<->categories relationship,
 // which would otherwise make the embed ambiguous (PGRST201).
-export const LISTING_SELECT = '*, listing_images(url, sort_order), categories!listings_category_id_fkey(name, slug), areas!listings_area_id_fkey(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url)';
+export const LISTING_SELECT = '*, listing_images(url, sort_order), categories!listings_category_id_fkey(name, slug), areas!listings_area_id_fkey(name, slug), profiles!listings_owner_id_fkey(id, full_name, avatar_url, social_links)';
 // Back-compat alias for internal use in this module.
 const SELECT = LISTING_SELECT;
 

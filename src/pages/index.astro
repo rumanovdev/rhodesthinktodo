@@ -195,9 +195,6 @@ const motherCount = (m: any) =>
 			                    </div>
 			                    <img src={item.img} class="img-fluid" alt="Listing Image" loading="lazy">
 			                </a>
-			                <div class="position-absolute end-0 bottom-0 me-3 mb-3 z-2">
-			                    <a href="#" class="bookmarkList" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
-			                </div>
 			            </div>
 			            <div class="listing-middle-item">
 			                <div class="listing-details">
@@ -215,19 +212,12 @@ const motherCount = (m: any) =>
 			                <div class="d-flex align-items-center justify-content-between gap-2">
 			                    <div class="catdWraps">
 			                        <div class="flex-start">
-			                            <a href="#" class="d-flex align-items-center justify-content-start gap-2">
+			                            <a href={`/listing/${slugify(item.title)}/`} class="d-flex align-items-center justify-content-start gap-2">
 			                                <span class={item.span}><i class={item.icon}></i></span>
 			                                <span class="catTitle">{item.name}</span>
 			                            </a>
 			                        </div>
 			                        <div class="flex-end"><span class="moreCatcounter">{item.plus}</span></div>
-			                    </div>
-			                    <div class="listing-shares">
-			                        <div class="d-flex align-items-center justify-content-start gap-2">
-			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="View Listing"><i class="bi bi-eye-fill m-0"></i></a>
-			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
-			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Share Listing"><i class="bi bi-share-fill m-0"></i></a>
-			                        </div>
 			                    </div>
 			                </div>
 			            </div>
@@ -339,7 +329,7 @@ const motherCount = (m: any) =>
 			            </div>
 			        </div>
 			        <div class="fstsButton">
-			            <button class="btn btn-light-primary rounded-pill fw-medium" type="button">Submit Your Listing</button>
+			            <a href="/dashboard-add-listing/" class="btn btn-light-primary rounded-pill fw-medium">Submit Your Listing</a>
 			        </div>
 			    </div>
 			</div>
@@ -369,14 +359,14 @@ const motherCount = (m: any) =>
 			{blogs.slice(0, 3).map((item) => (
 			<div class="col-xl-4 col-lg-4 col-md-6">
 			    <div class="card rounded-4 shadow-sm h-100">
-			        <a href="#" class="d-block bg-gradient rounded-top">
+			        <a href={`/blog-detail/${(item as any).slug || slugify(item.title)}/`} class="d-block bg-gradient rounded-top">
 			            <img class="card-img-top hover-fade-out" src={item.img} alt="blog image" loading="lazy">
 			        </a>
 			        <div class="card-body">
 			            <a href={`/blog-detail/${(item as any).slug || slugify(item.title)}/`}><h4 class="fw-medium fs-5 lh-base mb-3">{item.title}</h4></a>
 			            <p>{item.desc}</p>
 			            <div class="d-flex align-items-center justify-content-start mt-4">
-			                <a href="#" class="badge badge-primary rounded-pill">Continue Reading</a>
+			                <a href={`/blog-detail/${(item as any).slug || slugify(item.title)}/`} class="badge badge-primary rounded-pill">Continue Reading</a>
 			            </div>
 			        </div>
 			    </div>

@@ -190,7 +190,7 @@ const markersPayload = mappable.map((l) => ({
                         <i class="bi bi-geo-alt me-1"></i>{item.location || 'No location set'}
                       </div>
                       <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-sm"><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews} Reviews</span>
+                        <span class="text-sm">{(parseInt(item.reviews) || 0) > 0 ? (<><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</>) : (<span class="badge badge-xs bg-light-primary text-primary">New</span>)}</span>
                         {item.lat !== null && item.lng !== null
                           ? <span class="badge bg-light-success text-success">On map</span>
                           : <span class="badge bg-light-secondary text-muted">No coords</span>}
@@ -238,7 +238,8 @@ const markersPayload = mappable.map((l) => ({
 
       listings.forEach(function (l) {
         if (l.lat == null || l.lng == null) return;
-        const pinLabel = l.price || (l.rating ? '★ ' + l.rating : '•');
+        const reviewsCount = parseInt(l.reviews, 10) || 0;
+        const pinLabel = l.price || (reviewsCount > 0 ? '★ ' + l.rating : '•');
         const pinIcon = L.divIcon({
           className: 'lm-pin-wrap',
           iconSize: [0, 0],
@@ -250,7 +251,7 @@ const markersPayload = mappable.map((l) => ({
           l.img ? '<img src="' + escapeHtml(l.img) + '" alt="" class="lm-popup-img" />' : '',
           '<a class="lm-popup-title" href="/listing/' + escapeHtml(l.slug) + '/">' + escapeHtml(l.title) + '</a>',
           '<div class="lm-popup-meta">' + escapeHtml(l.category || '') + ' · ' + escapeHtml(l.price || '') + '</div>',
-          '<div class="lm-popup-meta">★ ' + escapeHtml(l.rating || '') + ' · ' + escapeHtml(l.reviews || '') + '</div>',
+          reviewsCount > 0 ? '<div class="lm-popup-meta">★ ' + escapeHtml(l.rating || '') + ' · ' + escapeHtml(l.reviews || '') + '</div>' : '',
         ].join('');
         marker.bindPopup(popupHtml, { autoPan: false });
         marker.on('click', function () {

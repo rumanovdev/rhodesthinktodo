@@ -18,7 +18,9 @@ const { item } = Astro.props;
     <h4 class="listingTitle"><a href={`/listing/${item.slug}/`} class="titleLink">{item.title}</a></h4>
     <div class="text-md text-muted mt-1"><i class="bi bi-geo-alt me-1"></i>{item.location || '—'}</div>
     <div class="d-flex align-items-center justify-content-between mt-3">
-      <div class="text-sm"><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</div>
+      <div class="text-sm">{(parseInt(item.reviews) || 0) > 0
+        ? (<><i class="bi bi-star-fill text-warning me-1"></i>{item.rating} · {item.reviews}</>)
+        : (<span class="badge badge-xs bg-light-primary text-primary">New</span>)}</div>
       <div class="text-sm text-muted">{item.dollar}</div>
     </div>
   </div>
