@@ -6,6 +6,8 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import { searchListings } from '../lib/supabase/listings';
 import { getAreasWithCounts } from '../lib/supabase/taxonomy';
+import SearchBar from '../components/shared/SearchBar.astro';
+import ViewTabs from '../components/shared/ViewTabs.astro';
 import '../styles/listings-map.css';
 
 export const prerender = false;
@@ -67,6 +69,7 @@ const markersPayload = mappable.map((l) => ({
   title="Rhodes Map — Find Things to Do Near You | Rhodes Things To Do"
   description="Explore Rhodes on an interactive map. Find restaurants, hotels, tours, activities, bars and shops near you across the island of Rhodes, Greece."
   canonical="/listings-map/"
+  noindex={hasFilter}
 >
   <Navbar headerClass="header header-light head-shadow" />
 
@@ -82,80 +85,15 @@ const markersPayload = mappable.map((l) => ({
         )}
       </h1>
 
-      <form action="/listings-map/" method="get" class="lm-searchbar card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-3">
-        <div class="row g-3 align-items-end">
-          <div class="col-12 col-lg-5">
-            <label class="form-label fw-medium small text-muted mb-1">Keywords</label>
-            <div class="lm-field">
-              <i class="bi bi-search"></i>
-              <input type="search" name="q" value={q} class="lm-input" placeholder="e.g. gym, brunch" />
-            </div>
-          </div>
-          <div class="col-6 col-lg-4">
-            <label class="form-label fw-medium small text-muted mb-1">Category</label>
-            <div class="lm-field lm-select">
-              <i class="bi bi-grid"></i>
-              <select name="category" class="lm-input">
-                <option value="">All categories</option>
-                {categories.map((c: any) => (
-                  <option value={c.slug} selected={c.slug === category}>{c.name}</option>
-                ))}
-              </select>
-              <i class="bi bi-chevron-down lm-chevron"></i>
-            </div>
-          </div>
-          <div class="col-6 col-lg-3">
-            <label class="form-label fw-medium small text-muted mb-1">Location</label>
-            <div class="lm-field lm-select">
-              <i class="bi bi-geo-alt"></i>
-              <select name="area" class="lm-input">
-                <option value="">Any area</option>
-                {areasWithCounts.map((a) => (
-                  <option value={a.slug} selected={a.slug === area}>{a.name} ({a.count})</option>
-                ))}
-              </select>
-              <i class="bi bi-chevron-down lm-chevron"></i>
-            </div>
-          </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium"><i class="bi bi-search me-2"></i>Search</button>
-          </div>
-        </div>
-      </form>
+      <div class="d-flex justify-content-end mb-3">
+        <ViewTabs active="map" qs={Astro.url.search} />
+      </div>
+
+      <div class="mb-3">
+        <SearchBar q={q} category={category} area={area} action="/listings-map/" />
+      </div>
 
       <style is:global>
-        .lm-searchbar .lm-field {
-          position: relative;
-          display: flex;
-          align-items: center;
-          background: #f6f7f9;
-          border: 1px solid #e7e9ee;
-          border-radius: 12px;
-          padding: 0 12px;
-          transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-        }
-        .lm-searchbar .lm-field:focus-within {
-          background: #fff;
-          border-color: var(--bs-primary);
-          box-shadow: 0 0 0 3px color-mix(in srgb, var(--bs-primary) 14%, transparent);
-        }
-        .lm-searchbar .lm-field > i:first-child { color: #9aa0a6; font-size: 1rem; }
-        .lm-searchbar .lm-input {
-          border: 0;
-          background: transparent;
-          width: 100%;
-          padding: 11px 10px;
-          font-size: .95rem;
-          font-weight: 500;
-          color: #222;
-          outline: none;
-          appearance: none;
-        }
-        .lm-searchbar .lm-select .lm-input { padding-right: 26px; cursor: pointer; }
-        .lm-searchbar .lm-chevron {
-          position: absolute; right: 12px; pointer-events: none;
-          color: #9aa0a6; font-size: .8rem;
-        }
         /* Listing cards */
         .lm-thumb-link { position: relative; display: block; height: 100%; }
         .lm-thumb { width: 100%; height: 180px; object-fit: cover; object-position: center; display: block; }
