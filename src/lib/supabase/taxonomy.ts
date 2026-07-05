@@ -79,6 +79,21 @@ export type AreaWithCount = {
   count: number;
 };
 
+// Supabase/PostgREST caps a single response's row count, so an aggregation that
+// must see every row (not a display page) has to page through them. Areas are a
+// tiny bounded set and stay a single query; listings and their area joins do not.
+async function fetchAllRows(makeQuery: (from: number, to: number) => any): Promise<any[]> {
+  const pageSize = 1000;
+  const out: any[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data } = await makeQuery(from, from + pageSize - 1);
+    const rows = (data ?? []) as any[];
+    out.push(...rows);
+    if (rows.length < pageSize) break;
+  }
+  return out;
+}
+
 /**
  * Towns (direct children of the `rhodes` root) that have at least one published
  * listing, with a rolled-up count. A listing tagged to a neighbourhood counts
@@ -115,17 +130,17 @@ export async function getAreasWithCounts(supabase: DB | null): Promise<AreaWithC
   };
 
   // 2. Published listings -> primary area membership + published id set.
-  const { data: listingRows } = await supabase
-    .from('listings')
-    .select('id, area_id')
-    .eq('status', 'published');
-  const listings = (listingRows ?? []) as { id: string; area_id: number | null }[];
+  // Paged: a count aggregation must see every row, not just the first page.
+  const listings = (await fetchAllRows((from, to) =>
+    supabase.from('listings').select('id, area_id').eq('status', 'published').range(from, to)
+  )) as { id: string; area_id: number | null }[];
   const publishedIds = new Set(listings.map((l) => l.id));
 
-  // 3. Extra memberships from the join table, filtered to published in JS (the
-  // join table is small — this avoids a large `IN (...)` list).
-  const { data: joinRows } = await supabase.from('listing_areas').select('listing_id, area_id');
-  const joins = (joinRows ?? []) as { listing_id: string; area_id: number }[];
+  // 3. Extra area memberships from the join table (filtered to published in JS).
+  // Paged for the same reason as the listings query above.
+  const joins = (await fetchAllRows((from, to) =>
+    supabase.from('listing_areas').select('listing_id, area_id').range(from, to)
+  )) as { listing_id: string; area_id: number }[];
 
   // 4. town id -> set of DISTINCT published listing ids.
   const townListings = new Map<number, Set<string>>();
@@ -144,7 +159,7 @@ export async function getAreasWithCounts(supabase: DB | null): Promise<AreaWithC
   const out: AreaWithCount[] = [];
   for (const [townId, set] of townListings) {
     const t = byId.get(townId);
-    if (t && set.size > 0) out.push({ id: t.id, slug: t.slug, name: t.name, lat: t.lat, lng: t.lng, count: set.size });
+    if (t) out.push({ id: t.id, slug: t.slug, name: t.name, lat: t.lat, lng: t.lng, count: set.size });
   }
   out.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
   return out;
