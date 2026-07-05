@@ -2,14 +2,16 @@
 import Base from '../layouts/Base.astro';
 import Navbar from '../components/nav/Navbar.astro';
 import Footer from '../components/nav/Footer.astro';
-import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
+import { SITE } from '../lib/data/site';
+
+const LAST_UPDATED = '5 July 2026';
 ---
 <Base
   title="Cookie Policy | Rhodes Things To Do"
-  description="How Rhodes Things To Do uses cookies and Google Analytics, and how you can control your cookie preferences."
+  description="Exactly which cookies Rhodes Things To Do sets, what each one does, how long it lasts, and how to accept, decline or change your choice at any time."
   canonical="/cookie-policy/"
 >
   <Navbar headerClass="header header-light head-shadow" />
@@ -25,8 +27,8 @@ import Preloader from '../components/shared/Preloader.astro';
 			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
 				<div class="position-relative">
 					<h1 class="xl-heading">Cookie Policy</h1>
-
-</div>
+					<p class="text-muted mb-0">Last updated: {LAST_UPDATED}</p>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -40,22 +42,90 @@ import Preloader from '../components/shared/Preloader.astro';
 		<div class="row justify-content-start g-4">
 			<div class="col-xl-10 col-lg-12 col-md-12">
 				<article class="article">
-				<h2>Cookie Policy</h2>
-					<p>This Cookie Policy explains how Rhodes Things To Do uses cookies and similar technologies when you visit our website, and the choices you have.</p>
+
+					<div class="card border rounded-4 bg-light p-4 mb-5">
+						<h2 class="fs-5 mb-3"><i class="bi bi-cookie text-primary me-2"></i>The short version</h2>
+						<ul class="mb-0 text-muted">
+							<li>We set <strong>one essential cookie</strong> to keep you signed in — that's it, by default.</li>
+							<li>Google Analytics cookies are set <strong>only if you press Accept</strong> in our banner. Decline and no tracking runs.</li>
+							<li>You can <strong>change your choice at any time</strong> with the button below.</li>
+						</ul>
+					</div>
+
 					<h4 class="fs-4">What are cookies?</h4>
-					<p>Cookies are small text files stored on your device when you visit a website. They help the site work properly, remember your preferences, and understand how the site is used.</p>
-					<h4 class="fs-4">Which cookies we use</h4>
-					<p>We use two types of cookies:</p>
-					<ul>
-						<li><strong>Essential cookies</strong> — required for the site to function, for example to keep you signed in and to remember your cookie choice. These are always active.</li>
-						<li><strong>Analytics cookies</strong> — set by Google Analytics (GA4) to help us understand how visitors use the site so we can improve it. These are only used if you accept them.</li>
-					</ul>
-					<h4 class="fs-4">Your choices &amp; consent</h4>
-					<p>When you first visit, a banner lets you <strong>Accept</strong> or <strong>Decline</strong> analytics cookies. We use Google Consent Mode, so analytics tracking stays disabled until you accept. You can change your mind at any time by clearing your cookies, and you can also block or delete cookies through your browser settings.</p>
-					<h4 class="fs-4">Third-party cookies</h4>
-					<p>Some cookies may be set by third-party services we use, such as Google Analytics and embedded maps. These providers have their own privacy and cookie policies.</p>
+					<p>Cookies are small text files a website stores on your device. Some are needed for the site to work (like staying signed in); others are used for statistics. We also use your browser's local storage for one thing: remembering your cookie choice itself.</p>
+
+					<h4 class="fs-4">Exactly which cookies we use</h4>
+					<p>This is the complete list — there are no others:</p>
+					<div class="table-responsive mb-4">
+						<table class="table table-bordered align-middle">
+							<thead class="table-light">
+								<tr><th>Name</th><th>Type</th><th>Purpose</th><th>Lasts</th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><code>sb-…-auth-token</code><br /><span class="text-muted text-sm">(may appear split as <code>.0</code>, <code>.1</code>)</span></td>
+									<td><span class="badge bg-success">Essential</span></td>
+									<td>Keeps you signed in to your account. Set only when you log in.</td>
+									<td>Up to 400 days, refreshed while you use the site. Removed on sign-out.</td>
+								</tr>
+								<tr>
+									<td><code>sb-…-auth-token-code-verifier</code></td>
+									<td><span class="badge bg-success">Essential</span></td>
+									<td>Secures the sign-in handshake (including Sign in with Google).</td>
+									<td>Minutes — removed as soon as sign-in completes.</td>
+								</tr>
+								<tr>
+									<td><code>_ga</code></td>
+									<td><span class="badge bg-warning text-dark">Analytics</span></td>
+									<td>Google Analytics 4 — distinguishes anonymous visitors.</td>
+									<td>2 years. <strong>Set only after you press Accept.</strong></td>
+								</tr>
+								<tr>
+									<td><code>_ga_CXN08G00SM</code></td>
+									<td><span class="badge bg-warning text-dark">Analytics</span></td>
+									<td>Google Analytics 4 — keeps visit/session state.</td>
+									<td>2 years. <strong>Set only after you press Accept.</strong></td>
+								</tr>
+								<tr>
+									<td><code>cookie-consent</code><br /><span class="text-muted text-sm">(local storage, not a cookie)</span></td>
+									<td><span class="badge bg-success">Essential</span></td>
+									<td>Remembers whether you accepted or declined analytics.</td>
+									<td>Until you clear it or use the reset button below.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<h4 class="fs-4">How consent works here</h4>
+					<p>
+						On your first visit a banner asks you to <strong>Accept</strong> or <strong>Decline</strong> analytics cookies. Dismissing the banner counts as declining.
+						We use <strong>Google Consent Mode v2</strong> with everything set to “denied” by default — meaning Google Analytics stores nothing and sets no cookies unless and until you accept.
+						Signing in, browsing, booking and every other feature of the site work exactly the same whether you accept or decline.
+					</p>
+
+					<h4 class="fs-4">Change your choice</h4>
+					<p>Withdrawing consent is as easy as giving it. Click the button below to reset your saved choice — the cookie banner will appear again and you can pick freshly:</p>
+					<p>
+						<button type="button" id="reset-cookie-choice" class="btn btn-primary rounded-pill px-4 fw-medium"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset my cookie choice</button>
+					</p>
+					<p class="text-muted text-md">
+						Note: resetting stops future tracking. To also remove Google's existing <code>_ga</code> cookies, clear cookies for this site in your browser
+						(all major browsers: Settings → Privacy → Cookies → see data for rhodesthingstodo.com → remove).
+					</p>
+
+					<h4 class="fs-4">Third-party requests that are not cookies</h4>
+					<p>
+						Some page assets load from third-party servers: the Jost font from Google Fonts, and map tiles from OpenStreetMap/CARTO when you open a map.
+						Like any web request, those servers see your IP address when delivering the file, under their own privacy policies — but they do not set tracking cookies on this site.
+					</p>
+
 					<h4 class="fs-4">More information</h4>
-					<p>For more on how we handle your data, see our <a href="/privacy-policy/">Privacy Policy</a>. If you have any questions, contact us at <a href="mailto:info@rhodesthingstodo.com">info@rhodesthingstodo.com</a>.</p>
+					<p>
+						How we handle personal data in general — including your GDPR rights — is covered in our <a href="/privacy-policy/">Privacy Policy</a>.
+						Questions? Contact us at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+					</p>
+
 				</article>
 			</div>
 		</div>
@@ -63,11 +133,23 @@ import Preloader from '../components/shared/Preloader.astro';
 </section>
 <!-- Articles Section End -->
 
-
-<!-- Call To Action Start -->
-
-<!-- Call To Action End -->
-
+	<script is:inline>
+		// "Reset my cookie choice" — remove the stored decision and revoke GA
+		// consent, then reload so the consent banner shows again.
+		(function () {
+			var btn = document.getElementById('reset-cookie-choice');
+			if (!btn) return;
+			btn.addEventListener('click', function () {
+				try { localStorage.removeItem('cookie-consent'); } catch (e) {}
+				try {
+					window.dataLayer = window.dataLayer || [];
+					function gtag() { dataLayer.push(arguments); }
+					gtag('consent', 'update', { analytics_storage: 'denied' });
+				} catch (e) {}
+				location.reload();
+			});
+		})();
+	</script>
 
 	<LoginModal />
 	<SearchOffcanvas />
