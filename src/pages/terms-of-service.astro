@@ -1,0 +1,183 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import { SITE } from '../lib/data/site';
+
+const LAST_UPDATED = '5 July 2026';
+---
+<Base
+  title="Terms of Service | Rhodes Things To Do"
+  description="The terms for using Rhodes Things To Do — accounts, business listings, the free-listing backlink condition, booking requests, reviews, content rules and liability."
+  canonical="/terms-of-service/"
+>
+  <Navbar headerClass="header header-light head-shadow" />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Page Title Start -->
+<section class="bg-light">
+	<div class="container">
+		<div class="row justify-content-start align-items-center pt-lg-0 pt-5">
+			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
+				<div class="position-relative">
+					<h1 class="xl-heading">Terms of Service</h1>
+					<p class="text-muted mb-0">Last updated: {LAST_UPDATED}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Page Title End -->
+
+
+<!-- Articles Section -->
+<section>
+	<div class="container">
+		<div class="row justify-content-start g-4">
+			<div class="col-xl-10 col-lg-12 col-md-12">
+				<article class="article">
+
+					<div class="card border rounded-4 bg-light p-4 mb-5">
+						<h2 class="fs-5 mb-3"><i class="bi bi-file-earmark-text text-primary me-2"></i>The short version</h2>
+						<ul class="mb-0 text-muted">
+							<li>Rhodes Things To Do is a <strong>free directory</strong> — we take no payments and no commission.</li>
+							<li>Booking requests go <strong>directly to the business</strong>; any deal you make is between you and them.</li>
+							<li>Business listings are free — the one condition is a <strong>link back to us</strong> from your website.</li>
+							<li>You own the content you post; you give us permission to <strong>display it</strong> on the site.</li>
+							<li>Keep reviews honest and listings accurate — we remove content that breaks the rules.</li>
+						</ul>
+					</div>
+
+					<h4 class="fs-4">1. Who we are and what these terms cover</h4>
+					<p>
+						These Terms of Service ("Terms") govern your use of <a href="https://rhodesthingstodo.com">rhodesthingstodo.com</a> (the "Site"), a travel directory for the island of Rhodes, Greece,
+						operated by Rhodes Things To Do ("we", "us"), operated from Greece. You can reach us at <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
+					</p>
+					<p>
+						By using the Site — browsing, creating an account, listing a business, sending a booking request or writing a review — you agree to these Terms.
+						How we handle personal data is described separately in our <a href="/privacy-policy/">Privacy Policy</a> and <a href="/cookie-policy/">Cookie Policy</a>.
+					</p>
+
+					<h4 class="fs-4">2. The service</h4>
+					<p>
+						The Site is a free directory of places, activities and businesses in Rhodes. We display business listings, let visitors discover them by category, area, search and map,
+						and let visitors send booking requests and write reviews. <strong>We process no payments, hold no funds and charge no commission.</strong>
+					</p>
+
+					<h4 class="fs-4">3. Your account</h4>
+					<ul>
+						<li>You must be at least <strong>16 years old</strong> to create an account.</li>
+						<li>Provide accurate information and keep your credentials secure — you are responsible for activity on your account.</li>
+						<li>You can delete your account yourself at any time (<em>Dashboard → My Profile → Danger zone</em>). Deletion is permanent and removes your profile, listings, bookings, bookmarks and reviews.</li>
+					</ul>
+
+					<h4 class="fs-4">4. Business listings and the backlink condition</h4>
+					<p>
+						Listing a business is free. In return we ask for one thing: a <strong>visible link from the business's website back to rhodesthingstodo.com</strong> (a text link or our
+						"Featured on Rhodes Things To Do" badge — a copy-paste snippet is provided in your dashboard). We may check for this link automatically, and we may unpublish
+						listings whose backlink is removed until it is restored.
+					</p>
+					<p>By submitting a listing you confirm that:</p>
+					<ul>
+						<li>you are authorised to represent the business;</li>
+						<li>the information you provide (name, description, address, contact details, photos, prices) is accurate and kept up to date;</li>
+						<li>you hold the rights to all photos and text you upload.</li>
+					</ul>
+					<p>We may review, edit for formatting, decline or remove any listing, and we don't guarantee placement, ranking or inclusion.</p>
+
+					<h4 class="fs-4">5. Booking requests — we are an intermediary</h4>
+					<p>
+						The Site transmits booking <em>requests</em> from visitors to businesses. A request is not a confirmed reservation: the business decides whether to accept it and contacts you directly.
+						<strong>Any resulting agreement is made directly between you and the business.</strong> We are not a party to it, we do not process payment for it, and we are not responsible for
+						the availability, quality, safety, pricing or delivery of any product or service listed. Complaints about a booking or service should be addressed to the business;
+						we will nevertheless gladly hear about bad experiences at <a href={`mailto:${SITE.email}`}>{SITE.email}</a> — they inform whether a business stays listed.
+					</p>
+
+					<h4 class="fs-4">6. Reviews</h4>
+					<ul>
+						<li>Reviews must reflect a <strong>genuine personal experience</strong> with the listed business.</li>
+						<li>Do not review your own business, a competitor's business, or post in exchange for payment or incentives.</li>
+						<li>No defamatory, obscene or unlawful content, and no personal data of third parties.</li>
+					</ul>
+					<p>Businesses who believe a review breaches these rules can report it to <a href={`mailto:${SITE.email}`}>{SITE.email}</a>; see section 9 for how we handle reports.</p>
+
+					<h4 class="fs-4">7. Your content — ownership and licence</h4>
+					<p>
+						You keep ownership of everything you post (listings, photos, reviews, profile details). By posting, you grant us a non-exclusive, worldwide, royalty-free licence to
+						host, display, reproduce and promote that content <em>in connection with operating and promoting the Site</em> (for example showing your listing in search results,
+						category pages, maps and social media previews). The licence ends when the content is deleted, except for copies in backups kept for a limited period.
+					</p>
+
+					<h4 class="fs-4">8. Acceptable use</h4>
+					<p>You agree not to:</p>
+					<ul>
+						<li>post false, misleading, unlawful, infringing or harmful content;</li>
+						<li>impersonate any person or business, or list a business without authority;</li>
+						<li>scrape, harvest or bulk-download Site content or user data without our written permission;</li>
+						<li>interfere with the Site's operation, attempt to bypass security, or probe for vulnerabilities;</li>
+						<li>use the Site to send spam or unsolicited marketing.</li>
+					</ul>
+
+					<h4 class="fs-4">9. Moderation, reports and enforcement</h4>
+					<p>
+						We may remove or restrict content, unpublish listings, and suspend or terminate accounts that breach these Terms or applicable law. Anyone can report content to
+						<a href={`mailto:${SITE.email}`}>{SITE.email}</a> — include a link to the content and the reason. We review reports promptly, and where we remove or restrict
+						content we inform the affected user of the reason, unless the law requires otherwise. If you disagree with a moderation decision, reply to our notice and we will
+						take a second look.
+					</p>
+
+					<h4 class="fs-4">10. Our content</h4>
+					<p>
+						The Site's design, branding, editorial guides and databases are ours or our licensors' and are protected by intellectual property law. You may link to any page of the Site,
+						and businesses may use the "Featured on Rhodes Things To Do" badge to link back to us. Any other reproduction of Site content requires our permission.
+					</p>
+
+					<h4 class="fs-4">11. Accuracy and third-party links</h4>
+					<p>
+						Listing details (opening hours, prices, menus, availability) are provided by businesses or compiled editorially and can change without notice — verify important details with the
+						business before travelling. The Site links to external websites (business websites, maps, social profiles) that we do not control and are not responsible for.
+					</p>
+
+					<h4 class="fs-4">12. Liability</h4>
+					<p>
+						The Site is provided free of charge, "as is" and "as available". To the maximum extent permitted by law, we exclude all warranties and are not liable for indirect or
+						consequential losses, loss of profits or data, or for the acts and omissions of listed businesses. Nothing in these Terms excludes or limits liability that cannot be
+						excluded under applicable law — including liability for gross negligence, wilful misconduct, or your statutory consumer rights.
+					</p>
+
+					<h4 class="fs-4">13. Termination</h4>
+					<p>
+						You can stop using the Site or delete your account at any time. We may suspend or terminate accounts and remove content for breach of these Terms, unlawful activity,
+						or extended inactivity of unpublished drafts, and we may discontinue the service with reasonable notice. Sections 7, 10, 11 and 12 survive termination.
+					</p>
+
+					<h4 class="fs-4">14. Changes to these terms</h4>
+					<p>
+						We may update these Terms as the service evolves. The "Last updated" date above always reflects the current version, and we will highlight material changes on the Site.
+						Continuing to use the Site after a change means you accept the updated Terms.
+					</p>
+
+					<h4 class="fs-4">15. Governing law and disputes</h4>
+					<p>
+						These Terms are governed by Greek law, and disputes belong to the courts of Rhodes, Greece — except that if you are a consumer in the EU, you keep the protection of the
+						mandatory rules and the courts of your country of residence. Most issues are resolved fastest by simply emailing us first: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+					</p>
+
+				</article>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Articles Section End -->
+
+	<LoginModal />
+	<SearchOffcanvas />
+
+	<Footer />
+</Base>
