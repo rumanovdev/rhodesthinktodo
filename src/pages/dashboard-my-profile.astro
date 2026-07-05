@@ -167,7 +167,7 @@ const delError = p.get('delerror');
                   <p class="text-muted">Deleting your account is permanent. Your listings, bookings, and reviews will also be removed.</p>
                   <form action="/api/profile/delete" method="post" onsubmit="return confirm('This cannot be undone. Really delete your account?')">
                     <label class="lableTitle">Type <code>DELETE</code> to confirm</label>
-                    <input type="text" name="confirm" required pattern="DELETE" class="form-control mb-3" style="max-width: 240px;" />
+                    <input type="text" name="confirm" required pattern="\s*[Dd][Ee][Ll][Ee][Tt][Ee]\s*" title="Type DELETE to confirm" class="form-control mb-3" style="max-width: 240px;" />
                     <button type="submit" class="btn btn-outline-danger rounded-pill fw-medium"><i class="bi bi-trash me-2"></i>Delete my account</button>
                   </form>
                 </div>
