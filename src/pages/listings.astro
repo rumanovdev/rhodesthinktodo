@@ -6,15 +6,29 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { getPublishedListings, slugify } from '../lib/supabase/listings';
+import { searchListings, slugify } from '../lib/supabase/listings';
+import SearchBar from '../components/shared/SearchBar.astro';
+import ViewTabs from '../components/shared/ViewTabs.astro';
 export const prerender = false;
 
-const listings6 = await getPublishedListings(Astro.locals.supabase);
+const params = Astro.url.searchParams;
+const q = params.get('q')?.trim() ?? '';
+const category = params.get('category')?.trim() ?? '';
+const area = params.get('area')?.trim() ?? '';
+const hasFilter = Boolean(q || category || area);
+
+const listings6 = await searchListings(Astro.locals.supabase, {
+  q: q || undefined,
+  categorySlug: category || undefined,
+  areaSlug: area || undefined,
+  limit: 200,
+});
 ---
 <Base
   title="Rhodes Listings — Places to Eat, Stay & Explore | Rhodes Things To Do"
   description="Explore listings across Rhodes, Greece in a simple list view — restaurants, hotels, tours, activities and more, with ratings and local reviews."
   canonical="/listings/"
+  noindex={hasFilter}
 >
   <Navbar headerClass="header header-light head-shadow position-relative" />
 
@@ -23,29 +37,13 @@ const listings6 = await getPublishedListings(Astro.locals.supabase);
 <div class="clearfix"></div>
 
 <!-- Filter Search Options Start -->
-<div class="bg-white py-3 sticky-lg-top z-3">
-	<div class="container">
-
-		<!-- Components/Listings/Grid-Layouts/grid-layout-02/filter.html -->
-		<!-- Banner Title -->
-		<div class="row justify-content-between align-items-center g-3">
-		    <div class="col">
-		        <ul class="nav nav-pills nav-fill gap-2 small d-inline-flex lightprimary border rounded-pill p-1 float-end">
-		          <li class="nav-item" role="presentation">
-		            <a href="/listings/" class="nav-link rounded-pill active" id="buy1" aria-selected="true"><i class="bi bi-list me-2"></i>List</a>
-		          </li>
-		          <li class="nav-item" role="presentation">
-		            <a href="/listings-grid/" class="nav-link rounded-pill" id="rent1" aria-selected="false"><i class="bi bi-ui-radios-grid me-2"></i>Grid</a>
-		          </li>
-		          <li class="nav-item" role="presentation">
-		            <a href="/listings-map/" class="nav-link rounded-pill" id="mapv1" aria-selected="false"><i class="bi bi-geo-alt me-2"></i>Map</a>
-		          </li>
-		        </ul>
-		    </div>
-		</div>
-		<!-- Banner Title -->
-
-	</div>
+<div class="bg-white py-3 border-bottom">
+  <div class="container">
+    <div class="d-flex justify-content-end mb-3">
+      <ViewTabs active="list" qs={Astro.url.search} />
+    </div>
+    <SearchBar q={q} category={category} area={area} action="/listings/" />
+  </div>
 </div>
 <!-- Filter Search Options End -->
 
@@ -62,6 +60,13 @@ const listings6 = await getPublishedListings(Astro.locals.supabase);
 			</div>
 		</div>
 
+		{listings6.length === 0 ? (
+		  <div class="text-center py-5">
+		    <i class="bi bi-search fs-1 text-muted"></i>
+		    <p class="text-muted mb-2 mt-2">No listings matched your search.</p>
+		    <a href="/listings/" class="btn btn-light rounded-pill">Clear filters</a>
+		  </div>
+		) : (
 		<div class="row align-items-center justify-content-center g-xl-4 g-3">
 
 			<!-- Components/Listings/List-Layouts/list-layout-02/listings9.html -->
@@ -134,7 +139,7 @@ const listings6 = await getPublishedListings(Astro.locals.supabase);
 			))}
 
 		</div>
-
+		)}
 
 	</div>
 </section>
