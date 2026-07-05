@@ -69,6 +69,12 @@ if (Astro.locals.user) {
 												<button type="submit" class="btn btn-primary full-width fw-medium">Log In</button>
 											</div>
 
+											<div class="d-flex align-items-center mb-4"><hr class="flex-grow-1 m-0" /><span class="px-3 text-muted text-md">or</span><hr class="flex-grow-1 m-0" /></div>
+
+											<div class="form-group mb-4">
+												<a href={`/api/auth/google?next=${encodeURIComponent(next)}`} class="btn btn-whites border full-width fw-medium"><i class="fa-brands fa-google me-2"></i>Continue with Google</a>
+											</div>
+
 											<div class="modal-flex-item d-flex align-items-center justify-content-between mb-3">
 												<div class="modal-flex-first">
 												</div>

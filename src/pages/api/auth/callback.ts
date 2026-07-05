@@ -10,6 +10,9 @@ export const GET: APIRoute = async ({ url, locals, redirect }) => {
 
   const code = url.searchParams.get('code');
   const type = url.searchParams.get('type');
+  // Same-site relative paths only — prevents open-redirect via ?next=.
+  const rawNext = (url.searchParams.get('next') ?? '').trim();
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/dashboard-user/';
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -23,5 +26,5 @@ export const GET: APIRoute = async ({ url, locals, redirect }) => {
     return redirect('/reset-password/');
   }
 
-  return redirect('/dashboard-user/');
+  return redirect(next);
 };
