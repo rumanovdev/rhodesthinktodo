@@ -17,7 +17,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
   if (!supabase || !user) return fail('unauthenticated', 401);
 
   const form = await request.formData();
-  const confirm = String(form.get('confirm') ?? '');
+  // Forgiving match — users often type "delete" or leave a stray space, and
+  // the old strict compare made the button look broken.
+  const confirm = String(form.get('confirm') ?? '').trim().toUpperCase();
   if (confirm !== 'DELETE') {
     return redirect('/dashboard-my-profile/?delerror=' + encodeURIComponent('Type DELETE to confirm'));
   }
