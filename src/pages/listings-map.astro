@@ -39,7 +39,7 @@ const selectedArea = area ? areasWithCounts.find((a) => a.slug === area) ?? null
 
 // Friendly label for the active filter (shown above the results list).
 const filterParts: string[] = [];
-if (q) filterParts.push(`“${q}”`);
+if (q) filterParts.push(`for “${q}”`);
 if (category) {
   const catName = categories.find((c: any) => c.slug === category)?.name ?? category;
   filterParts.push(`in ${catName}`);
@@ -76,7 +76,7 @@ const markersPayload = mappable.map((l) => ({
 
     <aside class="lm-sidebar-col">
       <h1 class={hasFilter ? 'h4 fw-semibold mb-3' : 'visually-hidden'}>
-        {hasFilter ? `Results for ${filterLabel}` : 'Explore things to do in Rhodes on the map'}
+        {hasFilter ? `Results ${filterLabel}` : 'Explore things to do in Rhodes on the map'}
         {hasFilter && (
           <> <a href="/listings-map/" class="text-primary fw-medium fs-6 ms-2">clear filters</a></>
         )}
