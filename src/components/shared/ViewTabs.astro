@@ -13,7 +13,7 @@ const tabs = [
 <ul class="nav nav-pills nav-fill gap-2 small d-inline-flex lightprimary border rounded-pill p-1">
   {tabs.map((t) => (
     <li class="nav-item" role="presentation">
-      <a href={t.href} class={`nav-link rounded-pill ${active === t.key ? 'active' : ''}`} aria-selected={active === t.key ? 'true' : 'false'}>
+      <a href={t.href} class={`nav-link rounded-pill ${active === t.key ? 'active' : ''}`} aria-current={active === t.key ? 'page' : undefined}>
         <i class={`bi ${t.icon} me-2`}></i>{t.label}
       </a>
     </li>

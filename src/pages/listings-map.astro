@@ -31,7 +31,7 @@ const mappable = allPublished.filter((l) => l.lat !== null && l.lng !== null);
 const totalCount = allPublished.length;
 const mappableCount = mappable.length;
 
-// Load the category list so the inline search form's dropdown reflects reality.
+// Load the category list so the results label can show the category name.
 const { data: categoryRows } =
   (await supabase?.from('categories').select('slug, name').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const categories = categoryRows ?? [];
