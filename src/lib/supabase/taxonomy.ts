@@ -132,14 +132,14 @@ export async function getAreasWithCounts(supabase: DB | null): Promise<AreaWithC
   // 2. Published listings -> primary area membership + published id set.
   // Paged: a count aggregation must see every row, not just the first page.
   const listings = (await fetchAllRows((from, to) =>
-    supabase.from('listings').select('id, area_id').eq('status', 'published').range(from, to)
+    supabase.from('listings').select('id, area_id').eq('status', 'published').order('id').range(from, to)
   )) as { id: string; area_id: number | null }[];
   const publishedIds = new Set(listings.map((l) => l.id));
 
   // 3. Extra area memberships from the join table (filtered to published in JS).
   // Paged for the same reason as the listings query above.
   const joins = (await fetchAllRows((from, to) =>
-    supabase.from('listing_areas').select('listing_id, area_id').range(from, to)
+    supabase.from('listing_areas').select('listing_id, area_id').order('listing_id').order('area_id').range(from, to)
   )) as { listing_id: string; area_id: number }[];
 
   // 4. town id -> set of DISTINCT published listing ids.
