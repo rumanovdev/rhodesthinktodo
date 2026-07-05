@@ -5,6 +5,7 @@ import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import { searchListings } from '../lib/supabase/listings';
+import { getAreasWithCounts } from '../lib/supabase/taxonomy';
 import '../styles/listings-map.css';
 
 export const prerender = false;
@@ -13,14 +14,14 @@ const supabase = Astro.locals.supabase;
 const params = Astro.url.searchParams;
 const q = params.get('q')?.trim() ?? '';
 const category = params.get('category')?.trim() ?? '';
-const city = params.get('city')?.trim() ?? '';
-const hasFilter = Boolean(q || category || city);
+const area = params.get('area')?.trim() ?? '';
+const hasFilter = Boolean(q || category || area);
 
 // One query drives both the sidebar and the markers.
 const allPublished = await searchListings(supabase, {
   q: q || undefined,
   categorySlug: category || undefined,
-  city: city || undefined,
+  areaSlug: area || undefined,
   limit: 200,
 });
 const mappable = allPublished.filter((l) => l.lat !== null && l.lng !== null);
@@ -33,6 +34,9 @@ const { data: categoryRows } =
   (await supabase?.from('categories').select('slug, name').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const categories = categoryRows ?? [];
 
+const areasWithCounts = await getAreasWithCounts(supabase);
+const selectedArea = area ? areasWithCounts.find((a) => a.slug === area) ?? null : null;
+
 // Friendly label for the active filter (shown above the results list).
 const filterParts: string[] = [];
 if (q) filterParts.push(`“${q}”`);
@@ -40,7 +44,10 @@ if (category) {
   const catName = categories.find((c: any) => c.slug === category)?.name ?? category;
   filterParts.push(`in ${catName}`);
 }
-if (city) filterParts.push(`near ${city}`);
+if (area) {
+  const areaName = areasWithCounts.find((a) => a.slug === area)?.name ?? area;
+  filterParts.push(`in ${areaName}`);
+}
 const filterLabel = filterParts.join(' ');
 
 const markersPayload = mappable.map((l) => ({
@@ -99,9 +106,15 @@ const markersPayload = mappable.map((l) => ({
           </div>
           <div class="col-6 col-lg-3">
             <label class="form-label fw-medium small text-muted mb-1">Location</label>
-            <div class="lm-field">
+            <div class="lm-field lm-select">
               <i class="bi bi-geo-alt"></i>
-              <input type="text" name="city" value={city} class="lm-input" placeholder="Any" />
+              <select name="area" class="lm-input">
+                <option value="">Any area</option>
+                {areasWithCounts.map((a) => (
+                  <option value={a.slug} selected={a.slug === area}>{a.name} ({a.count})</option>
+                ))}
+              </select>
+              <i class="bi bi-chevron-down lm-chevron"></i>
             </div>
           </div>
           <div class="col-12">
@@ -206,7 +219,13 @@ const markersPayload = mappable.map((l) => ({
     </aside>
 
     <div class="lm-map-col">
-      <div id="listingsMap" role="application" aria-label="Map of listings"></div>
+      <div
+        id="listingsMap"
+        role="application"
+        aria-label="Map of listings"
+        data-area-lat={selectedArea?.lat ?? ''}
+        data-area-lng={selectedArea?.lng ?? ''}
+      ></div>
     </div>
   </section>
 
@@ -263,7 +282,13 @@ const markersPayload = mappable.map((l) => ({
       if (bounds.length > 0) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
       } else {
-        map.setView([36.30, 28.10], 10); // focus on Rhodes, Greece
+        var aLat = parseFloat(mapEl.getAttribute('data-area-lat'));
+        var aLng = parseFloat(mapEl.getAttribute('data-area-lng'));
+        if (!isNaN(aLat) && !isNaN(aLng)) {
+          map.setView([aLat, aLng], 13); // selected town with no mappable listings
+        } else {
+          map.setView([36.30, 28.10], 10); // focus on Rhodes, Greece
+        }
       }
 
       document.querySelectorAll('.lm-card').forEach(function (card) {
