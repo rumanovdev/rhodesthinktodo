@@ -155,7 +155,7 @@ export async function getListingBySlug(supabase: DB | null, slug: string) {
 
 export async function searchListings(
   supabase: DB | null,
-  { q, categorySlug, city, limit = 40 }: { q?: string; categorySlug?: string; city?: string; limit?: number }
+  { q, categorySlug, city, areaSlug, limit = 40 }: { q?: string; categorySlug?: string; city?: string; areaSlug?: string; limit?: number }
 ): Promise<ListingCard[]> {
   if (!supabase) return [];
 
@@ -188,6 +188,23 @@ export async function searchListings(
   if (categorySlug) {
     const { data: cat } = await supabase.from('categories').select('id').eq('slug', categorySlug).maybeSingle();
     if (cat?.id) query = query.eq('category_id', cat.id);
+  }
+  if (areaSlug) {
+    const { data: areaRow } = await supabase.from('areas').select('id').eq('slug', areaSlug).eq('is_active', true).maybeSingle();
+    if (!areaRow?.id) return []; // unknown/inactive area slug -> no matches
+    const areaIds: number[] = [areaRow.id];
+    const { data: lvl1 } = await supabase.from('areas').select('id').eq('parent_id', areaRow.id).eq('is_active', true);
+    const l1 = (lvl1 ?? []).map((r: any) => r.id);
+    if (l1.length) {
+      areaIds.push(...l1);
+      const { data: lvl2 } = await supabase.from('areas').select('id').in('parent_id', l1).eq('is_active', true);
+      areaIds.push(...(lvl2 ?? []).map((r: any) => r.id));
+    }
+    const { data: la } = await supabase.from('listing_areas').select('listing_id').in('area_id', areaIds);
+    const areaListingIds = (la ?? []).map((r: any) => r.listing_id);
+    const parts = [`area_id.in.(${areaIds.join(',')})`];
+    if (areaListingIds.length) parts.push(`id.in.(${areaListingIds.join(',')})`);
+    query = query.or(parts.join(','));
   }
   query = query.order('is_featured', { ascending: false }).order('rating', { ascending: false, nullsFirst: false }).limit(limit);
   const { data, error } = await query;
