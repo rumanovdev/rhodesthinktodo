@@ -99,15 +99,35 @@ const motherCount = (m: any) =>
 		// so only ONE video ever downloads; no-JS visitors see the poster/bg image.
 		(function () {
 			var v = document.currentScript.previousElementSibling;
-			var mobile = window.matchMedia('(max-width: 767px)').matches;
-			if (mobile) v.poster = '/assets/video/hero-mobile-poster.jpg';
-			var s = document.createElement('source');
-			s.src = mobile ? '/assets/video/hero-mobile.mp4' : '/assets/video/hero-desktop.mp4';
-			s.type = 'video/mp4';
-			v.appendChild(s);
-			v.load();
-			var p = v.play();
-			if (p && p.catch) p.catch(function () {});
+
+			// Respect users who asked for less motion or less data: skip the
+			// download entirely — they keep the poster/background image.
+			var conn = navigator.connection || {};
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || conn.saveData) return;
+
+			var mq = window.matchMedia('(max-width: 767px)');
+			var current = '';
+			function apply() {
+				var src = mq.matches ? '/assets/video/hero-mobile.mp4' : '/assets/video/hero-desktop.mp4';
+				if (src === current) return;
+				current = src;
+				v.poster = mq.matches ? '/assets/video/hero-mobile-poster.jpg' : '/assets/video/hero-desktop-poster.jpg';
+				v.src = src;
+				v.load();
+				var p = v.play();
+				if (p && p.catch) p.catch(function () {});
+			}
+			apply();
+			// Swap the clip if the viewport crosses the breakpoint (tablet rotation).
+			if (mq.addEventListener) mq.addEventListener('change', apply);
+
+			// Autoplay can be blocked (iOS Low Power Mode, strict settings) —
+			// retry once on the first touch/click so the hero comes alive.
+			function kick() {
+				if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+			}
+			document.addEventListener('touchstart', kick, { once: true, passive: true });
+			document.addEventListener('click', kick, { once: true });
 		})();
 	</script>
 	<div class="container position-relative">
