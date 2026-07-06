@@ -170,9 +170,22 @@ export async function getTaxonomyListings(
   if (!supabase) return { listings: [], total: 0 };
   const { category, subcategory, area } = res;
 
-  // Category id set (used for mother-category hub pages, no subcategory selected).
+  // "Things to Do" is the site's umbrella hub: with no subcategory selected it
+  // deliberately shows EVERY published listing (tours, activities, food, …),
+  // not just listings filed under its own subtree.
+  const isCatchAll = !subcategory && category.slug === 'things-to-do';
+
+  // Category id set (used for mother-category hub pages, no subcategory selected),
+  // plus listings linked to any of those categories via listing_categories —
+  // previously hubs matched only the primary category_id, so join-table-linked
+  // listings appeared on subcategory pages but were missing from the hub.
   let categoryIds: number[] = [];
-  if (!subcategory) categoryIds = [category.id, ...(await subcategoryIds(supabase, category.id))];
+  let hubListingIds: string[] = [];
+  if (!subcategory && !isCatchAll) {
+    categoryIds = [category.id, ...(await subcategoryIds(supabase, category.id))];
+    const { data } = await supabase.from('listing_categories').select('listing_id').in('category_id', categoryIds);
+    hubListingIds = (data ?? []).map((r: any) => r.listing_id);
+  }
 
   // Precise subcategory match: listings whose main category is the subcategory,
   // or that carry it in listing_categories.
@@ -197,8 +210,12 @@ export async function getTaxonomyListings(
       const parts = [`category_id.eq.${subcategory.id}`];
       if (subListingIds.length) parts.push(`id.in.(${subListingIds.join(',')})`);
       q = q.or(parts.join(','));
+    } else if (isCatchAll) {
+      // no category filter — the Things to Do hub lists everything published
     } else if (categoryIds.length) {
-      q = q.in('category_id', categoryIds);
+      const parts = [`category_id.in.(${categoryIds.join(',')})`];
+      if (hubListingIds.length) parts.push(`id.in.(${hubListingIds.join(',')})`);
+      q = q.or(parts.join(','));
     }
     if (area) {
       const parts = [`area_id.in.(${areaIds.join(',')})`];
