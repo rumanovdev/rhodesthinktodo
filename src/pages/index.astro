@@ -90,10 +90,26 @@ const motherCount = (m: any) =>
 		loop
 		playsinline
 		preload="auto"
-		poster="/assets/video/hero-rhodes-poster.jpg"
+		poster="/assets/video/hero-desktop-poster.jpg"
 	>
-		<source src="/assets/video/hero-rhodes.mp4" type="video/mp4" />
 	</video>
+	<script is:inline>
+		// Responsive hero video: phones load the lighter portrait clip (3.3MB)
+		// instead of the 1080p landscape one (8.4MB). Source is attached by JS
+		// so only ONE video ever downloads; no-JS visitors see the poster/bg image.
+		(function () {
+			var v = document.currentScript.previousElementSibling;
+			var mobile = window.matchMedia('(max-width: 767px)').matches;
+			if (mobile) v.poster = '/assets/video/hero-mobile-poster.jpg';
+			var s = document.createElement('source');
+			s.src = mobile ? '/assets/video/hero-mobile.mp4' : '/assets/video/hero-desktop.mp4';
+			s.type = 'video/mp4';
+			v.appendChild(s);
+			v.load();
+			var p = v.play();
+			if (p && p.catch) p.catch(function () {});
+		})();
+	</script>
 	<div class="container position-relative">
 
 		<!-- Heading Rwo -->
