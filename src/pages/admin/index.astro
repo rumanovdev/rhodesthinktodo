@@ -87,8 +87,8 @@ const drafts = listingsByStatus['draft'] ?? 0;
               { label: 'Registered users', value: usersCount, icon: 'bi-people', href: '/admin/users/' },
               { label: 'Published listings', value: published, icon: 'bi-ui-radios-grid', href: '/admin/listings/' },
               { label: 'Draft listings', value: drafts, icon: 'bi-pencil-square', href: '/admin/listings/' },
-              { label: 'Bookings', value: bookingsCount, icon: 'bi-calendar2-check', href: '/admin/' },
-              { label: 'Reviews', value: reviewsCount, icon: 'bi-star', href: '/admin/' },
+              { label: 'Bookings', value: bookingsCount, icon: 'bi-calendar2-check', href: '/admin/bookings/' },
+              { label: 'Reviews', value: reviewsCount, icon: 'bi-star', href: '/admin/reviews/' },
               { label: 'Views (30d)', value: totalViews, icon: 'bi-eye', href: '/admin/analytics/' },
               { label: 'Unique visitors (30d)', value: uniqueVisitors, icon: 'bi-person-check', href: '/admin/analytics/' },
             ].map((s) => (

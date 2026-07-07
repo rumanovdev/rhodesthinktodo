@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import AdminSidebar from '../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+const rating = Astro.url.searchParams.get('rating') ?? '';
+
+let rows: any[] = [];
+if (admin) {
+  let q = admin
+    .from('reviews')
+    .select('id, rating, body, created_at, listings(title, slug), profiles:user_id(full_name)')
+    .order('created_at', { ascending: false })
+    .limit(300);
+  if (rating) q = q.eq('rating', Number(rating));
+  const { data } = await q;
+  rows = data ?? [];
+}
+const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+---
+<Base noindex title="Admin — Reviews | Rhodes Things To Do">
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5 admin-viewport">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="reviews" /></div>
+        <div class="col-xl-10 col-lg-9">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <h1 class="fs-3 fw-semibold mb-0">Reviews <span class="text-muted fs-6 fw-normal">({rows.length})</span></h1>
+            <div class="btn-group">
+              <a href="/admin/reviews/" class={`btn btn-sm ${!rating ? 'btn-primary' : 'btn-light border'}`}>All</a>
+              {[5, 4, 3, 2, 1].map((r) => (
+                <a href={`/admin/reviews/?rating=${r}`} class={`btn btn-sm ${rating === String(r) ? 'btn-primary' : 'btn-light border'}`}>{r}★</a>
+              ))}
+            </div>
+          </div>
+
+          {notice && <div class="alert alert-success">{notice}</div>}
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <div class="card rounded-4 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Listing</th><th>Reviewer</th><th>Rating</th>
+                    <th>Review</th><th>Posted</th><th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.length === 0 && <tr><td colspan="6" class="text-center text-muted py-5">No reviews{rating ? ` with ${rating} stars` : ' yet'}.</td></tr>}
+                  {rows.map((r: any) => (
+                    <tr>
+                      <td class="ps-4">
+                        {r.listings?.slug
+                          ? <a href={`/listing/${r.listings.slug}/#reviews`} target="_blank" class="fw-medium text-dark text-decoration-none">{r.listings.title}</a>
+                          : <span class="text-muted">(deleted listing)</span>}
+                      </td>
+                      <td class="text-sm">{r.profiles?.full_name || '—'}</td>
+                      <td>
+                        <span class="text-warning text-nowrap">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <i class={`bi ${i < r.rating ? 'bi-star-fill' : 'bi-star'}`}></i>
+                          ))}
+                        </span>
+                      </td>
+                      <td class="text-sm" style="max-width:320px"><span class="d-inline-block text-truncate" style="max-width:320px" title={r.body ?? ''}>{r.body || '—'}</span></td>
+                      <td class="text-sm">{fmtDate(r.created_at)}</td>
+                      <td class="text-end pe-4">
+                        <form method="post" action="/api/admin/reviews" onsubmit="return confirm('Delete this review? The listing rating is recalculated.');">
+                          <input type="hidden" name="review_id" value={r.id} />
+                          <input type="hidden" name="_action" value="delete" />
+                          <button type="submit" class="btn btn-sm btn-light border rounded-pill text-danger" title="Delete review"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
