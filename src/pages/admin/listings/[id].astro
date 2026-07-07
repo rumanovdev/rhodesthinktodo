@@ -165,7 +165,7 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
                   </div>
                 )}
                 <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
-                <small class="text-muted">Add up to 5 new photos (JPEG/PNG/WebP, 5 MB each). The first image becomes the hero when none is set.</small>
+                <small class="text-muted">Add up to 5 new photos (JPEG/PNG/WebP — big photos are shrunk automatically). The first image becomes the hero when none is set.</small>
               </div>
 
               <div class="col-12 d-flex gap-2 mt-2">
@@ -179,4 +179,12 @@ const mainMotherId = mainCat ? (mainCat.parent_id ?? mainCat.id) : null;
       </div>
     </div>
   </section>
+  <script>
+    import { wireCompressingInput, wireUploadForm } from '../../../lib/client/image-compress';
+    const imagesInput = document.querySelector<HTMLInputElement>('input[name="images"]');
+    if (imagesInput) {
+      wireCompressingInput(imagesInput);
+      if (imagesInput.form) wireUploadForm(imagesInput.form);
+    }
+  </script>
 </Base>

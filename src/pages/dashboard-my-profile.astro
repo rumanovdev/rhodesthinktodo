@@ -183,4 +183,10 @@ const delError = p.get('delerror');
 
   <SearchOffcanvas />
   <LoginModal />
+  <script>
+    import { wireCompressingInput } from '../lib/client/image-compress';
+    const avatarInput = document.querySelector<HTMLInputElement>('input[name="avatar"]');
+    // Server caps avatars at 1 MB — shrink hard so any photo fits.
+    if (avatarInput) wireCompressingInput(avatarInput, { maxFiles: 1, maxEdge: 512, quality: 0.85, maxTotalBytes: 900 * 1024 });
+  </script>
 </Base>

@@ -262,7 +262,7 @@ const STEPS = [
                     <label for="images" class="dropzone-like d-block rounded-4 text-center p-4 mb-2" style="cursor:pointer">
                       <i class="bi bi-cloud-arrow-up fs-1 text-primary d-block mb-1"></i>
                       <span class="fw-medium">Click to add photos <span class="text-danger">*</span></span>
-                      <span class="d-block text-muted text-sm">1–5 photos · JPEG/PNG/WebP · 5 MB each</span>
+                      <span class="d-block text-muted text-sm">1–5 photos · JPEG/PNG/WebP — big photos are shrunk automatically</span>
                     </label>
                     <input type="file" id="images" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" />
                     <div id="photoPreviews" class="d-flex flex-wrap gap-3 mb-1"></div>
@@ -357,6 +357,8 @@ const STEPS = [
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" is:inline></script>
 
   <script>
+    import { compressImageFile, MAX_TOTAL_UPLOAD_BYTES } from '../lib/client/image-compress';
+
     // ============================== Wizard nav ==============================
     const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-step-panel]'));
     const stepBtns = Array.from(document.querySelectorAll<HTMLElement>('[data-step-btn]'));
@@ -533,42 +535,68 @@ const STEPS = [
         previews.appendChild(wrap);
       });
     }
-    function checkPhotos() {
-      const ok = store.files.length > 0;
-      if (!ok) {
-        photoError.textContent = 'Please add at least one photo.';
-        photoError.classList.remove('d-none');
-      } else {
-        photoError.classList.add('d-none');
-      }
-      return ok;
+    let photosBusy = false;
+    function photoMsg(text: string, isError = true) {
+      photoError.textContent = text;
+      photoError.classList.toggle('d-none', !text);
+      photoError.classList.toggle('text-danger', isError);
+      photoError.classList.toggle('text-muted', !isError);
     }
-    fileInput?.addEventListener('change', () => {
-      photoError.classList.add('d-none');
+    function totalBytes() {
+      return Array.from(store.files).reduce((n, f) => n + f.size, 0);
+    }
+    function checkPhotos() {
+      if (photosBusy) { photoMsg('Still optimising your photos — one moment…', false); return false; }
+      if (store.files.length === 0) { photoMsg('Please add at least one photo.'); return false; }
+      if (totalBytes() > MAX_TOTAL_UPLOAD_BYTES) { photoMsg('These photos are too large to upload together — please remove one.'); return false; }
+      photoMsg('');
+      return true;
+    }
+    fileInput?.addEventListener('change', async () => {
+      const picked = Array.from(fileInput.files ?? []);
+      if (picked.length === 0) return;
+      photosBusy = true;
+      photoMsg('Optimising photos…', false);
       const msgs: string[] = [];
-      for (const f of Array.from(fileInput.files ?? [])) {
-        if (store.files.length >= MAX_FILES) { msgs.push('Maximum 5 photos — extra files were skipped.'); break; }
-        if (f.size > MAX_BYTES) { msgs.push(`"${f.name}" is over 5 MB and was skipped.`); continue; }
-        store.items.add(f);
+      try {
+        for (const f of picked) {
+          if (store.files.length >= MAX_FILES) { msgs.push('Maximum 5 photos — extra files were skipped.'); break; }
+          if (f.size > MAX_BYTES * 5) { msgs.push(`"${f.name}" is too large and was skipped.`); continue; }
+          const c = await compressImageFile(f);
+          if (totalBytes() + c.size > MAX_TOTAL_UPLOAD_BYTES) { msgs.push(`"${f.name}" was skipped — the upload would be too large.`); continue; }
+          store.items.add(c);
+        }
+      } finally {
+        photosBusy = false;
       }
       fileInput.files = store.files;
-      if (msgs.length) { photoError.textContent = msgs.join(' '); photoError.classList.remove('d-none'); }
+      photoMsg(msgs.join(' '));
       renderPreviews();
     });
 
     // ============================== Submit ==============================
     const form = document.getElementById('addListingForm') as HTMLFormElement;
+    const submitBtnHTML = submitBtn.innerHTML;
     form.addEventListener('submit', (e) => {
       // Validate every step; jump to the first invalid one.
       for (let i = 0; i < panels.length; i++) {
         if (!validatePanel(i)) {
           e.preventDefault();
           current = i; maxVisited = Math.max(maxVisited, i); renderStep();
+          // Re-run now that the step is visible so the browser's validation
+          // bubble actually shows (it can't focus fields in hidden panels).
+          validatePanel(i);
           return;
         }
       }
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting…';
+    });
+    // Restore the button when returning via browser Back (bfcache), otherwise
+    // the form reappears with a dead "Submitting…" button.
+    window.addEventListener('pageshow', () => {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = submitBtnHTML;
     });
 
     renderStep();
