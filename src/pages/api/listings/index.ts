@@ -44,10 +44,19 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     categoryId = cat?.id ?? null;
   }
 
-  const description = String(form.get('description') ?? '').trim() || null;
+  const description = String(form.get('description') ?? '').trim();
+  if (!description) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('A description is required'));
+  }
   // Card blurb, hard-capped at 240 chars (the DB has a matching check constraint).
-  const shortDescription = String(form.get('short_description') ?? '').trim().slice(0, 240) || null;
-  const phone = String(form.get('phone') ?? '').trim() || null;
+  const shortDescription = String(form.get('short_description') ?? '').trim().slice(0, 240);
+  if (!shortDescription) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('A short description is required'));
+  }
+  const phone = String(form.get('phone') ?? '').trim();
+  if (!phone) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('A phone number is required'));
+  }
   // Website: accept bare domains, store with a scheme; reject anything that
   // still doesn't parse as http(s).
   let website: string | null = String(form.get('website') ?? '').trim() || null;
@@ -60,7 +69,13 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       website = null;
     }
   }
-  const address = String(form.get('address') ?? '').trim() || null;
+  if (!website) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('A valid website is required, e.g. www.example.com'));
+  }
+  const address = String(form.get('address') ?? '').trim();
+  if (!address) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('A street address is required'));
+  }
   const city = String(form.get('city') ?? '').trim() || null;
   const country = String(form.get('country') ?? '').trim() || null;
   const areaRaw = String(form.get('area_id') ?? '').trim();
@@ -76,6 +91,14 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     lat < -90 || lat > 90 || lng < -180 || lng > 180
   ) {
     return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('Valid latitude and longitude are required so the listing appears on the map.'));
+  }
+  // Require at least one usable photo up front, so we never create a listing
+  // that would end up imageless after the upload step.
+  const images = form
+    .getAll('images')
+    .filter((f): f is File => f instanceof File && f.size > 0 && f.size <= MAX_BYTES && ALLOWED.has(f.type));
+  if (images.length === 0) {
+    return redirect('/dashboard-add-listing/?error=' + encodeURIComponent('At least one photo is required (JPEG, PNG or WebP, up to 5 MB)'));
   }
   const priceTier = Number(String(form.get('price_tier') ?? '2')) || 2;
   const statusRaw = String(form.get('status') ?? 'draft');
@@ -130,10 +153,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     p_amenity_ids: nums('amenities'),
   });
 
-  // Image uploads. Use service-role client so writes aren't blocked by storage RLS
-  // (we validate ownership above).
-  const images = form.getAll('images').filter((f): f is File => f instanceof File && f.size > 0);
-  if (images.length > 0) {
+  // Image uploads (validated above). Use service-role client so writes aren't
+  // blocked by storage RLS (we validate ownership above).
+  {
     const serviceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
     const supaUrl = import.meta.env.PUBLIC_SUPABASE_URL;
     if (serviceKey && supaUrl) {
@@ -141,8 +163,6 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
       let heroSet = false;
       for (let i = 0; i < images.length && i < 5; i++) {
         const file = images[i];
-        if (file.size > MAX_BYTES) continue;
-        if (!ALLOWED.has(file.type)) continue;
         const ext = file.type.split('/')[1];
         const path = `${inserted.id}/${Date.now()}-${i}.${ext}`;
         const { error: upErr } = await admin.storage.from(BUCKET).upload(path, file, {

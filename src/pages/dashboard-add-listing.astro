@@ -103,13 +103,13 @@ const STEPS = [
                         <div class="invalid-hint text-danger text-sm mt-1 d-none" data-hint="category">Please pick a category.</div>
                       </div>
                       <div class="col-12">
-                        <label for="short_description" class="form-label fw-medium">Short description <span class="text-muted fw-normal">— the card blurb</span></label>
-                        <textarea id="short_description" name="short_description" rows="2" maxlength="240" class="form-control rounded-3" placeholder="One or two punchy lines shown on the listing cards. Leave blank and we'll use the start of your full description."></textarea>
+                        <label for="short_description" class="form-label fw-medium">Short description <span class="text-muted fw-normal">— the card blurb</span> <span class="text-danger">*</span></label>
+                        <textarea id="short_description" name="short_description" rows="2" maxlength="240" required class="form-control rounded-3" placeholder="One or two punchy lines shown on the listing cards."></textarea>
                         <small class="text-muted"><span id="shortDescCount">0</span>/240 characters</small>
                       </div>
                       <div class="col-12">
-                        <label for="description" class="form-label fw-medium">Description</label>
-                        <textarea id="description" name="description" rows="4" class="form-control rounded-3" placeholder="What makes this place special? Mention what you offer, opening season, anything visitors should know."></textarea>
+                        <label for="description" class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+                        <textarea id="description" name="description" rows="4" required class="form-control rounded-3" placeholder="What makes this place special? Mention what you offer, opening season, anything visitors should know."></textarea>
                         <small class="text-muted">The full write-up shown on the listing page. You can edit it any time.</small>
                       </div>
                       <script is:inline>
@@ -142,8 +142,8 @@ const STEPS = [
                         </select>
                       </div>
                       <div class="col-md-6">
-                        <label for="address" class="form-label fw-medium">Street address</label>
-                        <input type="text" id="address" name="address" class="form-control form-control-lg rounded-3" placeholder="e.g. Sokratous 45" />
+                        <label for="address" class="form-label fw-medium">Street address <span class="text-danger">*</span></label>
+                        <input type="text" id="address" name="address" required class="form-control form-control-lg rounded-3" placeholder="e.g. Sokratous 45" />
                       </div>
                       <input type="hidden" id="city" name="city" />
 
@@ -182,7 +182,7 @@ const STEPS = [
                 <div class="step-panel" data-step-panel="2" hidden>
                   <div class="card rounded-4 shadow-sm p-4">
                     <h4 class="fs-5 fw-medium mb-1">The details visitors care about</h4>
-                    <p class="text-muted text-md mb-4">Everything here is optional — but the more you add, the better your listing ranks on the “Best … in …” pages.</p>
+                    <p class="text-muted text-md mb-4">Phone and website are required — and the more you add, the better your listing ranks on the “Best … in …” pages.</p>
                     <div class="row g-4">
 
                       <div class="col-12" id="subcatSection">
@@ -240,13 +240,13 @@ const STEPS = [
                         </div>
                       </div>
                       <div class="col-md-4">
-                        <label for="phone" class="form-label fw-medium">Phone</label>
-                        <input type="tel" id="phone" name="phone" class="form-control rounded-3" placeholder="698 000 0000" inputmode="tel" autocomplete="tel" />
+                        <label for="phone" class="form-label fw-medium">Phone <span class="text-danger">*</span></label>
+                        <input type="tel" id="phone" name="phone" required class="form-control rounded-3" placeholder="698 000 0000" inputmode="tel" autocomplete="tel" />
                         <div class="invalid-feedback">Greek number, e.g. 698 000 0000 or +30 22410 12345.</div>
                       </div>
                       <div class="col-md-4">
-                        <label for="website" class="form-label fw-medium">Website</label>
-                        <input type="text" id="website" name="website" class="form-control rounded-3" placeholder="www.example.com" inputmode="url" autocomplete="url" />
+                        <label for="website" class="form-label fw-medium">Website <span class="text-danger">*</span></label>
+                        <input type="text" id="website" name="website" required class="form-control rounded-3" placeholder="www.example.com" inputmode="url" autocomplete="url" />
                       </div>
 
                     </div>
@@ -257,12 +257,12 @@ const STEPS = [
                 <div class="step-panel" data-step-panel="3" hidden>
                   <div class="card rounded-4 shadow-sm p-4">
                     <h4 class="fs-5 fw-medium mb-1">Photos &amp; publish</h4>
-                    <p class="text-muted text-md mb-4">Listings with photos get far more clicks. The first photo becomes your cover image.</p>
+                    <p class="text-muted text-md mb-4">At least one photo is required — the first photo becomes your cover image.</p>
 
                     <label for="images" class="dropzone-like d-block rounded-4 text-center p-4 mb-2" style="cursor:pointer">
                       <i class="bi bi-cloud-arrow-up fs-1 text-primary d-block mb-1"></i>
-                      <span class="fw-medium">Click to add photos</span>
-                      <span class="d-block text-muted text-sm">Up to 5 · JPEG/PNG/WebP · 5 MB each</span>
+                      <span class="fw-medium">Click to add photos <span class="text-danger">*</span></span>
+                      <span class="d-block text-muted text-sm">1–5 photos · JPEG/PNG/WebP · 5 MB each</span>
                     </label>
                     <input type="file" id="images" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" />
                     <div id="photoPreviews" class="d-flex flex-wrap gap-3 mb-1"></div>
@@ -391,6 +391,7 @@ const STEPS = [
         hint.classList.add('d-none');
       }
       if (idx === 2 && !checkPhone()) return false;
+      if (idx === 3 && !checkPhotos()) return false;
       // Native validation for visible fields in this panel
       const fields = Array.from(panel.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
       for (const f of fields) {
@@ -531,6 +532,16 @@ const STEPS = [
         }
         previews.appendChild(wrap);
       });
+    }
+    function checkPhotos() {
+      const ok = store.files.length > 0;
+      if (!ok) {
+        photoError.textContent = 'Please add at least one photo.';
+        photoError.classList.remove('d-none');
+      } else {
+        photoError.classList.add('d-none');
+      }
+      return ok;
     }
     fileInput?.addEventListener('change', () => {
       photoError.classList.add('d-none');
