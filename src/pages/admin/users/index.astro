@@ -1,9 +1,9 @@
 ---
-import Base from '../../layouts/Base.astro';
-import Navbar from '../../components/nav/Navbar.astro';
-import AdminSidebar from '../../components/admin/AdminSidebar.astro';
-import { getServiceClient } from '../../lib/supabase/admin';
-import { getAdminUsers } from '../../lib/admin/users';
+import Base from '../../../layouts/Base.astro';
+import Navbar from '../../../components/nav/Navbar.astro';
+import AdminSidebar from '../../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../../lib/supabase/admin';
+import { getAdminUsers } from '../../../lib/admin/users';
 
 export const prerender = false;
 if (!Astro.locals.isAdmin) return Astro.redirect('/');
@@ -56,7 +56,7 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                 </select>
               </div>
               <div class="col-md-5">
-                <label class="form-label text-sm text-muted mb-1">Search (name, email, phone, location)</label>
+                <label class="form-label text-sm text-muted mb-1">Search (name, email, phone, location, website)</label>
                 <input type="search" name="q" value={q} class="form-control" placeholder="Search users…" />
               </div>
               <div class="col-md-3 d-flex gap-2">
@@ -73,7 +73,7 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                 <thead class="bg-light">
                   <tr>
                     <th class="ps-4">User</th><th>Email</th><th>Phone</th><th>Location</th>
-                    <th>Listings</th><th>Categories</th><th>Joined</th><th class="text-end pe-4">Actions</th>
+                    <th>Website</th><th>Listings</th><th>Joined</th><th class="text-end pe-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,28 +83,30 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                   {users.map((u) => (
                     <tr>
                       <td class="ps-4">
-                        <div class="d-flex align-items-center gap-2">
+                        <a href={`/admin/users/${u.id}/`} class="d-flex align-items-center gap-2 text-decoration-none">
                           <span class="square--40 circle bg-light-primary text-primary fw-semibold d-inline-flex align-items-center justify-content-center">{(u.name || u.email || '?').slice(0, 1).toUpperCase()}</span>
                           <div>
-                            <div class="fw-medium">{u.name}</div>
+                            <div class="fw-medium text-dark">{u.name}</div>
                             {u.isAdmin && <span class="badge bg-dark rounded-pill">admin</span>}
                           </div>
-                        </div>
+                        </a>
                       </td>
                       <td class="text-sm">{u.email || '—'}</td>
                       <td class="text-sm">{u.phone || '—'}</td>
                       <td class="text-sm">{u.location || '—'}</td>
-                      <td>{u.listings}</td>
-                      <td>
-                        <div class="d-flex flex-wrap gap-1">
-                          {u.categories.length === 0 ? <span class="text-muted text-sm">—</span> :
-                            u.categories.map((c) => <span class="badge bg-light-primary text-primary rounded-pill">{c}</span>)}
-                        </div>
+                      <td class="text-sm">
+                        {u.website ? (
+                          <a href={u.website} target="_blank" rel="noopener nofollow" class="text-decoration-none" title={u.website}>
+                            {u.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                          </a>
+                        ) : '—'}
                       </td>
+                      <td><a href={`/admin/users/${u.id}/`} class="text-decoration-none">{u.listings}</a></td>
                       <td class="text-sm">{fmtDate(u.joined)}</td>
                       <td class="text-end pe-4">
                         {u.id !== meId ? (
                           <div class="d-inline-flex gap-1">
+                            <a href={`/admin/users/${u.id}/`} class="btn btn-sm btn-light border rounded-pill" title="View user & listings"><i class="bi bi-eye"></i></a>
                             <form method="post" action="/api/admin/users">
                               <input type="hidden" name="user_id" value={u.id} />
                               <input type="hidden" name="_action" value="toggle_admin" />
@@ -119,7 +121,10 @@ const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString('en-GB'
                             </form>
                           </div>
                         ) : (
-                          <span class="text-sm text-muted">you</span>
+                          <div class="d-inline-flex gap-1 align-items-center">
+                            <a href={`/admin/users/${u.id}/`} class="btn btn-sm btn-light border rounded-pill" title="View user & listings"><i class="bi bi-eye"></i></a>
+                            <span class="text-sm text-muted">you</span>
+                          </div>
                         )}
                       </td>
                     </tr>
