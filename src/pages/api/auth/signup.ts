@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { sendEmail } from '../../../lib/email/resend';
+import { welcomeEmail } from '../../../lib/email/templates';
 
 export const prerender = false;
 
@@ -34,6 +36,14 @@ export const POST: APIRoute = async ({ request, locals, redirect, url }) => {
   });
   if (error) {
     return redirect('/register/?error=' + encodeURIComponent(error.message));
+  }
+
+  // Welcome email — fire-and-forget, never blocks or fails the signup.
+  try {
+    const msg = welcomeEmail(fullName);
+    await sendEmail({ to: email, subject: msg.subject, html: msg.html });
+  } catch (e) {
+    console.error('[signup] welcome email failed:', e);
   }
 
   return redirect('/login/?notice=' + encodeURIComponent('Check your email to confirm your account, then sign in.'));

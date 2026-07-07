@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../../lib/supabase/types';
-import { sendEmail, esc } from '../../lib/email/resend';
+import { sendEmail } from '../../lib/email/resend';
+import { resolveUserEmail } from '../../lib/email/users';
+import { bookingOwnerEmail, bookingGuestEmail, type BookingEmailData } from '../../lib/email/templates';
 import { SITE, absUrl } from '../../lib/data/site';
 
 export const prerender = false;
@@ -85,20 +85,6 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
 
 // ---------------------------------------------------------------------------
 
-async function resolveOwnerEmail(ownerId: string | null): Promise<string | null> {
-  if (!ownerId) return null;
-  const serviceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supaUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-  if (!serviceKey || !supaUrl) return null;
-  try {
-    const admin = createClient<Database>(supaUrl, serviceKey, { auth: { persistSession: false } });
-    const { data } = await admin.auth.admin.getUserById(ownerId);
-    return data?.user?.email ?? null;
-  } catch {
-    return null;
-  }
-}
-
 type BookingEmailInput = {
   listingTitle: string;
   listingSlug: string;
@@ -113,54 +99,41 @@ type BookingEmailInput = {
 };
 
 async function sendBookingEmails(b: BookingEmailInput): Promise<void> {
-  const listingUrl = absUrl(`/listing/${b.listingSlug}/`);
-  const dates = b.endDate ? `${b.startDate} → ${b.endDate}` : (b.startDate || '—');
+  const data: BookingEmailData = {
+    listingTitle: b.listingTitle,
+    listingUrl: absUrl(`/listing/${b.listingSlug}/`),
+    requesterName: b.requesterName,
+    requesterEmail: b.requesterEmail,
+    requesterPhone: b.requesterPhone,
+    dates: b.endDate ? `${b.startDate} → ${b.endDate}` : (b.startDate || '—'),
+    guests: b.guests,
+    notes: b.notes,
+  };
 
-  const detailsRows = `
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Listing</td><td style="padding:4px 0"><a href="${esc(listingUrl)}">${esc(b.listingTitle)}</a></td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Name</td><td style="padding:4px 0">${esc(b.requesterName || '—')}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td style="padding:4px 0">${esc(b.requesterEmail || '—')}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Phone</td><td style="padding:4px 0">${esc(b.requesterPhone || '—')}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Dates</td><td style="padding:4px 0">${esc(dates)}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Guests</td><td style="padding:4px 0">${esc(b.guests)}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666">Notes</td><td style="padding:4px 0">${esc(b.notes || '—')}</td></tr>`;
-
-  const wrap = (heading: string, intro: string) => `
-    <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a">
-      <h2 style="color:#e11d48;margin:0 0 12px">${esc(heading)}</h2>
-      <p style="margin:0 0 16px">${intro}</p>
-      <table style="border-collapse:collapse;width:100%;font-size:14px">${detailsRows}</table>
-      <p style="margin:20px 0 0;font-size:12px;color:#999">Sent by ${esc(SITE.name)} · ${esc(SITE.url)}</p>
-    </div>`;
-
-  const ownerEmail = await resolveOwnerEmail(b.ownerId);
+  const ownerEmail = await resolveUserEmail(b.ownerId);
   const notifyTo = ownerEmail || SITE.email; // fall back to the site inbox so no request is lost
 
   const tasks: Promise<unknown>[] = [];
 
   // 1. Notify the listing owner (or the site inbox).
+  const ownerMsg = bookingOwnerEmail(data);
   tasks.push(
     sendEmail({
       to: notifyTo,
-      subject: `New booking request — ${b.listingTitle}`,
-      html: wrap(
-        'New booking request',
-        `You have a new booking request for <strong>${esc(b.listingTitle)}</strong>. Reply to this email to reach the guest directly.`
-      ),
+      subject: ownerMsg.subject,
+      html: ownerMsg.html,
       ...(b.requesterEmail ? { replyTo: b.requesterEmail } : {}),
     })
   );
 
   // 2. Confirm to the guest.
   if (b.requesterEmail) {
+    const guestMsg = bookingGuestEmail(data);
     tasks.push(
       sendEmail({
         to: b.requesterEmail,
-        subject: `We received your booking request — ${b.listingTitle}`,
-        html: wrap(
-          'Your request has been sent',
-          `Thanks${b.requesterName ? `, ${esc(b.requesterName)}` : ''}! We've passed your request for <strong>${esc(b.listingTitle)}</strong> to the host. No payment has been charged — the host will confirm your booking. Here's what you sent:`
-        ),
+        subject: guestMsg.subject,
+        html: guestMsg.html,
         replyTo: SITE.email,
       })
     );
