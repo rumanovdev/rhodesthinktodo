@@ -225,9 +225,12 @@ export async function getListingsByOwner(supabase: DB | null, ownerId: string): 
 
 export async function getBookmarkedListings(supabase: DB | null, userId: string): Promise<ListingCard[]> {
   if (!supabase) return [];
+  // Embed the full listing row. `SELECT` starts with `*, ` and the star must
+  // survive — the old `.substring(2)` stripped it, selecting only the joined
+  // tables and leaving title/slug/id undefined on every bookmark card.
   const { data } = await supabase
     .from('bookmarks')
-    .select('listings(' + SELECT.substring(2) + ')')
+    .select('listings(' + SELECT + ')')
     .eq('user_id', userId);
   if (!data) return [];
   return data
