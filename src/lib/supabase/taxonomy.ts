@@ -70,6 +70,101 @@ export async function getTopAreas(supabase: DB | null): Promise<TaxArea[]> {
   return (data ?? []) as TaxArea[];
 }
 
+export type AreaWithCount = {
+  id: number;
+  slug: string;
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  count: number;
+};
+
+// Supabase/PostgREST caps a single response's row count, so an aggregation that
+// must see every row (not a display page) has to page through them. Areas are a
+// tiny bounded set and stay a single query; listings and their area joins do not.
+async function fetchAllRows(makeQuery: (from: number, to: number) => any): Promise<any[]> {
+  const pageSize = 1000;
+  const out: any[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data } = await makeQuery(from, from + pageSize - 1);
+    const rows = (data ?? []) as any[];
+    out.push(...rows);
+    if (rows.length < pageSize) break;
+  }
+  return out;
+}
+
+/**
+ * Towns (direct children of the `rhodes` root) that have at least one published
+ * listing, with a rolled-up count. A listing tagged to a neighbourhood counts
+ * under its parent town; a listing spanning two towns counts in both; a listing
+ * in two neighbourhoods of the same town counts once. Ordered by count desc,
+ * then name asc. Powers the /listings-map Location dropdown.
+ */
+export async function getAreasWithCounts(supabase: DB | null): Promise<AreaWithCount[]> {
+  if (!supabase) return [];
+
+  // 1. All active areas -> id map + root.
+  const { data: areaRows } = await supabase
+    .from('areas')
+    .select('id, slug, name, parent_id, lat, lng')
+    .eq('is_active', true);
+  const areas = (areaRows ?? []) as {
+    id: number; slug: string; name: string; parent_id: number | null; lat: number | null; lng: number | null;
+  }[];
+  const byId = new Map(areas.map((a) => [a.id, a]));
+  const root = areas.find((a) => a.slug === 'rhodes');
+  if (!root) return [];
+
+  // The "town" for any area = the ancestor whose parent is the root (a town is
+  // its own town). Root itself or an out-of-tree area -> null. The loop cap
+  // guards against accidental parent cycles.
+  const townOf = (areaId: number): number | null => {
+    let cur = byId.get(areaId);
+    for (let i = 0; cur && i < 10; i++) {
+      if (cur.id === root.id) return null;
+      if (cur.parent_id === root.id) return cur.id;
+      cur = cur.parent_id != null ? byId.get(cur.parent_id) : undefined;
+    }
+    return null;
+  };
+
+  // 2. Published listings -> primary area membership + published id set.
+  // Paged: a count aggregation must see every row, not just the first page.
+  const listings = (await fetchAllRows((from, to) =>
+    supabase.from('listings').select('id, area_id').eq('status', 'published').order('id').range(from, to)
+  )) as { id: string; area_id: number | null }[];
+  const publishedIds = new Set(listings.map((l) => l.id));
+
+  // 3. Extra area memberships from the join table (filtered to published in JS).
+  // Paged for the same reason as the listings query above.
+  const joins = (await fetchAllRows((from, to) =>
+    supabase.from('listing_areas').select('listing_id, area_id').order('listing_id').order('area_id').range(from, to)
+  )) as { listing_id: string; area_id: number }[];
+
+  // 4. town id -> set of DISTINCT published listing ids.
+  const townListings = new Map<number, Set<string>>();
+  const add = (areaId: number | null, listingId: string) => {
+    if (areaId == null) return;
+    const town = townOf(areaId);
+    if (town == null) return;
+    let set = townListings.get(town);
+    if (!set) townListings.set(town, (set = new Set()));
+    set.add(listingId);
+  };
+  for (const l of listings) add(l.area_id, l.id);
+  for (const j of joins) if (publishedIds.has(j.listing_id)) add(j.area_id, j.listing_id);
+
+  // 5. Emit towns with count>0, sorted by count desc then name asc.
+  const out: AreaWithCount[] = [];
+  for (const [townId, set] of townListings) {
+    const t = byId.get(townId);
+    if (t) out.push({ id: t.id, slug: t.slug, name: t.name, lat: t.lat, lng: t.lng, count: set.size });
+  }
+  out.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  return out;
+}
+
 async function subcategoryIds(supabase: DB, motherId: number): Promise<number[]> {
   const { data } = await supabase.from('categories').select('id').eq('parent_id', motherId).eq('is_active', true);
   return (data ?? []).map((r: any) => r.id);

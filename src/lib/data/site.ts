@@ -8,8 +8,8 @@ export const SITE = {
   defaultOgImage: '/assets/img/hero-rhodes.webp',
   locale: 'en_US',
   // Contact / NAP — keep in sync with the footer and LocalBusiness schema.
-  phone: '+30 690 791 7676',
-  phoneHref: 'tel:+306907917676',
+  phone: '+30 694 360 0527',
+  phoneHref: 'tel:+306943600527',
   email: 'info@rhodesthingstodo.com',
   address: {
     locality: 'Rhodes',

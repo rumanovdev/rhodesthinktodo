@@ -5,6 +5,9 @@ import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import { searchListings } from '../lib/supabase/listings';
+import { getAreasWithCounts } from '../lib/supabase/taxonomy';
+import SearchBar from '../components/shared/SearchBar.astro';
+import ViewTabs from '../components/shared/ViewTabs.astro';
 import '../styles/listings-map.css';
 
 export const prerender = false;
@@ -13,14 +16,14 @@ const supabase = Astro.locals.supabase;
 const params = Astro.url.searchParams;
 const q = params.get('q')?.trim() ?? '';
 const category = params.get('category')?.trim() ?? '';
-const city = params.get('city')?.trim() ?? '';
-const hasFilter = Boolean(q || category || city);
+const area = params.get('area')?.trim() ?? '';
+const hasFilter = Boolean(q || category || area);
 
 // One query drives both the sidebar and the markers.
 const allPublished = await searchListings(supabase, {
   q: q || undefined,
   categorySlug: category || undefined,
-  city: city || undefined,
+  areaSlug: area || undefined,
   limit: 200,
 });
 const mappable = allPublished.filter((l) => l.lat !== null && l.lng !== null);
@@ -28,19 +31,25 @@ const mappable = allPublished.filter((l) => l.lat !== null && l.lng !== null);
 const totalCount = allPublished.length;
 const mappableCount = mappable.length;
 
-// Load the category list so the inline search form's dropdown reflects reality.
+// Load the category list so the results label can show the category name.
 const { data: categoryRows } =
   (await supabase?.from('categories').select('slug, name').eq('is_active', true).order('sort_order')) ?? { data: [] };
 const categories = categoryRows ?? [];
 
+const areasWithCounts = await getAreasWithCounts(supabase);
+const selectedArea = area ? areasWithCounts.find((a) => a.slug === area) ?? null : null;
+
 // Friendly label for the active filter (shown above the results list).
 const filterParts: string[] = [];
-if (q) filterParts.push(`“${q}”`);
+if (q) filterParts.push(`for “${q}”`);
 if (category) {
   const catName = categories.find((c: any) => c.slug === category)?.name ?? category;
   filterParts.push(`in ${catName}`);
 }
-if (city) filterParts.push(`near ${city}`);
+if (area) {
+  const areaName = areasWithCounts.find((a) => a.slug === area)?.name ?? area;
+  filterParts.push(`in ${areaName}`);
+}
 const filterLabel = filterParts.join(' ');
 
 const markersPayload = mappable.map((l) => ({
@@ -60,6 +69,7 @@ const markersPayload = mappable.map((l) => ({
   title="Rhodes Map — Find Things to Do Near You | Rhodes Things To Do"
   description="Explore Rhodes on an interactive map. Find restaurants, hotels, tours, activities, bars and shops near you across the island of Rhodes, Greece."
   canonical="/listings-map/"
+  noindex={hasFilter}
 >
   <Navbar headerClass="header header-light head-shadow" />
 
@@ -69,80 +79,21 @@ const markersPayload = mappable.map((l) => ({
 
     <aside class="lm-sidebar-col">
       <h1 class={hasFilter ? 'h4 fw-semibold mb-3' : 'visually-hidden'}>
-        {hasFilter ? `Results for ${filterLabel}` : 'Explore things to do in Rhodes on the map'}
+        {hasFilter ? `Results ${filterLabel}` : 'Explore things to do in Rhodes on the map'}
         {hasFilter && (
           <> <a href="/listings-map/" class="text-primary fw-medium fs-6 ms-2">clear filters</a></>
         )}
       </h1>
 
-      <form action="/listings-map/" method="get" class="lm-searchbar card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-3">
-        <div class="row g-3 align-items-end">
-          <div class="col-12 col-lg-5">
-            <label class="form-label fw-medium small text-muted mb-1">Keywords</label>
-            <div class="lm-field">
-              <i class="bi bi-search"></i>
-              <input type="search" name="q" value={q} class="lm-input" placeholder="e.g. gym, brunch" />
-            </div>
-          </div>
-          <div class="col-6 col-lg-4">
-            <label class="form-label fw-medium small text-muted mb-1">Category</label>
-            <div class="lm-field lm-select">
-              <i class="bi bi-grid"></i>
-              <select name="category" class="lm-input">
-                <option value="">All categories</option>
-                {categories.map((c: any) => (
-                  <option value={c.slug} selected={c.slug === category}>{c.name}</option>
-                ))}
-              </select>
-              <i class="bi bi-chevron-down lm-chevron"></i>
-            </div>
-          </div>
-          <div class="col-6 col-lg-3">
-            <label class="form-label fw-medium small text-muted mb-1">Location</label>
-            <div class="lm-field">
-              <i class="bi bi-geo-alt"></i>
-              <input type="text" name="city" value={city} class="lm-input" placeholder="Any" />
-            </div>
-          </div>
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium"><i class="bi bi-search me-2"></i>Search</button>
-          </div>
-        </div>
-      </form>
+      <div class="d-flex justify-content-end mb-3">
+        <ViewTabs active="map" qs={Astro.url.search} />
+      </div>
+
+      <div class="mb-3">
+        <SearchBar q={q} category={category} area={area} action="/listings-map/" />
+      </div>
 
       <style is:global>
-        .lm-searchbar .lm-field {
-          position: relative;
-          display: flex;
-          align-items: center;
-          background: #f6f7f9;
-          border: 1px solid #e7e9ee;
-          border-radius: 12px;
-          padding: 0 12px;
-          transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-        }
-        .lm-searchbar .lm-field:focus-within {
-          background: #fff;
-          border-color: var(--bs-primary);
-          box-shadow: 0 0 0 3px color-mix(in srgb, var(--bs-primary) 14%, transparent);
-        }
-        .lm-searchbar .lm-field > i:first-child { color: #9aa0a6; font-size: 1rem; }
-        .lm-searchbar .lm-input {
-          border: 0;
-          background: transparent;
-          width: 100%;
-          padding: 11px 10px;
-          font-size: .95rem;
-          font-weight: 500;
-          color: #222;
-          outline: none;
-          appearance: none;
-        }
-        .lm-searchbar .lm-select .lm-input { padding-right: 26px; cursor: pointer; }
-        .lm-searchbar .lm-chevron {
-          position: absolute; right: 12px; pointer-events: none;
-          color: #9aa0a6; font-size: .8rem;
-        }
         /* Listing cards */
         .lm-thumb-link { position: relative; display: block; height: 100%; }
         .lm-thumb { width: 100%; height: 180px; object-fit: cover; object-position: center; display: block; }
@@ -206,7 +157,13 @@ const markersPayload = mappable.map((l) => ({
     </aside>
 
     <div class="lm-map-col">
-      <div id="listingsMap" role="application" aria-label="Map of listings"></div>
+      <div
+        id="listingsMap"
+        role="application"
+        aria-label="Map of listings"
+        data-area-lat={selectedArea?.lat ?? ''}
+        data-area-lng={selectedArea?.lng ?? ''}
+      ></div>
     </div>
   </section>
 
@@ -263,7 +220,13 @@ const markersPayload = mappable.map((l) => ({
       if (bounds.length > 0) {
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
       } else {
-        map.setView([36.30, 28.10], 10); // focus on Rhodes, Greece
+        var aLat = parseFloat(mapEl.getAttribute('data-area-lat'));
+        var aLng = parseFloat(mapEl.getAttribute('data-area-lng'));
+        if (!isNaN(aLat) && !isNaN(aLng)) {
+          map.setView([aLat, aLng], 13); // selected town with no mappable listings
+        } else {
+          map.setView([36.30, 28.10], 10); // focus on Rhodes, Greece
+        }
       }
 
       document.querySelectorAll('.lm-card').forEach(function (card) {

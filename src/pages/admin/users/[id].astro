@@ -1,0 +1,163 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Navbar from '../../../components/nav/Navbar.astro';
+import AdminSidebar from '../../../components/admin/AdminSidebar.astro';
+import { getServiceClient } from '../../../lib/supabase/admin';
+
+export const prerender = false;
+if (!Astro.locals.isAdmin) return Astro.redirect('/');
+
+const admin = getServiceClient();
+const userId = Astro.params.id ?? '';
+if (!admin || !userId) return Astro.redirect('/admin/users/?error=' + encodeURIComponent('User not found'));
+
+const notice = Astro.url.searchParams.get('notice');
+const error = Astro.url.searchParams.get('error');
+
+const [{ data: profile }, authRes] = await Promise.all([
+  admin.from('profiles').select('id, full_name, phone, city, country, website, is_admin, created_at').eq('id', userId).maybeSingle(),
+  admin.auth.admin.getUserById(userId),
+]);
+if (!profile) return Astro.redirect('/admin/users/?error=' + encodeURIComponent('User not found'));
+
+const email = authRes.data?.user?.email ?? '';
+
+const { data: listings } = await admin
+  .from('listings')
+  .select('id, slug, title, status, is_featured, is_verified, city, website, created_at, categories!listings_category_id_fkey(name), areas!listings_area_id_fkey(name)')
+  .eq('owner_id', userId)
+  .order('created_at', { ascending: false });
+const rows = listings ?? [];
+
+// 30-day views for this user's listings only.
+const views30 = new Map<string, number>();
+if (rows.length > 0) {
+  const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+  const { data: pv } = await admin
+    .from('page_views')
+    .select('listing_id')
+    .gte('created_at', since30)
+    .in('listing_id', rows.map((l: any) => l.id))
+    .limit(50000);
+  for (const v of pv ?? []) views30.set(v.listing_id!, (views30.get(v.listing_id!) ?? 0) + 1);
+}
+
+const name = profile.full_name || email || 'User';
+const location = [profile.city, profile.country].filter(Boolean).join(', ');
+const meId = Astro.locals.user?.id;
+const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-GB') : '—');
+const prettyUrl = (u: string) => u.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+<Base noindex title={`Admin — ${name} | Rhodes Things To Do`}>
+  <Navbar headerClass="header header-light head-shadow" />
+  <section class="gray-simple pt-4 pb-5 mt-5 admin-viewport">
+    <div class="container-fluid px-lg-5">
+      <div class="row g-4">
+        <div class="col-xl-2 col-lg-3"><AdminSidebar current="users" /></div>
+        <div class="col-xl-10 col-lg-9">
+
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <div class="d-flex align-items-center gap-2">
+              <a href="/admin/users/" class="btn btn-sm btn-light border rounded-pill" title="Back to users"><i class="bi bi-arrow-left"></i></a>
+              <h1 class="fs-3 fw-semibold mb-0">{name}</h1>
+              {profile.is_admin && <span class="badge bg-dark rounded-pill">admin</span>}
+            </div>
+            {userId !== meId && (
+              <div class="d-flex gap-2">
+                <form method="post" action="/api/admin/users">
+                  <input type="hidden" name="user_id" value={userId} />
+                  <input type="hidden" name="_action" value="toggle_admin" />
+                  <button type="submit" class="btn btn-light border rounded-pill">
+                    <i class={`bi ${profile.is_admin ? 'bi-shield-slash' : 'bi-shield-check'} me-2`}></i>{profile.is_admin ? 'Remove admin' : 'Make admin'}
+                  </button>
+                </form>
+                <form method="post" action="/api/admin/users" onsubmit={`return confirm('Delete ${name}? Their listings, bookings and reviews are removed too.');`}>
+                  <input type="hidden" name="user_id" value={userId} />
+                  <input type="hidden" name="_action" value="delete" />
+                  <button type="submit" class="btn btn-light border rounded-pill text-danger"><i class="bi bi-trash me-2"></i>Delete user</button>
+                </form>
+              </div>
+            )}
+          </div>
+
+          {notice && <div class="alert alert-success">{notice}</div>}
+          {error && <div class="alert alert-danger">{error}</div>}
+
+          <!-- Profile details -->
+          <div class="card rounded-4 shadow-sm p-4 mb-4">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <div class="text-sm text-muted">Email</div>
+                <div class="fw-medium">{email ? <a href={`mailto:${email}`} class="text-decoration-none">{email}</a> : '—'}</div>
+              </div>
+              <div class="col-md-3">
+                <div class="text-sm text-muted">Phone</div>
+                <div class="fw-medium">{profile.phone || '—'}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="text-sm text-muted">Location</div>
+                <div class="fw-medium">{location || '—'}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="text-sm text-muted">Website</div>
+                <div class="fw-medium">
+                  {profile.website ? <a href={profile.website} target="_blank" rel="noopener nofollow" class="text-decoration-none" title={profile.website}>{prettyUrl(profile.website)}</a> : '—'}
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="text-sm text-muted">Joined</div>
+                <div class="fw-medium">{fmtDate(profile.created_at)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Their listings -->
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h2 class="fs-5 fw-semibold mb-0">Listings <span class="text-muted fs-6 fw-normal">({rows.length})</span></h2>
+          </div>
+          <div class="card rounded-4 shadow-sm overflow-hidden">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Listing</th><th>Category</th><th>Area</th><th>Status</th>
+                    <th>Website</th><th>Views 30d</th><th>Created</th><th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.length === 0 && <tr><td colspan="8" class="text-center text-muted py-5">This user has no listings.</td></tr>}
+                  {rows.map((l: any) => (
+                    <tr>
+                      <td class="ps-4">
+                        <div class="fw-medium"><a href={`/listing/${l.slug}/`} target="_blank" class="text-dark text-decoration-none">{l.title}</a></div>
+                        <div class="d-flex gap-1 mt-1">
+                          {l.is_featured && <span class="badge bg-warning text-dark rounded-pill">Featured</span>}
+                          {l.is_verified && <span class="badge bg-success rounded-pill">Verified</span>}
+                        </div>
+                      </td>
+                      <td class="text-sm">{l.categories?.name || '—'}</td>
+                      <td class="text-sm">{l.areas?.name || l.city || '—'}</td>
+                      <td><span class={`badge rounded-pill ${l.status === 'published' ? 'bg-success' : l.status === 'draft' ? 'bg-secondary' : 'bg-dark'}`}>{l.status}</span></td>
+                      <td class="text-sm">
+                        {l.website ? <a href={l.website} target="_blank" rel="noopener nofollow" class="text-decoration-none" title={l.website}>{prettyUrl(l.website)}</a> : '—'}
+                      </td>
+                      <td>{views30.get(l.id) ?? 0}</td>
+                      <td class="text-sm">{fmtDate(l.created_at)}</td>
+                      <td class="text-end pe-4">
+                        <div class="d-inline-flex gap-1">
+                          <a href={`/admin/listings/${l.id}/`} class="btn btn-sm btn-light border rounded-pill" title="Edit"><i class="bi bi-pencil"></i></a>
+                          <a href={`/listing/${l.slug}/`} target="_blank" class="btn btn-sm btn-light border rounded-pill" title="View on site"><i class="bi bi-box-arrow-up-right"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

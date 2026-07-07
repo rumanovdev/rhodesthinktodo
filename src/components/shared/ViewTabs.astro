@@ -1,0 +1,21 @@
+---
+interface Props {
+  active: 'list' | 'grid' | 'map';
+  qs: string; // Astro.url.search — "" or "?q=...&area=..."
+}
+const { active, qs } = Astro.props;
+const tabs = [
+  { key: 'list', href: `/listings/${qs}`, icon: 'bi-list', label: 'List' },
+  { key: 'grid', href: `/listings-grid/${qs}`, icon: 'bi-ui-radios-grid', label: 'Grid' },
+  { key: 'map', href: `/listings-map/${qs}`, icon: 'bi-geo-alt', label: 'Map' },
+];
+---
+<ul class="nav nav-pills nav-fill gap-2 small d-inline-flex lightprimary border rounded-pill p-1">
+  {tabs.map((t) => (
+    <li class="nav-item" role="presentation">
+      <a href={t.href} class={`nav-link rounded-pill ${active === t.key ? 'active' : ''}`} aria-current={active === t.key ? 'page' : undefined}>
+        <i class={`bi ${t.icon} me-2`}></i>{t.label}
+      </a>
+    </li>
+  ))}
+</ul>

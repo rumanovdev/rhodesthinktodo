@@ -21,10 +21,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
   if (format === 'csv') {
     const escCsv = (s: string) => `"${String(s ?? '').replace(/"/g, '""')}"`;
-    const head = ['Name', 'Email', 'Phone', 'Location', 'Listings', 'Categories', 'Admin', 'Joined'];
+    const head = ['Name', 'Email', 'Phone', 'Location', 'Website', 'Listings', 'Categories', 'Admin', 'Joined'];
     const lines = [head.join(',')];
     for (const u of users) {
-      lines.push([u.name, u.email, u.phone, u.location, String(u.listings), u.categories.join('; '), u.isAdmin ? 'yes' : 'no', fmtDate(u.joined)].map(escCsv).join(','));
+      lines.push([u.name, u.email, u.phone, u.location, u.website, String(u.listings), u.categories.join('; '), u.isAdmin ? 'yes' : 'no', fmtDate(u.joined)].map(escCsv).join(','));
     }
     return new Response('﻿' + lines.join('\n'), {
       headers: {
@@ -45,8 +45,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
   autoTable(doc, {
     startY: 74,
-    head: [['Name', 'Email', 'Phone', 'Location', 'Listings', 'Categories', 'Admin', 'Joined']],
-    body: users.map((u) => [u.name, u.email, u.phone, u.location, String(u.listings), u.categories.join(', '), u.isAdmin ? 'yes' : '', fmtDate(u.joined)]),
+    head: [['Name', 'Email', 'Phone', 'Location', 'Website', 'Listings', 'Admin', 'Joined']],
+    body: users.map((u) => [u.name, u.email, u.phone, u.location, u.website.replace(/^https?:\/\//, ''), String(u.listings), u.isAdmin ? 'yes' : '', fmtDate(u.joined)]),
     styles: { fontSize: 9, cellPadding: 5 },
     headStyles: { fillColor: [225, 29, 72] },
     alternateRowStyles: { fillColor: [248, 249, 250] },
