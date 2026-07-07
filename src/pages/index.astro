@@ -484,13 +484,14 @@ const motherCount = (m: any) =>
     @media (prefers-reduced-motion: reduce) {
       .hero-header .hero-bg-video { display: none; }
     }
-    /* Full-screen hero on mobile (fills the viewport under the transparent header) */
-    @media (max-width: 991px) {
-      .hero-header,
-      .hero-header.full-height {
-        min-height: 100vh;
-        min-height: 100svh;
-      }
+    /* Hero = 2/3 of the viewport height on all screens (overrides the theme's
+       100vh + 650-750px floors). Small px floor so it never collapses on short
+       landscape phones. */
+    .hero-header,
+    .hero-header.full-height {
+      height: 66.667vh !important;
+      height: 66.667svh !important;
+      min-height: 420px !important;
     }
     /* Hero title — keyword-led, smaller on desktop, no dash */
     .hero-title {
