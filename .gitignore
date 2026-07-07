@@ -31,3 +31,6 @@ pnpm-debug.log*
 .vercel/
 .playwright-mcp/
 .vercel
+
+# Supabase CLI scratch
+supabase/.temp/
