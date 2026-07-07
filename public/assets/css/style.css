@@ -9668,3 +9668,9 @@ Responsiveness Start
   padding: 20px;
   color: #53c797 !important;
 }
+/* --- v3: comfortable tap targets on touch screens (WCAG 2.5.8) ------------ */
+@media (max-width: 991.98px) {
+  .footer-menu li a { display: inline-block; padding: 8px 4px; }
+  .breadcrumb-item a { display: inline-block; padding: 8px 2px; }
+  .owl-dots .owl-dot { padding: 10px 6px; }
+}

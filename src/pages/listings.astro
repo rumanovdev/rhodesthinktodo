@@ -5,7 +5,7 @@ import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { searchListings, slugify } from '../lib/supabase/listings';
+import { searchListings } from '../lib/supabase/listings';
 import SearchBar from '../components/shared/SearchBar.astro';
 import ViewTabs from '../components/shared/ViewTabs.astro';
 export const prerender = false;
@@ -54,6 +54,7 @@ const listings6 = await searchListings(Astro.locals.supabase, {
 		<div class="row align-items-center justify-content-between mb-4">
 			<div class="col-xl- 5 col-lg-5 col-md-5 col-sm-6 col-6">
 				<div class="totalListingshow">
+					<h1 class="visually-hidden">Browse listings in Rhodes — places to eat, stay and explore</h1>
 					<h6 class="fw-medium text-md mb-0">{listings6.length} Listings Found</h6>
 				</div>
 			</div>
@@ -105,7 +106,7 @@ const listings6 = await searchListings(Astro.locals.supabase, {
 			                                    </div>
 
 			                                    </div>
-			                                <h5 class="listItemtitle"><a href={`/listing/${slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
+			                                <h5 class="listItemtitle"><a href={`/listing/${item.slug}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
 			                                <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
 			                                    <div class="flex-start"><div class="list-location text-muted"><span><i class="fa-solid fa-location-dot me-2"></i>{item.location}</span></div></div>
 			                                    <div class="flex-last">

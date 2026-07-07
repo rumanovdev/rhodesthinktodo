@@ -38,7 +38,7 @@ const delError = p.get('delerror');
         <div class="col-xl-10 col-lg-9 col-md-12">
           <div class="user-dashboard-box bg-light">
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
-              <h2 class="fw-medium mb-0">My Profile</h2>
+              <h1 class="h2 fw-medium mb-0">My Profile</h1>
               <p class="text-muted mt-2 mb-0">Update your personal details, change your email or password, or close your account.</p>
             </div>
 
@@ -55,20 +55,20 @@ const delError = p.get('delerror');
                     <div class="card-body">
                       <div class="row g-3">
                         <div class="col-md-6">
-                          <label class="lableTitle">Full name</label>
-                          <input type="text" name="full_name" value={profile?.full_name ?? ''} maxlength="120" class="form-control" />
+                          <label class="lableTitle" for="pf-full_name">Full name</label>
+                          <input type="text" name="full_name" id="pf-full_name" value={profile?.full_name ?? ''} maxlength="120" class="form-control" />
                         </div>
                         <div class="col-md-6">
-                          <label class="lableTitle">Phone</label>
-                          <input type="tel" name="phone" value={profile?.phone ?? ''} maxlength="40" class="form-control" placeholder="+1 555 555 0100" />
+                          <label class="lableTitle" for="pf-phone">Phone</label>
+                          <input type="tel" name="phone" id="pf-phone" value={profile?.phone ?? ''} maxlength="40" class="form-control" placeholder="+1 555 555 0100" />
                         </div>
                         <div class="col-12">
-                          <label class="lableTitle">About me</label>
-                          <textarea name="bio" rows="4" maxlength="2000" class="form-control" placeholder="Tell people a bit about yourself…">{profile?.bio ?? ''}</textarea>
+                          <label class="lableTitle" for="pf-bio">About me</label>
+                          <textarea name="bio" id="pf-bio" rows="4" maxlength="2000" class="form-control" placeholder="Tell people a bit about yourself…">{profile?.bio ?? ''}</textarea>
                         </div>
                         <div class="col-md-6">
-                          <label class="lableTitle">Website</label>
-                          <input type="url" name="website" value={profile?.website ?? ''} maxlength="400" class="form-control" placeholder="https://…" />
+                          <label class="lableTitle" for="pf-website">Website</label>
+                          <input type="url" name="website" id="pf-website" value={profile?.website ?? ''} maxlength="400" class="form-control" placeholder="https://…" />
                         </div>
                       </div>
                     </div>
@@ -79,15 +79,15 @@ const delError = p.get('delerror');
                     <div class="card-body">
                       <div class="row g-3">
                         <div class="col-12">
-                          <label class="lableTitle">Street address</label>
-                          <input type="text" name="address" value={profile?.address ?? ''} maxlength="200" class="form-control" />
+                          <label class="lableTitle" for="pf-address">Street address</label>
+                          <input type="text" name="address" id="pf-address" value={profile?.address ?? ''} maxlength="200" class="form-control" />
                         </div>
-                        <div class="col-md-4"><label class="lableTitle">City</label><input type="text" name="city" value={profile?.city ?? ''} maxlength="100" class="form-control" /></div>
-                        <div class="col-md-4"><label class="lableTitle">State / Region</label><input type="text" name="state" value={profile?.state ?? ''} maxlength="100" class="form-control" /></div>
-                        <div class="col-md-4"><label class="lableTitle">Zip / Postal</label><input type="text" name="zip" value={profile?.zip ?? ''} maxlength="20" class="form-control" /></div>
-                        <div class="col-md-4"><label class="lableTitle">Country</label><input type="text" name="country" value={profile?.country ?? ''} maxlength="100" class="form-control" /></div>
-                        <div class="col-md-4"><label class="lableTitle">Latitude</label><input type="number" step="0.0000001" min="-90" max="90" name="lat" value={profile?.lat ?? ''} class="form-control" /></div>
-                        <div class="col-md-4"><label class="lableTitle">Longitude</label><input type="number" step="0.0000001" min="-180" max="180" name="lng" value={profile?.lng ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-city">City</label><input type="text" name="city" id="pf-city" value={profile?.city ?? ''} maxlength="100" class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-state">State / Region</label><input type="text" name="state" id="pf-state" value={profile?.state ?? ''} maxlength="100" class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-zip">Zip / Postal</label><input type="text" name="zip" id="pf-zip" value={profile?.zip ?? ''} maxlength="20" class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-country">Country</label><input type="text" name="country" id="pf-country" value={profile?.country ?? ''} maxlength="100" class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-lat">Latitude</label><input type="number" step="0.0000001" min="-90" max="90" name="lat" id="pf-lat" value={profile?.lat ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle" for="pf-lng">Longitude</label><input type="number" step="0.0000001" min="-180" max="180" name="lng" id="pf-lng" value={profile?.lng ?? ''} class="form-control" /></div>
                       </div>
                     </div>
                   </div>
@@ -96,11 +96,11 @@ const delError = p.get('delerror');
                     <div class="card-header py-3 px-4"><h4 class="m-0">Social links</h4></div>
                     <div class="card-body">
                       <div class="row g-3">
-                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-facebook me-2"></i>Facebook</label><input type="url" name="facebook" value={social.facebook ?? ''} maxlength="400" class="form-control" placeholder="https://facebook.com/…" /></div>
-                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-x-twitter me-2"></i>X</label><input type="url" name="twitter" value={social.twitter ?? ''} maxlength="400" class="form-control" /></div>
-                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-linkedin me-2"></i>LinkedIn</label><input type="url" name="linkedin" value={social.linkedin ?? ''} maxlength="400" class="form-control" /></div>
-                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-instagram me-2"></i>Instagram</label><input type="url" name="instagram" value={social.instagram ?? ''} maxlength="400" class="form-control" /></div>
-                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-youtube me-2"></i>YouTube</label><input type="url" name="youtube" value={social.youtube ?? ''} maxlength="400" class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-facebook me-2"></i>Facebook</label><input type="url" id="pf-facebook" name="facebook" value={social.facebook ?? ''} maxlength="400" class="form-control" placeholder="https://facebook.com/…" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-x-twitter me-2"></i>X</label><input type="url" id="pf-twitter" name="twitter" value={social.twitter ?? ''} maxlength="400" class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-linkedin me-2"></i>LinkedIn</label><input type="url" id="pf-linkedin" name="linkedin" value={social.linkedin ?? ''} maxlength="400" class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-instagram me-2"></i>Instagram</label><input type="url" id="pf-instagram" name="instagram" value={social.instagram ?? ''} maxlength="400" class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-youtube me-2"></i>YouTube</label><input type="url" id="pf-youtube" name="youtube" value={social.youtube ?? ''} maxlength="400" class="form-control" /></div>
                       </div>
                     </div>
                   </div>
@@ -118,8 +118,8 @@ const delError = p.get('delerror');
                       {profile?.avatar_url
                         ? <img src={profile.avatar_url} class="img-fluid rounded-circle mb-3" style="width: 140px; height: 140px; object-fit: cover;" alt="Avatar" />
                         : <span class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:140px;height:140px;background:var(--bs-primary);color:#fff;font-size:52px;font-weight:700;">{(profile?.full_name || user?.email || '?').trim().split(/\s+/).map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()}</span>}
-                      <label class="form-label d-block text-start">Replace avatar</label>
-                      <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" class="form-control form-control-sm" />
+                      <label class="form-label d-block text-start" for="pf-avatar">Replace avatar</label>
+                      <input type="file" id="pf-avatar" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" class="form-control form-control-sm" />
                       <p class="text-muted text-md mt-2 mb-0">JPG / PNG / WebP / GIF, ≤ 1 MB.</p>
                     </div>
                   </div>
@@ -134,8 +134,8 @@ const delError = p.get('delerror');
                       {emailNotice && <div class="alert alert-success">{emailNotice}</div>}
                       {emailError && <div class="alert alert-danger">{emailError}</div>}
                       <form action="/api/profile/email" method="post">
-                        <label class="lableTitle">Email address</label>
-                        <input type="email" name="email" value={user.email ?? ''} required autocomplete="email" class="form-control mb-3" />
+                        <label class="lableTitle" for="pf-email">Email address</label>
+                        <input type="email" name="email" id="pf-email" value={user.email ?? ''} required autocomplete="email" class="form-control mb-3" />
                         <button type="submit" class="btn btn-primary rounded-pill fw-medium">Update Email</button>
                       </form>
                     </div>
@@ -149,10 +149,10 @@ const delError = p.get('delerror');
                       {pwNotice && <div class="alert alert-success">{pwNotice}</div>}
                       {pwError && <div class="alert alert-danger">{pwError}</div>}
                       <form action="/api/profile/password" method="post">
-                        <label class="lableTitle">New password</label>
-                        <input type="password" name="new_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
-                        <label class="lableTitle">Confirm new password</label>
-                        <input type="password" name="confirm_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
+                        <label class="lableTitle" for="pf-new_password">New password</label>
+                        <input type="password" name="new_password" id="pf-new_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
+                        <label class="lableTitle" for="pf-confirm_password">Confirm new password</label>
+                        <input type="password" name="confirm_password" id="pf-confirm_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
                         <button type="submit" class="btn btn-primary rounded-pill fw-medium">Update Password</button>
                       </form>
                     </div>
@@ -166,8 +166,8 @@ const delError = p.get('delerror');
                   {delError && <div class="alert alert-danger">{delError}</div>}
                   <p class="text-muted">Deleting your account is permanent. Your listings, bookings, and reviews will also be removed.</p>
                   <form action="/api/profile/delete" method="post" onsubmit="return confirm('This cannot be undone. Really delete your account?')">
-                    <label class="lableTitle">Type <code>DELETE</code> to confirm</label>
-                    <input type="text" name="confirm" required pattern="\s*[Dd][Ee][Ll][Ee][Tt][Ee]\s*" title="Type DELETE to confirm" class="form-control mb-3" style="max-width: 240px;" />
+                    <label class="lableTitle" for="pf-delete-confirm">Type <code>DELETE</code> to confirm</label>
+                    <input type="text" id="pf-delete-confirm" name="confirm" required pattern="\s*[Dd][Ee][Ll][Ee][Tt][Ee]\s*" title="Type DELETE to confirm" class="form-control mb-3" style="max-width: 240px;" />
                     <button type="submit" class="btn btn-outline-danger rounded-pill fw-medium"><i class="bi bi-trash me-2"></i>Delete my account</button>
                   </form>
                 </div>

@@ -96,26 +96,26 @@ const defaultEmail = user?.email ?? '';
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>First Name<i class="req">*</i></label>
-                    <input type="text" name="first_name" value={defaultFirstName} required class="form-control">
+                    <label for="bk-first-name">First Name<i class="req">*</i></label>
+                    <input type="text" id="bk-first-name" name="first_name" value={defaultFirstName} required class="form-control">
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" name="last_name" value={defaultLastName} class="form-control">
+                    <label for="bk-last-name">Last Name</label>
+                    <input type="text" id="bk-last-name" name="last_name" value={defaultLastName} class="form-control">
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>Email<i class="req">*</i></label>
-                    <input type="email" name="email" value={defaultEmail} required class="form-control">
+                    <label for="bk-email">Email<i class="req">*</i></label>
+                    <input type="email" id="bk-email" name="email" value={defaultEmail} required class="form-control">
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>Phone</label>
-                    <input type="tel" name="phone" class="form-control">
+                    <label for="bk-phone">Phone</label>
+                    <input type="tel" id="bk-phone" name="phone" class="form-control">
                   </div>
                 </div>
               </div>
@@ -126,26 +126,26 @@ const defaultEmail = user?.email ?? '';
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>Date<i class="req">*</i></label>
-                    <input type="date" name="start_date" required class="form-control">
+                    <label for="bk-start-date">Date<i class="req">*</i></label>
+                    <input type="date" id="bk-start-date" name="start_date" required class="form-control">
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>End Date</label>
-                    <input type="date" name="end_date" class="form-control">
+                    <label for="bk-end-date">End Date</label>
+                    <input type="date" id="bk-end-date" name="end_date" class="form-control">
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12">
                   <div class="form-group">
-                    <label>Guests</label>
-                    <input type="number" name="guests" min="1" value="1" class="form-control">
+                    <label for="bk-guests">Guests</label>
+                    <input type="number" id="bk-guests" name="guests" min="1" value="1" class="form-control">
                   </div>
                 </div>
                 <div class="col-12">
                   <div class="form-group">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="3" class="form-control" placeholder="Anything the host should know?"></textarea>
+                    <label for="bk-notes">Notes</label>
+                    <textarea id="bk-notes" name="notes" rows="3" class="form-control" placeholder="Anything the host should know?"></textarea>
                   </div>
                 </div>
               </div>

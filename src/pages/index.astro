@@ -168,7 +168,9 @@ const motherCount = (m: any) =>
 				<div class="owl-carousel categorySlider">
 
 					<!-- Components/Home/index/categories.html -->
-					{catTree.map((item) => {
+					{/* Only categories that actually have published listings — empty ones
+					    (e.g. a brand-new category) would show "0 Listings" and dead-end pages. */}
+					{catTree.filter((item) => motherCount(item) > 0).map((item) => {
 						const count = motherCount(item);
 						const label = count === 1 ? '1 Listing' : `${count} Listings`;
 						return (
@@ -216,7 +218,7 @@ const motherCount = (m: any) =>
 			    <div class="listingitem-container">
 			        <div class="singlelisting-item">
 			            <div class="listing-top-item">
-			                <a href={`/listing/${slugify(item.title)}/`} class="topLink" aria-label={item.title}>
+			                <a href={`/listing/${item.slug}/`} class="topLink" aria-label={item.title}>
 			                    <div class="position-absolute start-0 top-0 ms-3 mt-3 z-2">
 			                        <div class="d-flex align-items-center justify-content-start gap-2">
 			                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
@@ -228,12 +230,12 @@ const motherCount = (m: any) =>
 
 			                        </div>
 			                    </div>
-			                    <img src={item.img} class="img-fluid" alt="Listing Image" loading="lazy">
+			                    <img src={item.img} class="img-fluid" alt={item.title} loading="lazy">
 			                </a>
 			            </div>
 			            <div class="listing-middle-item">
 			                <div class="listing-details">
-			                    <h4 class="listingTitle"><a href={`/listing/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
+			                    <h4 class="listingTitle"><a href={`/listing/${item.slug}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
 			                    <p>{item.short}</p>
 			                </div>
 			                <div class="listing-info-details">
@@ -247,7 +249,7 @@ const motherCount = (m: any) =>
 			                <div class="d-flex align-items-center justify-content-between gap-2">
 			                    <div class="catdWraps">
 			                        <div class="flex-start">
-			                            <a href={`/listing/${slugify(item.title)}/`} class="d-flex align-items-center justify-content-start gap-2">
+			                            <a href={`/listing/${item.slug}/`} class="d-flex align-items-center justify-content-start gap-2">
 			                                <span class={item.span}><i class={item.icon}></i></span>
 			                                <span class="catTitle">{item.name}</span>
 			                            </a>

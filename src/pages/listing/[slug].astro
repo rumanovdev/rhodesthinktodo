@@ -5,7 +5,7 @@ import Footer from '../../components/nav/Footer.astro';
 import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
-import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
+import { getListingBySlug, getPublishedListings } from '../../lib/supabase/listings';
 import { getListingTaxonomy } from '../../lib/supabase/taxonomy';
 import { absUrl } from '../../lib/data/site';
 export const prerender = false;
@@ -233,9 +233,9 @@ const breadcrumbSchema = {
 		                    <div class="listingFirstinfo d-flex align-items-center justify-content-start gap-3 flex-wrap">
 		                        
 		                        <div class="listingCaptioninfo">
-		                            <div class="propertyTitlename d-flex align-items-center gap-2 mb-1"><h2 class="fw-semibold text-light mb-0">
+		                            <div class="propertyTitlename d-flex align-items-center gap-2 mb-1"><h1 class="h2 fw-semibold text-light mb-0">
 		                                {event.title || 'Listing'}
-		                            </h2>{isVerified && (<span class="verified mt-1"><img src="/assets/img/tick.svg" class="img-fluid" width="22" alt="Verified Listing"></span>)}</div>
+		                            </h1>{isVerified && (<span class="verified mt-1"><img src="/assets/img/tick.svg" class="img-fluid" width="22" alt="Verified Listing"></span>)}</div>
 		                            <div class="listingsbasicInfo">
 		                                <div class="d-flex align-items-center justify-content-start flex-wrap gap-2">
 		                                    <div class="flexItem me-2"><span class="text-md fw-medium text-light"><i class="fa-solid fa-location-dot me-2"></i>{event.location || event.city || 'Rhodes, Greece'}</span></div>
@@ -517,10 +517,7 @@ const breadcrumbSchema = {
 									    <div class="listingitem-container">
 									        <div class="singlelisting-item bg-light border-0">
 									            <div class="listing-top-item">
-									                <div class="position-absolute end-0 top-0 me-3 mt-3 z-2">
-									                    <a href="#" class="bookmarkList" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
-									                </div>
-									                <a href="#" class="topLink">
+									                <a href={`/listing/${item.slug}/`} class="topLink" aria-label={item.title}>
 									                    <div class="position-absolute start-0 top-0 ms-3 mt-3 z-2">
 									                        <div class="d-flex align-items-center justify-content-start gap-2">
 									                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
@@ -532,12 +529,12 @@ const breadcrumbSchema = {
 
 									                        </div>
 									                    </div>
-									                    <img src={item.img} class="img-fluid" alt="Listing Image">
+									                    <img src={item.img} class="img-fluid" alt={item.title}>
 									                </a>
 									                <div class="opssListing position-absolute start-0 bottom-0 ms-3 mb-4 z-2">
 									                    <div class="d-flex align-items-center justify-content-start gap-2">
 									                        <div class="listing-details">
-									                            <h4 class="listingTitle"><a href={`/listing/${slugify(item.title)}/`} class="titleLink">{item.title}{item.btn === 'Verified' && (<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span>)}</a></h4>
+									                            <h4 class="listingTitle"><a href={`/listing/${item.slug}/`} class="titleLink">{item.title}{item.btn === 'Verified' && (<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span>)}</a></h4>
 									                            <div class="list-infos">
 									                                <div class="d-flex align-items-center justify-content-start gap-3 mt-1">
 									                                    <div class="list-distance text-light"><i class="bi bi-geo-alt mb-0 me-2"></i>{item.location}</div>
@@ -552,10 +549,10 @@ const breadcrumbSchema = {
 									                <div class="d-flex align-items-center justify-content-between gap-2">
 									                    <div class="catdWraps">
 									                        <div class="flex-start">
-									                            <a href="#" class="d-flex align-items-center justify-content-start gap-2">
+									                            <span class="d-flex align-items-center justify-content-start gap-2">
 									                                <span class={item.span}><i class={item.icon}></i></span>
 									                                <span class="catTitle">{item.name}</span>
-									                            </a>
+									                            </span>
 									                        </div>
 									                    </div>
 									                    <div class="listing-rates">
@@ -651,7 +648,7 @@ const breadcrumbSchema = {
 							<div class="card-footer bg-white border-top">
 								<div class="d-flex align-items-center justify-content-center gap-3">
 									{ownerSocialLinks.map((s) => (
-									<div class="flexSocial"><a href={s.url} target="_blank" rel="noopener nofollow" class="square--40 circle border"><i class={`bi ${s.icon} ${s.cls}`}></i></a></div>
+									<div class="flexSocial"><a href={s.url} target="_blank" rel="noopener nofollow" class="square--40 circle border" aria-label={`Owner's ${s.key} profile`}><i class={`bi ${s.icon} ${s.cls}`}></i></a></div>
 									))}
 								</div>
 							</div>
