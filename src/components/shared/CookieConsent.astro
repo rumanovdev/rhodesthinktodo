@@ -154,6 +154,10 @@ const t = useTranslations(locale);
             analytics_storage: value === 'granted' ? 'granted' : 'denied',
           });
         }
+        // Load the Meta Pixel only once the visitor accepts (see Analytics.astro).
+        if (value === 'granted' && typeof window.__loadMetaPixel === 'function') {
+          window.__loadMetaPixel();
+        }
         el.classList.remove('show');
         setTimeout(function () { el.hidden = true; }, 350);
       });

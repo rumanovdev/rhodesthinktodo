@@ -1,8 +1,10 @@
 ---
-// Google Analytics 4 (GA4) with Consent Mode v2.
-// Analytics storage defaults to "denied" until the visitor accepts cookies
-// via the CookieConsent banner. Goes in <head>.
+// Google Analytics 4 (GA4) with Consent Mode v2 + Meta (Facebook) Pixel.
+// Both are consent-gated: analytics/ad storage defaults to "denied" and the
+// Meta Pixel does not load or fire until the visitor accepts cookies via the
+// CookieConsent banner. Goes in <head>.
 const GA_ID = 'G-CXN08G00SM';
+const META_PIXEL_ID = '1359153729476329';
 ---
 <script is:inline define:vars={{ GA_ID }}>
   window.dataLayer = window.dataLayer || [];
@@ -46,4 +48,42 @@ const GA_ID = 'G-CXN08G00SM';
   ['scroll', 'click', 'keydown', 'touchstart'].forEach(function (e) {
     window.addEventListener(e, loadGtag, { once: true, passive: true });
   });
+</script>
+
+<!-- Meta (Facebook) Pixel — consent-gated. fbevents.js and PageView are held
+     back until the visitor accepts cookies (CookieConsent calls __loadMetaPixel
+     on Accept). No consent = no _fbp cookie and nothing sent to Meta. -->
+<script is:inline define:vars={{ META_PIXEL_ID }}>
+  // Standard fbq stub so any queued fbq() calls survive until the library loads.
+  if (!window.fbq) {
+    var n = window.fbq = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!window._fbq) window._fbq = n;
+    n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+  }
+
+  // Injects fbevents.js + fires PageView. Idempotent. Called on consent grant.
+  window.__loadMetaPixel = function () {
+    if (window.__fbqLoaded) return;
+    window.__fbqLoaded = true;
+    var t = document.createElement('script');
+    t.async = true;
+    t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    document.head.appendChild(t);
+    fbq('init', META_PIXEL_ID);
+    fbq('track', 'PageView');
+  };
+
+  // Repeat visitors who already granted consent: load after the page is
+  // interactive so the pixel never competes with LCP (mirrors GA above).
+  try {
+    if (localStorage.getItem('cookie-consent') === 'granted') {
+      if (document.readyState === 'complete') {
+        setTimeout(window.__loadMetaPixel, 1200);
+      } else {
+        window.addEventListener('load', function () { setTimeout(window.__loadMetaPixel, 1200); });
+      }
+    }
+  } catch (e) {}
 </script>
